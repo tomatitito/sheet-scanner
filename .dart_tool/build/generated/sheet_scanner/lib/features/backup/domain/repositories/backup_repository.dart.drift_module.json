@@ -1,0 +1,7 @@
+{
+  "elements": {},
+  "imports": [
+    "package:sheet_scanner/core/error/failures.dart",
+    "package:sheet_scanner/core/utils/either.dart"
+  ]
+}
