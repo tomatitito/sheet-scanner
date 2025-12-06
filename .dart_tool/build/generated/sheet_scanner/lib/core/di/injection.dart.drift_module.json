@@ -1,0 +1,7 @@
+{
+  "elements": {},
+  "imports": [
+    "package:get_it/get_it.dart",
+    "package:logging/logging.dart"
+  ]
+}
