@@ -2,8 +2,7 @@
   "elements": {},
   "imports": [
     "package:flutter/material.dart",
-    "package:go_router/go_router.dart",
-    "package:logging/logging.dart",
-    "package:sheet_scanner/core/di/injection.dart"
+    "package:sheet_scanner/core/di/injection.dart",
+    "package:sheet_scanner/core/router/app_router.dart"
   ]
 }

@@ -1,1 +1,1 @@
-{"valid_import":true,"imports":[{"uri":"package:flutter/material.dart","transitive":false},{"uri":"package:go_router/go_router.dart","transitive":false},{"uri":"package:logging/logging.dart","transitive":false},{"uri":"package:sheet_scanner/core/di/injection.dart","transitive":false}],"elements":[]}
+{"valid_import":true,"imports":[{"uri":"package:flutter/material.dart","transitive":false},{"uri":"package:sheet_scanner/core/di/injection.dart","transitive":false},{"uri":"package:sheet_scanner/core/router/app_router.dart","transitive":false}],"elements":[]}

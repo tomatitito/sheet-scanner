@@ -1,1 +1,1 @@
-{"valid_import":true,"imports":[{"uri":"package:get_it/get_it.dart","transitive":false},{"uri":"package:logging/logging.dart","transitive":false}],"elements":[]}
+{"valid_import":true,"imports":[{"uri":"package:get_it/get_it.dart","transitive":false},{"uri":"package:sheet_scanner/core/database/database.dart","transitive":false}],"elements":[]}

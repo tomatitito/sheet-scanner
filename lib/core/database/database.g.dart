@@ -4,7 +4,7 @@ part of 'database.dart';
 
 // ignore_for_file: type=lint
 class $SheetMusicTableTable extends SheetMusicTable
-    with TableInfo<$SheetMusicTableTable, SheetMusicTableData> {
+    with TableInfo<$SheetMusicTableTable, SheetMusicModel> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -55,8 +55,7 @@ class $SheetMusicTableTable extends SheetMusicTable
   String get actualTableName => $name;
   static const String $name = 'sheet_music_table';
   @override
-  VerificationContext validateIntegrity(
-      Insertable<SheetMusicTableData> instance,
+  VerificationContext validateIntegrity(Insertable<SheetMusicModel> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -97,9 +96,9 @@ class $SheetMusicTableTable extends SheetMusicTable
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  SheetMusicTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  SheetMusicModel map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return SheetMusicTableData(
+    return SheetMusicModel(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       title: attachedDatabase.typeMapping
@@ -121,15 +120,14 @@ class $SheetMusicTableTable extends SheetMusicTable
   }
 }
 
-class SheetMusicTableData extends DataClass
-    implements Insertable<SheetMusicTableData> {
+class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
   final int id;
   final String title;
   final String composer;
   final String? notes;
   final DateTime createdAt;
   final DateTime updatedAt;
-  const SheetMusicTableData(
+  const SheetMusicModel(
       {required this.id,
       required this.title,
       required this.composer,
@@ -162,10 +160,10 @@ class SheetMusicTableData extends DataClass
     );
   }
 
-  factory SheetMusicTableData.fromJson(Map<String, dynamic> json,
+  factory SheetMusicModel.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return SheetMusicTableData(
+    return SheetMusicModel(
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       composer: serializer.fromJson<String>(json['composer']),
@@ -187,14 +185,14 @@ class SheetMusicTableData extends DataClass
     };
   }
 
-  SheetMusicTableData copyWith(
+  SheetMusicModel copyWith(
           {int? id,
           String? title,
           String? composer,
           Value<String?> notes = const Value.absent(),
           DateTime? createdAt,
           DateTime? updatedAt}) =>
-      SheetMusicTableData(
+      SheetMusicModel(
         id: id ?? this.id,
         title: title ?? this.title,
         composer: composer ?? this.composer,
@@ -202,8 +200,8 @@ class SheetMusicTableData extends DataClass
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
-  SheetMusicTableData copyWithCompanion(SheetMusicTableCompanion data) {
-    return SheetMusicTableData(
+  SheetMusicModel copyWithCompanion(SheetMusicTableCompanion data) {
+    return SheetMusicModel(
       id: data.id.present ? data.id.value : this.id,
       title: data.title.present ? data.title.value : this.title,
       composer: data.composer.present ? data.composer.value : this.composer,
@@ -215,7 +213,7 @@ class SheetMusicTableData extends DataClass
 
   @override
   String toString() {
-    return (StringBuffer('SheetMusicTableData(')
+    return (StringBuffer('SheetMusicModel(')
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('composer: $composer, ')
@@ -232,7 +230,7 @@ class SheetMusicTableData extends DataClass
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is SheetMusicTableData &&
+      (other is SheetMusicModel &&
           other.id == this.id &&
           other.title == this.title &&
           other.composer == this.composer &&
@@ -241,7 +239,7 @@ class SheetMusicTableData extends DataClass
           other.updatedAt == this.updatedAt);
 }
 
-class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicTableData> {
+class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
   final Value<int> id;
   final Value<String> title;
   final Value<String> composer;
@@ -267,7 +265,7 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicTableData> {
         composer = Value(composer),
         createdAt = Value(createdAt),
         updatedAt = Value(updatedAt);
-  static Insertable<SheetMusicTableData> custom({
+  static Insertable<SheetMusicModel> custom({
     Expression<int>? id,
     Expression<String>? title,
     Expression<String>? composer,
@@ -341,7 +339,7 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicTableData> {
 }
 
 class $TagsTableTable extends TagsTable
-    with TableInfo<$TagsTableTable, TagsTableData> {
+    with TableInfo<$TagsTableTable, TagModel> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -362,22 +360,15 @@ class $TagsTableTable extends TagsTable
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
-  static const VerificationMeta _countMeta = const VerificationMeta('count');
   @override
-  late final GeneratedColumn<int> count = GeneratedColumn<int>(
-      'count', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0));
-  @override
-  List<GeneratedColumn> get $columns => [id, name, count];
+  List<GeneratedColumn> get $columns => [id, name];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'tags_table';
   @override
-  VerificationContext validateIntegrity(Insertable<TagsTableData> instance,
+  VerificationContext validateIntegrity(Insertable<TagModel> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -390,25 +381,19 @@ class $TagsTableTable extends TagsTable
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
-    if (data.containsKey('count')) {
-      context.handle(
-          _countMeta, count.isAcceptableOrUnknown(data['count']!, _countMeta));
-    }
     return context;
   }
 
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  TagsTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  TagModel map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return TagsTableData(
+    return TagModel(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      count: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}count'])!,
     );
   }
 
@@ -418,18 +403,15 @@ class $TagsTableTable extends TagsTable
   }
 }
 
-class TagsTableData extends DataClass implements Insertable<TagsTableData> {
+class TagModel extends DataClass implements Insertable<TagModel> {
   final int id;
   final String name;
-  final int count;
-  const TagsTableData(
-      {required this.id, required this.name, required this.count});
+  const TagModel({required this.id, required this.name});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
-    map['count'] = Variable<int>(count);
     return map;
   }
 
@@ -437,17 +419,15 @@ class TagsTableData extends DataClass implements Insertable<TagsTableData> {
     return TagsTableCompanion(
       id: Value(id),
       name: Value(name),
-      count: Value(count),
     );
   }
 
-  factory TagsTableData.fromJson(Map<String, dynamic> json,
+  factory TagModel.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return TagsTableData(
+    return TagModel(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
-      count: serializer.fromJson<int>(json['count']),
     );
   }
   @override
@@ -456,76 +436,62 @@ class TagsTableData extends DataClass implements Insertable<TagsTableData> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
-      'count': serializer.toJson<int>(count),
     };
   }
 
-  TagsTableData copyWith({int? id, String? name, int? count}) => TagsTableData(
+  TagModel copyWith({int? id, String? name}) => TagModel(
         id: id ?? this.id,
         name: name ?? this.name,
-        count: count ?? this.count,
       );
-  TagsTableData copyWithCompanion(TagsTableCompanion data) {
-    return TagsTableData(
+  TagModel copyWithCompanion(TagsTableCompanion data) {
+    return TagModel(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
-      count: data.count.present ? data.count.value : this.count,
     );
   }
 
   @override
   String toString() {
-    return (StringBuffer('TagsTableData(')
+    return (StringBuffer('TagModel(')
           ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('count: $count')
+          ..write('name: $name')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, count);
+  int get hashCode => Object.hash(id, name);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is TagsTableData &&
-          other.id == this.id &&
-          other.name == this.name &&
-          other.count == this.count);
+      (other is TagModel && other.id == this.id && other.name == this.name);
 }
 
-class TagsTableCompanion extends UpdateCompanion<TagsTableData> {
+class TagsTableCompanion extends UpdateCompanion<TagModel> {
   final Value<int> id;
   final Value<String> name;
-  final Value<int> count;
   const TagsTableCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
-    this.count = const Value.absent(),
   });
   TagsTableCompanion.insert({
     this.id = const Value.absent(),
     required String name,
-    this.count = const Value.absent(),
   }) : name = Value(name);
-  static Insertable<TagsTableData> custom({
+  static Insertable<TagModel> custom({
     Expression<int>? id,
     Expression<String>? name,
-    Expression<int>? count,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
-      if (count != null) 'count': count,
     });
   }
 
-  TagsTableCompanion copyWith(
-      {Value<int>? id, Value<String>? name, Value<int>? count}) {
+  TagsTableCompanion copyWith({Value<int>? id, Value<String>? name}) {
     return TagsTableCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
-      count: count ?? this.count,
     );
   }
 
@@ -538,9 +504,6 @@ class TagsTableCompanion extends UpdateCompanion<TagsTableData> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
-    if (count.present) {
-      map['count'] = Variable<int>(count.value);
-    }
     return map;
   }
 
@@ -548,15 +511,14 @@ class TagsTableCompanion extends UpdateCompanion<TagsTableData> {
   String toString() {
     return (StringBuffer('TagsTableCompanion(')
           ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('count: $count')
+          ..write('name: $name')
           ..write(')'))
         .toString();
   }
 }
 
 class $SheetMusicTagsTableTable extends SheetMusicTagsTable
-    with TableInfo<$SheetMusicTagsTableTable, SheetMusicTagsTableData> {
+    with TableInfo<$SheetMusicTagsTableTable, SheetMusicTagModel> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -580,8 +542,7 @@ class $SheetMusicTagsTableTable extends SheetMusicTagsTable
   String get actualTableName => $name;
   static const String $name = 'sheet_music_tags_table';
   @override
-  VerificationContext validateIntegrity(
-      Insertable<SheetMusicTagsTableData> instance,
+  VerificationContext validateIntegrity(Insertable<SheetMusicTagModel> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -605,10 +566,13 @@ class $SheetMusicTagsTableTable extends SheetMusicTagsTable
   @override
   Set<GeneratedColumn> get $primaryKey => {sheetMusicId, tagId};
   @override
-  SheetMusicTagsTableData map(Map<String, dynamic> data,
-      {String? tablePrefix}) {
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+        {sheetMusicId, tagId},
+      ];
+  @override
+  SheetMusicTagModel map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return SheetMusicTagsTableData(
+    return SheetMusicTagModel(
       sheetMusicId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}sheet_music_id'])!,
       tagId: attachedDatabase.typeMapping
@@ -622,12 +586,11 @@ class $SheetMusicTagsTableTable extends SheetMusicTagsTable
   }
 }
 
-class SheetMusicTagsTableData extends DataClass
-    implements Insertable<SheetMusicTagsTableData> {
+class SheetMusicTagModel extends DataClass
+    implements Insertable<SheetMusicTagModel> {
   final int sheetMusicId;
   final int tagId;
-  const SheetMusicTagsTableData(
-      {required this.sheetMusicId, required this.tagId});
+  const SheetMusicTagModel({required this.sheetMusicId, required this.tagId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -643,10 +606,10 @@ class SheetMusicTagsTableData extends DataClass
     );
   }
 
-  factory SheetMusicTagsTableData.fromJson(Map<String, dynamic> json,
+  factory SheetMusicTagModel.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return SheetMusicTagsTableData(
+    return SheetMusicTagModel(
       sheetMusicId: serializer.fromJson<int>(json['sheetMusicId']),
       tagId: serializer.fromJson<int>(json['tagId']),
     );
@@ -660,13 +623,13 @@ class SheetMusicTagsTableData extends DataClass
     };
   }
 
-  SheetMusicTagsTableData copyWith({int? sheetMusicId, int? tagId}) =>
-      SheetMusicTagsTableData(
+  SheetMusicTagModel copyWith({int? sheetMusicId, int? tagId}) =>
+      SheetMusicTagModel(
         sheetMusicId: sheetMusicId ?? this.sheetMusicId,
         tagId: tagId ?? this.tagId,
       );
-  SheetMusicTagsTableData copyWithCompanion(SheetMusicTagsTableCompanion data) {
-    return SheetMusicTagsTableData(
+  SheetMusicTagModel copyWithCompanion(SheetMusicTagsTableCompanion data) {
+    return SheetMusicTagModel(
       sheetMusicId: data.sheetMusicId.present
           ? data.sheetMusicId.value
           : this.sheetMusicId,
@@ -676,7 +639,7 @@ class SheetMusicTagsTableData extends DataClass
 
   @override
   String toString() {
-    return (StringBuffer('SheetMusicTagsTableData(')
+    return (StringBuffer('SheetMusicTagModel(')
           ..write('sheetMusicId: $sheetMusicId, ')
           ..write('tagId: $tagId')
           ..write(')'))
@@ -688,13 +651,12 @@ class SheetMusicTagsTableData extends DataClass
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is SheetMusicTagsTableData &&
+      (other is SheetMusicTagModel &&
           other.sheetMusicId == this.sheetMusicId &&
           other.tagId == this.tagId);
 }
 
-class SheetMusicTagsTableCompanion
-    extends UpdateCompanion<SheetMusicTagsTableData> {
+class SheetMusicTagsTableCompanion extends UpdateCompanion<SheetMusicTagModel> {
   final Value<int> sheetMusicId;
   final Value<int> tagId;
   final Value<int> rowid;
@@ -709,7 +671,7 @@ class SheetMusicTagsTableCompanion
     this.rowid = const Value.absent(),
   })  : sheetMusicId = Value(sheetMusicId),
         tagId = Value(tagId);
-  static Insertable<SheetMusicTagsTableData> custom({
+  static Insertable<SheetMusicTagModel> custom({
     Expression<int>? sheetMusicId,
     Expression<int>? tagId,
     Expression<int>? rowid,
@@ -878,17 +840,17 @@ class $$SheetMusicTableTableAnnotationComposer
 class $$SheetMusicTableTableTableManager extends RootTableManager<
     _$AppDatabase,
     $SheetMusicTableTable,
-    SheetMusicTableData,
+    SheetMusicModel,
     $$SheetMusicTableTableFilterComposer,
     $$SheetMusicTableTableOrderingComposer,
     $$SheetMusicTableTableAnnotationComposer,
     $$SheetMusicTableTableCreateCompanionBuilder,
     $$SheetMusicTableTableUpdateCompanionBuilder,
     (
-      SheetMusicTableData,
-      BaseReferences<_$AppDatabase, $SheetMusicTableTable, SheetMusicTableData>
+      SheetMusicModel,
+      BaseReferences<_$AppDatabase, $SheetMusicTableTable, SheetMusicModel>
     ),
-    SheetMusicTableData,
+    SheetMusicModel,
     PrefetchHooks Function()> {
   $$SheetMusicTableTableTableManager(
       _$AppDatabase db, $SheetMusicTableTable table)
@@ -943,27 +905,25 @@ class $$SheetMusicTableTableTableManager extends RootTableManager<
 typedef $$SheetMusicTableTableProcessedTableManager = ProcessedTableManager<
     _$AppDatabase,
     $SheetMusicTableTable,
-    SheetMusicTableData,
+    SheetMusicModel,
     $$SheetMusicTableTableFilterComposer,
     $$SheetMusicTableTableOrderingComposer,
     $$SheetMusicTableTableAnnotationComposer,
     $$SheetMusicTableTableCreateCompanionBuilder,
     $$SheetMusicTableTableUpdateCompanionBuilder,
     (
-      SheetMusicTableData,
-      BaseReferences<_$AppDatabase, $SheetMusicTableTable, SheetMusicTableData>
+      SheetMusicModel,
+      BaseReferences<_$AppDatabase, $SheetMusicTableTable, SheetMusicModel>
     ),
-    SheetMusicTableData,
+    SheetMusicModel,
     PrefetchHooks Function()>;
 typedef $$TagsTableTableCreateCompanionBuilder = TagsTableCompanion Function({
   Value<int> id,
   required String name,
-  Value<int> count,
 });
 typedef $$TagsTableTableUpdateCompanionBuilder = TagsTableCompanion Function({
   Value<int> id,
   Value<String> name,
-  Value<int> count,
 });
 
 class $$TagsTableTableFilterComposer
@@ -980,9 +940,6 @@ class $$TagsTableTableFilterComposer
 
   ColumnFilters<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<int> get count => $composableBuilder(
-      column: $table.count, builder: (column) => ColumnFilters(column));
 }
 
 class $$TagsTableTableOrderingComposer
@@ -999,9 +956,6 @@ class $$TagsTableTableOrderingComposer
 
   ColumnOrderings<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get count => $composableBuilder(
-      column: $table.count, builder: (column) => ColumnOrderings(column));
 }
 
 class $$TagsTableTableAnnotationComposer
@@ -1018,25 +972,19 @@ class $$TagsTableTableAnnotationComposer
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
-
-  GeneratedColumn<int> get count =>
-      $composableBuilder(column: $table.count, builder: (column) => column);
 }
 
 class $$TagsTableTableTableManager extends RootTableManager<
     _$AppDatabase,
     $TagsTableTable,
-    TagsTableData,
+    TagModel,
     $$TagsTableTableFilterComposer,
     $$TagsTableTableOrderingComposer,
     $$TagsTableTableAnnotationComposer,
     $$TagsTableTableCreateCompanionBuilder,
     $$TagsTableTableUpdateCompanionBuilder,
-    (
-      TagsTableData,
-      BaseReferences<_$AppDatabase, $TagsTableTable, TagsTableData>
-    ),
-    TagsTableData,
+    (TagModel, BaseReferences<_$AppDatabase, $TagsTableTable, TagModel>),
+    TagModel,
     PrefetchHooks Function()> {
   $$TagsTableTableTableManager(_$AppDatabase db, $TagsTableTable table)
       : super(TableManagerState(
@@ -1051,22 +999,18 @@ class $$TagsTableTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> name = const Value.absent(),
-            Value<int> count = const Value.absent(),
           }) =>
               TagsTableCompanion(
             id: id,
             name: name,
-            count: count,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required String name,
-            Value<int> count = const Value.absent(),
           }) =>
               TagsTableCompanion.insert(
             id: id,
             name: name,
-            count: count,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -1078,17 +1022,14 @@ class $$TagsTableTableTableManager extends RootTableManager<
 typedef $$TagsTableTableProcessedTableManager = ProcessedTableManager<
     _$AppDatabase,
     $TagsTableTable,
-    TagsTableData,
+    TagModel,
     $$TagsTableTableFilterComposer,
     $$TagsTableTableOrderingComposer,
     $$TagsTableTableAnnotationComposer,
     $$TagsTableTableCreateCompanionBuilder,
     $$TagsTableTableUpdateCompanionBuilder,
-    (
-      TagsTableData,
-      BaseReferences<_$AppDatabase, $TagsTableTable, TagsTableData>
-    ),
-    TagsTableData,
+    (TagModel, BaseReferences<_$AppDatabase, $TagsTableTable, TagModel>),
+    TagModel,
     PrefetchHooks Function()>;
 typedef $$SheetMusicTagsTableTableCreateCompanionBuilder
     = SheetMusicTagsTableCompanion Function({
@@ -1155,18 +1096,18 @@ class $$SheetMusicTagsTableTableAnnotationComposer
 class $$SheetMusicTagsTableTableTableManager extends RootTableManager<
     _$AppDatabase,
     $SheetMusicTagsTableTable,
-    SheetMusicTagsTableData,
+    SheetMusicTagModel,
     $$SheetMusicTagsTableTableFilterComposer,
     $$SheetMusicTagsTableTableOrderingComposer,
     $$SheetMusicTagsTableTableAnnotationComposer,
     $$SheetMusicTagsTableTableCreateCompanionBuilder,
     $$SheetMusicTagsTableTableUpdateCompanionBuilder,
     (
-      SheetMusicTagsTableData,
+      SheetMusicTagModel,
       BaseReferences<_$AppDatabase, $SheetMusicTagsTableTable,
-          SheetMusicTagsTableData>
+          SheetMusicTagModel>
     ),
-    SheetMusicTagsTableData,
+    SheetMusicTagModel,
     PrefetchHooks Function()> {
   $$SheetMusicTagsTableTableTableManager(
       _$AppDatabase db, $SheetMusicTagsTableTable table)
@@ -1211,18 +1152,18 @@ class $$SheetMusicTagsTableTableTableManager extends RootTableManager<
 typedef $$SheetMusicTagsTableTableProcessedTableManager = ProcessedTableManager<
     _$AppDatabase,
     $SheetMusicTagsTableTable,
-    SheetMusicTagsTableData,
+    SheetMusicTagModel,
     $$SheetMusicTagsTableTableFilterComposer,
     $$SheetMusicTagsTableTableOrderingComposer,
     $$SheetMusicTagsTableTableAnnotationComposer,
     $$SheetMusicTagsTableTableCreateCompanionBuilder,
     $$SheetMusicTagsTableTableUpdateCompanionBuilder,
     (
-      SheetMusicTagsTableData,
+      SheetMusicTagModel,
       BaseReferences<_$AppDatabase, $SheetMusicTagsTableTable,
-          SheetMusicTagsTableData>
+          SheetMusicTagModel>
     ),
-    SheetMusicTagsTableData,
+    SheetMusicTagModel,
     PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
