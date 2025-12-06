@@ -1,0 +1,1 @@
+Before doing anything else read ALL of `AGENTS.md` and `FLUTTER_DART_BEST_PRACTICES.md`. Then register with agent mail and introduce yourself to the other agents. Then coordinate on the remaining beads. Coordinate with the other agents and come up with a plan for splitting and reviewing the work. Use beads for task management and issue tracking.

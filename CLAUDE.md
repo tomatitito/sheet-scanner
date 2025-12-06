@@ -20,11 +20,17 @@ We want all console output to be informative, detailed, stylish, colorful, etc.
 
 If you aren't 100% sure about how to use a third party library, then you must SEARCH ONLINE to find the latest documentation website for the library to understand how it is supposed to work and the latest (mid-2025) suggested best practices and usage.
 
-**CRITICAL:** Whenever you make any substantive changes or additions to the dart code, you MUST check that you didn't introduce any compile errors or lint errors. You can do this by running the following command:
+**CRITICAL:** Whenever you make any substantive changes or additions to the dart code, you MUST check that you didn't introduce any compile errors or lint errors. Check `FLUTTER_DART_BEST_PRACTICES.md` for commands to do that.
 
-```dart
-fvm flutter build
-```
+### Getting Feedback
+
+ALWAYS make you are on the right track to achieving you goal. You can use whatever is at your disposal to do that. 
+- Check `FLUTTER_DART_BEST_PRACTICES.md` for commands to run tests and format code. 
+- Alternatively you can use tools provided by `flutter-mcp`. 
+- Use the `maestro` tool to start the app and make screenshots of it. Start doing this as soon as you have an (even minimal) app that can actually be started. 
+- Use the `playwright` and `playwright-extension` tools to inspect the desktop version of the app via screenshots.
+- You can start an emulated android app using `~/Library/Android/sdk/emulator/emulator -avd <avd_name>`. 
+- Long running and potentially blocking processes like running `maestro` or the android emulator should ALWAYS be run in a tmux session. Check for tmux sessions named `tools` or similar. Use `send-keys` to interact with the sessions. 
 
 ### Integrating with Beads (dependency‑aware task planning)
 
@@ -34,6 +40,7 @@ Recommended conventions
 - **Single source of truth**: Use **Beads** for task status/priority/dependencies; use **Agent Mail** for conversation, decisions, and attachments (audit).
 - **Shared identifiers**: Use the Beads issue id (e.g., `bd-123`) as the Mail `thread_id` and prefix message subjects with `[bd-123]`.
 - **Reservations**: When starting a `bd-###` task, call `file_reservation_paths(...)` for the affected paths; include the issue id in the `reason` and release on completion.
+- **New Beads**: File new issues when you encounter a problem or a TODO that requires a new task.
 
 ## Landing the Plane
 
