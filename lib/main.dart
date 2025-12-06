@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/core/router/app_router.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await setupInjection();
+  setupInjection();
   runApp(const MainApp());
 }
 
