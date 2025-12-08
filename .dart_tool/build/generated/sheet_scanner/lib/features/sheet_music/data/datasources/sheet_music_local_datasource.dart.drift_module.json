@@ -1,0 +1,6 @@
+{
+  "elements": {},
+  "imports": [
+    "package:sheet_scanner/core/database/database.dart"
+  ]
+}

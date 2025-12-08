@@ -1,0 +1,7 @@
+{
+  "elements": {},
+  "imports": [
+    "package:sheet_scanner/core/database/database.dart",
+    "package:sheet_scanner/features/sheet_music/domain/entities/sheet_music.dart"
+  ]
+}

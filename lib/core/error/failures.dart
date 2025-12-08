@@ -83,3 +83,11 @@ class PermissionFailure extends Failure {
     super.code,
   });
 }
+
+/// Failure for platform-specific errors (OS detection, platform unavailable).
+class PlatformFailure extends Failure {
+  PlatformFailure({
+    required super.message,
+    super.code,
+  });
+}
