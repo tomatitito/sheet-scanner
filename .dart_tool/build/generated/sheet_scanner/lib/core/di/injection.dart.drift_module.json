@@ -2,6 +2,18 @@
   "elements": {},
   "imports": [
     "package:get_it/get_it.dart",
-    "package:sheet_scanner/core/database/database.dart"
+    "package:sheet_scanner/core/database/database.dart",
+    "package:sheet_scanner/features/backup/data/datasources/backup_local_datasource.dart",
+    "package:sheet_scanner/features/backup/data/repositories/backup_repository_impl.dart",
+    "package:sheet_scanner/features/backup/domain/repositories/backup_repository.dart",
+    "package:sheet_scanner/features/ocr/data/datasources/ocr_local_datasource.dart",
+    "package:sheet_scanner/features/ocr/data/repositories/ocr_repository_impl.dart",
+    "package:sheet_scanner/features/ocr/domain/repositories/ocr_repository.dart",
+    "package:sheet_scanner/features/search/data/datasources/search_local_datasource.dart",
+    "package:sheet_scanner/features/search/data/repositories/search_repository_impl.dart",
+    "package:sheet_scanner/features/search/domain/repositories/search_repository.dart",
+    "package:sheet_scanner/features/sheet_music/data/datasources/sheet_music_local_datasource.dart",
+    "package:sheet_scanner/features/sheet_music/data/repositories/sheet_music_repository_impl.dart",
+    "package:sheet_scanner/features/sheet_music/domain/repositories/sheet_music_repository.dart"
   ]
 }
