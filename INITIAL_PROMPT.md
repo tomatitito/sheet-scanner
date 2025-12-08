@@ -1,1 +1,0 @@
-Before doing anything else read ALL of `PLAN.md`, `AGENTS.md` and `FLUTTER_DART_BEST_PRACTICES.md`. Then read all markdown files about assignments and coordination. Then register with agent mail and introduce yourself to the other agents. Then pick the bead you are supposed to work on and start working.
