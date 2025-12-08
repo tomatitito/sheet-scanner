@@ -1,0 +1,9 @@
+{
+  "elements": {},
+  "imports": [
+    "package:sheet_scanner/core/error/failures.dart",
+    "package:sheet_scanner/core/utils/either.dart",
+    "package:sheet_scanner/features/search/domain/repositories/search_repository.dart",
+    "package:sheet_scanner/features/sheet_music/domain/entities/sheet_music.dart"
+  ]
+}

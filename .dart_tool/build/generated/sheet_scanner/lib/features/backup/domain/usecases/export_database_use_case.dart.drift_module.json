@@ -1,0 +1,8 @@
+{
+  "elements": {},
+  "imports": [
+    "package:sheet_scanner/core/error/failures.dart",
+    "package:sheet_scanner/core/utils/either.dart",
+    "package:sheet_scanner/features/backup/domain/repositories/backup_repository.dart"
+  ]
+}
