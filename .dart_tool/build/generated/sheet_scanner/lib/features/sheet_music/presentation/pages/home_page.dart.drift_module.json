@@ -6,6 +6,7 @@
     "package:sheet_scanner/core/di/injection.dart",
     "package:sheet_scanner/features/sheet_music/presentation/cubit/home_cubit.dart",
     "package:sheet_scanner/features/sheet_music/presentation/cubit/home_state.dart",
+    "package:sheet_scanner/features/sheet_music/presentation/pages/add_sheet_page.dart",
     "package:sheet_scanner/features/sheet_music/presentation/pages/sheet_detail_page.dart",
     "package:sheet_scanner/features/sheet_music/presentation/widgets/empty_library_placeholder.dart",
     "package:sheet_scanner/features/sheet_music/presentation/widgets/sheet_music_list_item.dart"

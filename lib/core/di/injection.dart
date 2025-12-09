@@ -12,8 +12,10 @@ import 'package:sheet_scanner/features/search/domain/repositories/search_reposit
 import 'package:sheet_scanner/features/sheet_music/data/datasources/sheet_music_local_datasource.dart';
 import 'package:sheet_scanner/features/sheet_music/data/repositories/sheet_music_repository_impl.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/repositories/sheet_music_repository.dart';
+import 'package:sheet_scanner/features/sheet_music/domain/usecases/add_sheet_music_use_case.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/usecases/get_all_sheet_music_use_case.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/usecases/get_sheet_music_by_id_use_case.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/cubit/add_sheet_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/home_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/sheet_detail_cubit.dart';
 
@@ -86,6 +88,12 @@ void setupInjection() {
 
   // ==================== USE CASES ====================
   // Sheet Music Use Cases
+  getIt.registerSingleton<AddSheetMusicUseCase>(
+    AddSheetMusicUseCase(
+      repository: getIt<SheetMusicRepository>(),
+    ),
+  );
+
   getIt.registerSingleton<GetAllSheetMusicUseCase>(
     GetAllSheetMusicUseCase(
       repository: getIt<SheetMusicRepository>(),
@@ -109,6 +117,12 @@ void setupInjection() {
   getIt.registerSingleton<SheetDetailCubit>(
     SheetDetailCubit(
       getSheetMusicByIdUseCase: getIt<GetSheetMusicByIdUseCase>(),
+    ),
+  );
+
+  getIt.registerSingleton<AddSheetCubit>(
+    AddSheetCubit(
+      addSheetMusicUseCase: getIt<AddSheetMusicUseCase>(),
     ),
   );
 }
