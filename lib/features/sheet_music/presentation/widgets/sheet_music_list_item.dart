@@ -5,13 +5,13 @@ import 'package:sheet_scanner/features/sheet_music/domain/entities/sheet_music.d
 class SheetMusicListItem extends StatelessWidget {
   final SheetMusic sheetMusic;
   final VoidCallback? onTap;
-  
+
   /// Whether this item is in selection mode
   final bool isSelectionMode;
-  
+
   /// Whether this item is currently selected (only used in selection mode)
   final bool isSelected;
-  
+
   /// Callback when selection checkbox is toggled (only in selection mode)
   final ValueChanged<bool>? onSelectionChanged;
 
@@ -76,9 +76,8 @@ class SheetMusicListItem extends StatelessWidget {
               Icons.chevron_right,
               color: Colors.grey[400],
             ),
-      onTap: isSelectionMode
-          ? () => onSelectionChanged?.call(!isSelected)
-          : onTap,
+      onTap:
+          isSelectionMode ? () => onSelectionChanged?.call(!isSelected) : onTap,
     );
   }
 }

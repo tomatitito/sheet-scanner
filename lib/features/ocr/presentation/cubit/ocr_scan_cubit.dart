@@ -14,7 +14,8 @@ class OCRScanCubit extends Cubit<OCRScanState> {
 
   final _logger = Logger('OCRScanCubit');
 
-  OCRScanCubit({required this.recognizeTextUseCase}) : super(const OCRScanState.initial());
+  OCRScanCubit({required this.recognizeTextUseCase})
+      : super(const OCRScanState.initial());
 
   /// Initialize camera and prepare for scanning
   Future<void> initializeCamera() async {

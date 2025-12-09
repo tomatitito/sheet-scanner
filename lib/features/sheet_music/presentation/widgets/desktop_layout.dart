@@ -88,9 +88,10 @@ class DesktopLayout extends StatelessWidget {
                         const SizedBox(height: 16),
                         Text(
                           'Select an item from the list',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: Colors.grey[600],
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: Colors.grey[600],
+                                  ),
                         ),
                       ],
                     ),

@@ -69,7 +69,11 @@ class FilePickerServiceImpl implements FilePickerService {
       allowMultiple: true,
     );
 
-    return result?.files.map((e) => e.path ?? '').where((p) => p.isNotEmpty).toList() ?? [];
+    return result?.files
+            .map((e) => e.path ?? '')
+            .where((p) => p.isNotEmpty)
+            .toList() ??
+        [];
   }
 
   @override

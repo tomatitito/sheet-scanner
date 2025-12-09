@@ -255,9 +255,8 @@ class _DesktopSidebarState extends State<DesktopSidebar>
                               color: isActive
                                   ? Theme.of(context).primaryColor
                                   : Colors.grey[700],
-                              fontWeight: isActive
-                                  ? FontWeight.w600
-                                  : FontWeight.w500,
+                              fontWeight:
+                                  isActive ? FontWeight.w600 : FontWeight.w500,
                             ),
                       ),
                     ),

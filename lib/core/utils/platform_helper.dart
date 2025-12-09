@@ -44,14 +44,14 @@ class PlatformHelper {
   /// Get appropriate padding based on screen size and platform.
   static EdgeInsets getResponsivePadding(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     if (isDesktop()) {
       return EdgeInsets.symmetric(
         horizontal: screenWidth > 1200 ? 48.0 : 24.0,
         vertical: 24.0,
       );
     }
-    
+
     return const EdgeInsets.all(16.0);
   }
 }

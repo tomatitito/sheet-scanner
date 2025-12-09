@@ -224,25 +224,25 @@ class _BrowsePageDesktopState extends State<BrowsePageDesktop> {
                             ),
                             const SizedBox(width: 8),
                             ...browseCubit.getAllTags().take(4).map(
-                              (tag) => Padding(
-                                padding: const EdgeInsets.only(right: 8.0),
-                                child: FilterChip(
-                                  label: Text(tag),
-                                  selected:
-                                      state.selectedTags.contains(tag),
-                                  onSelected: (_) {
-                                    final newTags =
-                                        List<String>.from(state.selectedTags);
-                                    if (newTags.contains(tag)) {
-                                      newTags.remove(tag);
-                                    } else {
-                                      newTags.add(tag);
-                                    }
-                                    browseCubit.filterByTags(newTags);
-                                  },
+                                  (tag) => Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: FilterChip(
+                                      label: Text(tag),
+                                      selected:
+                                          state.selectedTags.contains(tag),
+                                      onSelected: (_) {
+                                        final newTags = List<String>.from(
+                                            state.selectedTags);
+                                        if (newTags.contains(tag)) {
+                                          newTags.remove(tag);
+                                        } else {
+                                          newTags.add(tag);
+                                        }
+                                        browseCubit.filterByTags(newTags);
+                                      },
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
                           ],
                         ),
                       ),
@@ -264,9 +264,7 @@ class _BrowsePageDesktopState extends State<BrowsePageDesktop> {
                               const SizedBox(height: 16),
                               Text(
                                 'No results found',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium,
+                                style: Theme.of(context).textTheme.titleMedium,
                               ),
                             ],
                           ),

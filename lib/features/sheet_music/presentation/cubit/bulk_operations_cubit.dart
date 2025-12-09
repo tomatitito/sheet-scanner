@@ -44,7 +44,8 @@ class BulkOperationsCubit extends Cubit<BulkOperationsState> {
 
   /// Select all available items
   void selectAll(int totalAvailable) {
-    final selectedIds = Set<int>.from(List.generate(totalAvailable, (i) => i + 1));
+    final selectedIds =
+        Set<int>.from(List.generate(totalAvailable, (i) => i + 1));
     emit(SelectionModeActive(
       selectedIds: selectedIds,
       totalAvailable: totalAvailable,
@@ -92,7 +93,7 @@ class BulkOperationsCubit extends Cubit<BulkOperationsState> {
         final result = await deleteSheetMusicUseCase.call(
           DeleteSheetMusicParams(id: id),
         );
-        
+
         result.fold(
           (failure) => throw Exception(failure.toString()),
           (_) => deletedCount++,
