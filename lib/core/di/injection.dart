@@ -18,6 +18,7 @@ import 'package:sheet_scanner/features/sheet_music/domain/usecases/get_all_sheet
 import 'package:sheet_scanner/features/sheet_music/domain/usecases/get_sheet_music_by_id_use_case.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/usecases/update_sheet_music_use_case.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/add_sheet_cubit.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/cubit/browse_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/edit_sheet_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/home_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/sheet_detail_cubit.dart';
@@ -146,6 +147,12 @@ void setupInjection() {
     EditSheetCubit(
       getSheetMusicByIdUseCase: getIt<GetSheetMusicByIdUseCase>(),
       updateSheetMusicUseCase: getIt<UpdateSheetMusicUseCase>(),
+    ),
+  );
+
+  getIt.registerSingleton<BrowseCubit>(
+    BrowseCubit(
+      getAllSheetMusicUseCase: getIt<GetAllSheetMusicUseCase>(),
     ),
   );
 }
