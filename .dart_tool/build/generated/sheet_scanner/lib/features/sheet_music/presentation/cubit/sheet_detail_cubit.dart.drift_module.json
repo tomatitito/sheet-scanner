@@ -1,9 +1,0 @@
-{
-  "elements": {},
-  "imports": [
-    "package:flutter_bloc/flutter_bloc.dart",
-    "package:sheet_scanner/core/error/failures.dart",
-    "package:sheet_scanner/features/sheet_music/domain/usecases/get_sheet_music_by_id_use_case.dart",
-    "package:sheet_scanner/features/sheet_music/presentation/cubit/sheet_detail_state.dart"
-  ]
-}

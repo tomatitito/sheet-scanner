@@ -1,9 +1,0 @@
-{
-  "elements": {},
-  "imports": [
-    "package:sheet_scanner/core/error/failures.dart",
-    "package:sheet_scanner/core/utils/either.dart",
-    "package:sheet_scanner/features/ocr/data/datasources/ocr_local_datasource.dart",
-    "package:sheet_scanner/features/ocr/domain/repositories/ocr_repository.dart"
-  ]
-}

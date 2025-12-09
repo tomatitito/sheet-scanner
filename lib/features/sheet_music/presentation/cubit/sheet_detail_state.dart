@@ -39,3 +39,23 @@ class SheetDetailError extends SheetDetailState {
   @override
   List<Object?> get props => [failure];
 }
+
+/// Deleting state while processing delete operation
+class SheetDetailDeleting extends SheetDetailState {
+  final SheetMusic sheetMusic;
+
+  const SheetDetailDeleting(this.sheetMusic);
+
+  @override
+  List<Object?> get props => [sheetMusic];
+}
+
+/// Deleted state after successful deletion
+class SheetDetailDeleted extends SheetDetailState {
+  final int deletedId;
+
+  const SheetDetailDeleted(this.deletedId);
+
+  @override
+  List<Object?> get props => [deletedId];
+}

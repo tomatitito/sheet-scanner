@@ -1,7 +1,0 @@
-{
-  "elements": {},
-  "imports": [
-    "package:flutter/material.dart",
-    "package:sheet_scanner/features/sheet_music/domain/entities/sheet_music.dart"
-  ]
-}

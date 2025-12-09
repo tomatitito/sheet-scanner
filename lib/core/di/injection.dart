@@ -13,6 +13,7 @@ import 'package:sheet_scanner/features/sheet_music/data/datasources/sheet_music_
 import 'package:sheet_scanner/features/sheet_music/data/repositories/sheet_music_repository_impl.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/repositories/sheet_music_repository.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/usecases/add_sheet_music_use_case.dart';
+import 'package:sheet_scanner/features/sheet_music/domain/usecases/delete_sheet_music_use_case.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/usecases/get_all_sheet_music_use_case.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/usecases/get_sheet_music_by_id_use_case.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/usecases/update_sheet_music_use_case.dart';
@@ -114,6 +115,12 @@ void setupInjection() {
     ),
   );
 
+  getIt.registerSingleton<DeleteSheetMusicUseCase>(
+    DeleteSheetMusicUseCase(
+      repository: getIt<SheetMusicRepository>(),
+    ),
+  );
+
   // ==================== PRESENTATION ====================
   // Sheet Music Cubits
   getIt.registerSingleton<HomeCubit>(
@@ -125,6 +132,7 @@ void setupInjection() {
   getIt.registerSingleton<SheetDetailCubit>(
     SheetDetailCubit(
       getSheetMusicByIdUseCase: getIt<GetSheetMusicByIdUseCase>(),
+      deleteSheetMusicUseCase: getIt<DeleteSheetMusicUseCase>(),
     ),
   );
 

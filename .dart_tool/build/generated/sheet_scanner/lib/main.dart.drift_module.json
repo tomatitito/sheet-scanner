@@ -1,8 +1,0 @@
-{
-  "elements": {},
-  "imports": [
-    "package:flutter/material.dart",
-    "package:sheet_scanner/core/di/injection.dart",
-    "package:sheet_scanner/core/router/app_router.dart"
-  ]
-}

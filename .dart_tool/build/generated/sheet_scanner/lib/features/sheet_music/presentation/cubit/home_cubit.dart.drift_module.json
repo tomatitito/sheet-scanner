@@ -1,8 +1,0 @@
-{
-  "elements": {},
-  "imports": [
-    "package:flutter_bloc/flutter_bloc.dart",
-    "package:sheet_scanner/features/sheet_music/domain/usecases/get_all_sheet_music_use_case.dart",
-    "package:sheet_scanner/features/sheet_music/presentation/cubit/home_state.dart"
-  ]
-}
