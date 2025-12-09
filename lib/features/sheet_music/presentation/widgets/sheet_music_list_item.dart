@@ -5,28 +5,45 @@ import 'package:sheet_scanner/features/sheet_music/domain/entities/sheet_music.d
 class SheetMusicListItem extends StatelessWidget {
   final SheetMusic sheetMusic;
   final VoidCallback? onTap;
+  
+  /// Whether this item is in selection mode
+  final bool isSelectionMode;
+  
+  /// Whether this item is currently selected (only used in selection mode)
+  final bool isSelected;
+  
+  /// Callback when selection checkbox is toggled (only in selection mode)
+  final ValueChanged<bool>? onSelectionChanged;
 
   const SheetMusicListItem({
     super.key,
     required this.sheetMusic,
     this.onTap,
+    this.isSelectionMode = false,
+    this.isSelected = false,
+    this.onSelectionChanged,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: Colors.blue.shade100,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(
-          Icons.music_note,
-          color: Colors.blue.shade700,
-        ),
-      ),
+      leading: isSelectionMode
+          ? Checkbox(
+              value: isSelected,
+              onChanged: (value) => onSelectionChanged?.call(value ?? false),
+            )
+          : Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.blue.shade100,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.music_note,
+                color: Colors.blue.shade700,
+              ),
+            ),
       title: Text(
         sheetMusic.title,
         style: Theme.of(context).textTheme.titleMedium,
@@ -53,11 +70,15 @@ class SheetMusicListItem extends StatelessWidget {
             ),
         ],
       ),
-      trailing: Icon(
-        Icons.chevron_right,
-        color: Colors.grey[400],
-      ),
-      onTap: onTap,
+      trailing: isSelectionMode
+          ? null
+          : Icon(
+              Icons.chevron_right,
+              color: Colors.grey[400],
+            ),
+      onTap: isSelectionMode
+          ? () => onSelectionChanged?.call(!isSelected)
+          : onTap,
     );
   }
 }
