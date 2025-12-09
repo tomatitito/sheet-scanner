@@ -41,68 +41,6 @@ class _AddSheetPageState extends State<AddSheetPage> {
     super.dispose();
   }
 
-  void _onTitleChanged(String value) {
-    context.read<AddSheetCubit>().validate(
-          title: value,
-          composer: _composerController.text,
-          notes: _notesController.text,
-          tags: _tags,
-        );
-  }
-
-  void _onComposerChanged(String value) {
-    context.read<AddSheetCubit>().validate(
-          title: _titleController.text,
-          composer: value,
-          notes: _notesController.text,
-          tags: _tags,
-        );
-  }
-
-  void _onNotesChanged(String value) {
-    context.read<AddSheetCubit>().validate(
-          title: _titleController.text,
-          composer: _composerController.text,
-          notes: value,
-          tags: _tags,
-        );
-  }
-
-  void _addTag(String tag) {
-    if (tag.isNotEmpty && !_tags.contains(tag)) {
-      setState(() {
-        _tags.add(tag);
-      });
-      context.read<AddSheetCubit>().validate(
-            title: _titleController.text,
-            composer: _composerController.text,
-            notes: _notesController.text,
-            tags: _tags,
-          );
-    }
-  }
-
-  void _removeTag(String tag) {
-    setState(() {
-      _tags.remove(tag);
-    });
-    context.read<AddSheetCubit>().validate(
-          title: _titleController.text,
-          composer: _composerController.text,
-          notes: _notesController.text,
-          tags: _tags,
-        );
-  }
-
-  void _submitForm() {
-    context.read<AddSheetCubit>().submitForm(
-          title: _titleController.text,
-          composer: _composerController.text,
-          notes: _notesController.text,
-          tags: _tags,
-        );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -135,12 +73,6 @@ class _AddSheetPageState extends State<AddSheetPage> {
           composerController: _composerController,
           notesController: _notesController,
           tags: _tags,
-          onTitleChanged: _onTitleChanged,
-          onComposerChanged: _onComposerChanged,
-          onNotesChanged: _onNotesChanged,
-          onAddTag: _addTag,
-          onRemoveTag: _removeTag,
-          onSubmit: _submitForm,
           onClose: widget.onClose,
         ),
       ),
@@ -153,12 +85,6 @@ class _AddSheetForm extends StatefulWidget {
   final TextEditingController composerController;
   final TextEditingController notesController;
   final List<String> tags;
-  final ValueChanged<String> onTitleChanged;
-  final ValueChanged<String> onComposerChanged;
-  final ValueChanged<String> onNotesChanged;
-  final Function(String) onAddTag;
-  final Function(String) onRemoveTag;
-  final VoidCallback onSubmit;
   final VoidCallback? onClose;
 
   const _AddSheetForm({
@@ -166,12 +92,6 @@ class _AddSheetForm extends StatefulWidget {
     required this.composerController,
     required this.notesController,
     required this.tags,
-    required this.onTitleChanged,
-    required this.onComposerChanged,
-    required this.onNotesChanged,
-    required this.onAddTag,
-    required this.onRemoveTag,
-    required this.onSubmit,
     this.onClose,
   });
 
@@ -182,6 +102,41 @@ class _AddSheetForm extends StatefulWidget {
 class _AddSheetFormState extends State<_AddSheetForm> {
   final _formKey = GlobalKey<FormState>();
   String _newTag = '';
+
+  void _validateForm() {
+    final cubit = context.read<AddSheetCubit>();
+    cubit.validate(
+      title: widget.titleController.text,
+      composer: widget.composerController.text,
+      notes: widget.notesController.text,
+      tags: widget.tags,
+    );
+  }
+
+  void _addTag(String tag) {
+    if (tag.isNotEmpty && !widget.tags.contains(tag)) {
+      setState(() {
+        widget.tags.add(tag);
+      });
+      _validateForm();
+    }
+  }
+
+  void _removeTag(String tag) {
+    setState(() {
+      widget.tags.remove(tag);
+    });
+    _validateForm();
+  }
+
+  void _submitForm() {
+    context.read<AddSheetCubit>().submitForm(
+          title: widget.titleController.text,
+          composer: widget.composerController.text,
+          notes: widget.notesController.text,
+          tags: widget.tags,
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -210,7 +165,7 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                   TextFormField(
                     controller: widget.titleController,
                     enabled: !isSubmitting,
-                    onChanged: widget.onTitleChanged,
+                    onChanged: (_) => _validateForm(),
                     decoration: InputDecoration(
                       labelText: 'Title *',
                       hintText: 'Enter sheet music title',
@@ -225,7 +180,7 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                   TextFormField(
                     controller: widget.composerController,
                     enabled: !isSubmitting,
-                    onChanged: widget.onComposerChanged,
+                    onChanged: (_) => _validateForm(),
                     decoration: InputDecoration(
                       labelText: 'Composer *',
                       hintText: 'Enter composer name',
@@ -240,7 +195,7 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                   TextFormField(
                     controller: widget.notesController,
                     enabled: !isSubmitting,
-                    onChanged: widget.onNotesChanged,
+                    onChanged: (_) => _validateForm(),
                     maxLines: 3,
                     decoration: InputDecoration(
                       labelText: 'Notes',
@@ -284,7 +239,7 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                         onPressed: isSubmitting
                             ? null
                             : () {
-                                widget.onAddTag(_newTag);
+                                _addTag(_newTag);
                                 _newTag = '';
                               },
                         icon: const Icon(Icons.add),
@@ -301,9 +256,8 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                           .map(
                             (tag) => Chip(
                               label: Text(tag),
-                              onDeleted: isSubmitting
-                                  ? null
-                                  : () => widget.onRemoveTag(tag),
+                              onDeleted:
+                                  isSubmitting ? null : () => _removeTag(tag),
                             ),
                           )
                           .toList(),
@@ -318,7 +272,7 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                               state is AddSheetInvalid ||
                               state is AddSheetInitial)
                           ? null
-                          : widget.onSubmit,
+                          : _submitForm,
                       icon: isSubmitting
                           ? const SizedBox(
                               width: 20,
