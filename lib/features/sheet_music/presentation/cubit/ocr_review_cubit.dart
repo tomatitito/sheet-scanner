@@ -57,8 +57,8 @@ class OCRReviewCubit extends Cubit<OCRReviewState> {
     final isValid = errors.isEmpty;
 
     state.whenOrNull(
-      initialized: (dTitle, dComposer, conf, image, eTitle, eComposer,
-          eNotes, tgs, _, __, isSubmitting, error) {
+      initialized: (dTitle, dComposer, conf, image, eTitle, eComposer, eNotes,
+          tgs, _, __, isSubmitting, error) {
         emit(OCRReviewState.initialized(
           detectedTitle: dTitle,
           detectedComposer: dComposer,
@@ -145,8 +145,7 @@ class OCRReviewCubit extends Cubit<OCRReviewState> {
           (sheetMusic) {
             emit(OCRReviewState.success(
               sheetMusic: sheetMusic,
-              message:
-                  'Sheet music "${sheetMusic.title}" saved successfully',
+              message: 'Sheet music "${sheetMusic.title}" saved successfully',
             ));
           },
         );

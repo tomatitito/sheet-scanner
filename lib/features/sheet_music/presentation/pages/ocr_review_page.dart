@@ -248,24 +248,19 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
           BlocBuilder<OCRReviewCubit, OCRReviewState>(
             builder: (context, state) {
               final isSubmitting = state.maybeWhen(
-                initialized: (dTitle, dComposer, conf, image, eTitle,
-                        eComposer, eNotes, tags, isValid, errors,
-                        isSubmitting, error) =>
+                initialized: (dTitle, dComposer, conf, image, eTitle, eComposer,
+                        eNotes, tags, isValid, errors, isSubmitting, error) =>
                     isSubmitting,
                 orElse: () => false,
               );
               final isValid = state.maybeWhen(
-                initialized: (dTitle, dComposer, conf, image, eTitle,
-                        eComposer, eNotes, tags, isValid, errors,
-                        isSubmitting, error) =>
+                initialized: (dTitle, dComposer, conf, image, eTitle, eComposer,
+                        eNotes, tags, isValid, errors, isSubmitting, error) =>
                     isValid,
                 orElse: () => false,
               );
               return TextButton(
-                onPressed:
-                    (isSubmitting || !isValid)
-                        ? null
-                        : widget.onSubmit,
+                onPressed: (isSubmitting || !isValid) ? null : widget.onSubmit,
                 child: isSubmitting
                     ? const SizedBox(
                         width: 20,
@@ -297,7 +292,6 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
               isSubmitting,
               error,
             ) {
-
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: isSmallScreen
@@ -454,9 +448,8 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
                 .map(
                   (tag) => Chip(
                     label: Text(tag),
-                    onDeleted: isSubmitting
-                        ? null
-                        : () => widget.onRemoveTag(tag),
+                    onDeleted:
+                        isSubmitting ? null : () => widget.onRemoveTag(tag),
                   ),
                 )
                 .toList(),
@@ -494,7 +487,8 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
           decoration: BoxDecoration(
             color: (confidenceStyle['color'] as Color).withAlpha(51),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: confidenceStyle['color'] as Color, width: 1),
+            border:
+                Border.all(color: confidenceStyle['color'] as Color, width: 1),
           ),
           child: Row(
             children: [
@@ -543,9 +537,7 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
             const SizedBox(width: 8),
             Expanded(
               child: ElevatedButton.icon(
-                onPressed: (isSubmitting)
-                    ? null
-                    : widget.onSubmit,
+                onPressed: (isSubmitting) ? null : widget.onSubmit,
                 icon: isSubmitting
                     ? const SizedBox(
                         width: 20,
@@ -757,8 +749,8 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
                 decoration: BoxDecoration(
                   color: (confidenceStyle['color'] as Color).withAlpha(51),
                   borderRadius: BorderRadius.circular(8),
-                  border:
-                      Border.all(color: confidenceStyle['color'] as Color, width: 1),
+                  border: Border.all(
+                      color: confidenceStyle['color'] as Color, width: 1),
                 ),
                 child: Row(
                   children: [
@@ -781,12 +773,10 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
                           ),
                           Text(
                             confidenceStyle['label'] as String,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(
-                                  color: Colors.grey[600],
-                                ),
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Colors.grey[600],
+                                    ),
                           ),
                         ],
                       ),
