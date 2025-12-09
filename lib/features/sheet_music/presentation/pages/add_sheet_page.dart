@@ -4,6 +4,7 @@ import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/sheet_music/data/services/file_picker_service.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/add_sheet_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/add_sheet_state.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/file_picker_drop_zone.dart';
 
 /// Page for adding a new sheet music entry to the library
 class AddSheetPage extends StatefulWidget {
@@ -310,61 +311,13 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                     ),
                   const SizedBox(height: 32),
 
-                  // File picker section
-                  Text(
-                    'Attachments',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                  // File picker section - using enhanced drop zone widget
+                  FilePickerDropZone(
+                    selectedFiles: widget.selectedFiles,
+                    onPickFiles: _pickFiles,
+                    onRemoveFile: _removeFile,
+                    isSubmitting: isSubmitting,
                   ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: isSubmitting ? null : _pickFiles,
-                      icon: const Icon(Icons.attach_file),
-                      label: const Text('Add Files'),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  if (widget.selectedFiles.isNotEmpty)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Selected Files (${widget.selectedFiles.length})',
-                          style:
-                              Theme.of(context).textTheme.labelMedium?.copyWith(
-                                    color: Colors.grey[600],
-                                  ),
-                        ),
-                        const SizedBox(height: 8),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: widget.selectedFiles.length,
-                          itemBuilder: (context, index) {
-                            final filePath = widget.selectedFiles[index];
-                            final fileName = filePath.split('/').last;
-                            return ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading: const Icon(Icons.insert_drive_file),
-                              title: Text(
-                                fileName,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              trailing: isSubmitting
-                                  ? null
-                                  : IconButton(
-                                      icon: const Icon(Icons.close),
-                                      onPressed: () => _removeFile(filePath),
-                                    ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
                   const SizedBox(height: 32),
 
                   // Submit button
