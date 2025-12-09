@@ -37,9 +37,7 @@ class OCRRepositoryImpl implements OCRRepository {
     try {
       final results = await localDataSource.recognizeTextBatch(imagePaths);
       return Right(
-        results
-            .map((result) => OCRResult(text: result.$1, confidence: result.$2))
-            .toList(),
+        results.map((result) => OCRResult(text: result.$1, confidence: result.$2)).toList(),
       );
     } on Exception catch (e) {
       return Left(OCRFailure(message: e.toString()));

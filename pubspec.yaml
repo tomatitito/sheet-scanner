@@ -32,6 +32,7 @@ dependencies:
 
   # Camera - Mobile only
   camera: ^0.10.5
+  image_picker: ^1.0.0
 
   # File Operations
   file_picker: ^10.3.0

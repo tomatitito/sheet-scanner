@@ -23,6 +23,8 @@ import 'package:sheet_scanner/features/sheet_music/presentation/cubit/edit_sheet
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/home_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/ocr_review_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/sheet_detail_cubit.dart';
+import 'package:sheet_scanner/features/ocr/domain/usecases/recognize_text_use_case.dart';
+import 'package:sheet_scanner/features/ocr/presentation/cubit/ocr_scan_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -92,6 +94,13 @@ void setupInjection() {
   );
 
   // ==================== USE CASES ====================
+  // OCR Use Cases
+  getIt.registerSingleton<RecognizeTextUseCase>(
+    RecognizeTextUseCase(
+      repository: getIt<OCRRepository>(),
+    ),
+  );
+
   // Sheet Music Use Cases
   getIt.registerSingleton<AddSheetMusicUseCase>(
     AddSheetMusicUseCase(
@@ -160,6 +169,13 @@ void setupInjection() {
   getIt.registerSingleton<OCRReviewCubit>(
     OCRReviewCubit(
       getIt<AddSheetMusicUseCase>(),
+    ),
+  );
+
+  // OCR Cubits
+  getIt.registerSingleton<OCRScanCubit>(
+    OCRScanCubit(
+      recognizeTextUseCase: getIt<RecognizeTextUseCase>(),
     ),
   );
 }
