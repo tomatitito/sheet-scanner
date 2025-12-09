@@ -21,6 +21,7 @@ import 'package:sheet_scanner/features/sheet_music/presentation/cubit/add_sheet_
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/browse_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/edit_sheet_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/home_cubit.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/cubit/ocr_review_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/sheet_detail_cubit.dart';
 
 final getIt = GetIt.instance;
@@ -153,6 +154,12 @@ void setupInjection() {
   getIt.registerSingleton<BrowseCubit>(
     BrowseCubit(
       getAllSheetMusicUseCase: getIt<GetAllSheetMusicUseCase>(),
+    ),
+  );
+
+  getIt.registerSingleton<OCRReviewCubit>(
+    OCRReviewCubit(
+      getIt<AddSheetMusicUseCase>(),
     ),
   );
 }
