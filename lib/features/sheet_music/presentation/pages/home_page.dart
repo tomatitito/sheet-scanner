@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
+import 'package:sheet_scanner/core/utils/platform_helper.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/home_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/home_state.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/pages/add_sheet_page.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/pages/home_page_desktop.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/pages/sheet_detail_page.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/empty_library_placeholder.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/sheet_music_list_item.dart';
@@ -13,6 +15,12 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Use desktop layout on desktop platforms
+    if (PlatformHelper.isDesktop()) {
+      return const HomePageDesktop();
+    }
+
+    // Use mobile layout on mobile platforms
     return BlocProvider(
       create: (context) => getIt<HomeCubit>()..loadSheetMusic(),
       child: const _HomeView(),
