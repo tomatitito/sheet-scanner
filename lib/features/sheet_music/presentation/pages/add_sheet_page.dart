@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
+import 'package:sheet_scanner/features/sheet_music/data/services/file_picker_service.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/add_sheet_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/add_sheet_state.dart';
 
@@ -24,6 +25,8 @@ class _AddSheetPageState extends State<AddSheetPage> {
   late final TextEditingController _composerController;
   late final TextEditingController _notesController;
   final List<String> _tags = [];
+  final List<String> _selectedFiles = [];
+  late final FilePickerService _filePickerService;
 
   @override
   void initState() {
@@ -31,6 +34,7 @@ class _AddSheetPageState extends State<AddSheetPage> {
     _titleController = TextEditingController();
     _composerController = TextEditingController();
     _notesController = TextEditingController();
+    _filePickerService = FilePickerServiceImpl();
   }
 
   @override
@@ -73,6 +77,8 @@ class _AddSheetPageState extends State<AddSheetPage> {
           composerController: _composerController,
           notesController: _notesController,
           tags: _tags,
+          selectedFiles: _selectedFiles,
+          filePickerService: _filePickerService,
           onClose: widget.onClose,
         ),
       ),
@@ -85,6 +91,8 @@ class _AddSheetForm extends StatefulWidget {
   final TextEditingController composerController;
   final TextEditingController notesController;
   final List<String> tags;
+  final List<String> selectedFiles;
+  final FilePickerService filePickerService;
   final VoidCallback? onClose;
 
   const _AddSheetForm({
@@ -92,6 +100,8 @@ class _AddSheetForm extends StatefulWidget {
     required this.composerController,
     required this.notesController,
     required this.tags,
+    required this.selectedFiles,
+    required this.filePickerService,
     this.onClose,
   });
 
@@ -127,6 +137,42 @@ class _AddSheetFormState extends State<_AddSheetForm> {
       widget.tags.remove(tag);
     });
     _validateForm();
+  }
+
+  Future<void> _pickFiles() async {
+    try {
+      final files = await widget.filePickerService.pickMultipleFiles(
+        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png', 'gif'],
+      );
+
+      if (files.isNotEmpty && mounted) {
+        setState(() {
+          widget.selectedFiles.addAll(files);
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${files.length} file(s) selected'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error selecting files: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _removeFile(String filePath) {
+    setState(() {
+      widget.selectedFiles.remove(filePath);
+    });
   }
 
   void _submitForm() {
@@ -261,6 +307,63 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                             ),
                           )
                           .toList(),
+                    ),
+                  const SizedBox(height: 32),
+
+                  // File picker section
+                  Text(
+                    'Attachments',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: isSubmitting ? null : _pickFiles,
+                      icon: const Icon(Icons.attach_file),
+                      label: const Text('Add Files'),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  if (widget.selectedFiles.isNotEmpty)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Selected Files (${widget.selectedFiles.length})',
+                          style:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    color: Colors.grey[600],
+                                  ),
+                        ),
+                        const SizedBox(height: 8),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: widget.selectedFiles.length,
+                          itemBuilder: (context, index) {
+                            final filePath = widget.selectedFiles[index];
+                            final fileName = filePath.split('/').last;
+                            return ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              leading: const Icon(Icons.insert_drive_file),
+                              title: Text(
+                                fileName,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              trailing: isSubmitting
+                                  ? null
+                                  : IconButton(
+                                      icon: const Icon(Icons.close),
+                                      onPressed: () => _removeFile(filePath),
+                                    ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   const SizedBox(height: 32),
 
