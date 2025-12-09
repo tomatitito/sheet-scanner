@@ -1,7 +1,13 @@
+# Build and Flutter artifacts
+build/
+.dart_tool/
+.packages
+pubspec.lock
 
 # FVM Version Cache
 .fvm/
 
+# Beads
 .beads/beads.db
 .beads/beads.db-*
 .beads/bd.sock
