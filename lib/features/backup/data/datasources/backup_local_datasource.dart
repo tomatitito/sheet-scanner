@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:sheet_scanner/core/database/database.dart';
 import 'package:sheet_scanner/core/storage/image_storage.dart';
 
 /// Abstract interface for backup data source operations.
@@ -41,6 +43,10 @@ abstract class BackupLocalDataSource {
 class BackupLocalDataSourceImpl implements BackupLocalDataSource {
   static const String _backupDirName = 'sheet_scanner_backups';
   static const String _dbFileName = 'sheet_scanner.db';
+
+  final AppDatabase database;
+
+  BackupLocalDataSourceImpl({required this.database});
 
   /// Gets the path to the database file.
   Future<String> _getDatabasePath() async {
@@ -85,8 +91,51 @@ class BackupLocalDataSourceImpl implements BackupLocalDataSource {
 
   @override
   Future<String> exportToJSON({bool includeImages = false}) async {
-    // TODO: Implement JSON export with metadata and optional image paths
-    throw UnimplementedError('exportToJSON not yet implemented');
+    // Query all sheet music from the database
+    final sheetMusicList =
+        await database.select(database.sheetMusicTable).get();
+
+    // Build JSON structure
+    final jsonData = {
+      'exportDate': DateTime.now().toIso8601String(),
+      'exportFormat': 'json',
+      'version': '1.0',
+      'sheetMusic': sheetMusicList.map((model) {
+        final jsonItem = {
+          'id': model.id,
+          'title': model.title,
+          'composer': model.composer,
+          'notes': model.notes,
+          'createdAt': model.createdAt.toIso8601String(),
+          'updatedAt': model.updatedAt.toIso8601String(),
+        };
+
+        // Optionally include image information
+        if (includeImages) {
+          // TODO: Add image paths once schema includes them
+          jsonItem['images'] = [];
+        }
+
+        return jsonItem;
+      }).toList(),
+      'metadata': {
+        'totalSheets': sheetMusicList.length,
+        'includeImages': includeImages,
+      },
+    };
+
+    // Write JSON file
+    final timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
+    final fileName = 'sheet_scanner_export_$timestamp.json';
+
+    final backupDir = await _getBackupDir();
+    final filePath = p.join(backupDir.path, fileName);
+    final file = File(filePath);
+
+    final jsonString = jsonEncode(jsonData);
+    await file.writeAsString(jsonString);
+
+    return filePath;
   }
 
   @override

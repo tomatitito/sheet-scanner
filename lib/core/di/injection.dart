@@ -74,7 +74,7 @@ void setupInjection() {
   // ==================== BACKUP FEATURE ====================
   // Data sources
   getIt.registerSingleton<BackupLocalDataSource>(
-    BackupLocalDataSourceImpl(),
+    BackupLocalDataSourceImpl(database: getIt<AppDatabase>()),
   );
 
   // Repositories
