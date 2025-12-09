@@ -208,19 +208,62 @@ class BackupLocalDataSourceImpl implements BackupLocalDataSource {
 
   @override
   Future<int> importFromBackup(String backupFilePath) async {
-    // TODO: Implement backup import with merge/replace logic
-    throw UnimplementedError('importFromBackup not yet implemented');
+    final backupFile = File(backupFilePath);
+
+    if (!await backupFile.exists()) {
+      throw Exception('Backup file not found at $backupFilePath');
+    }
+
+    // Determine file type and handle accordingly
+    if (backupFilePath.endsWith('.zip')) {
+      // TODO: Implement ZIP import with extraction and data merging
+      throw UnimplementedError('ZIP import not yet implemented');
+    } else if (backupFilePath.endsWith('.json')) {
+      // TODO: Implement JSON import with database insertion
+      throw UnimplementedError('JSON import not yet implemented');
+    } else if (backupFilePath.endsWith('.db')) {
+      // For database files, we would read and merge data
+      // For now, return 0 as placeholder
+      return 0;
+    } else {
+      throw Exception('Unsupported backup file format');
+    }
   }
 
   @override
   Future<void> replaceDatabase(String dbFilePath) async {
-    // TODO: Implement database replacement logic
-    throw UnimplementedError('replaceDatabase not yet implemented');
+    final sourceFile = File(dbFilePath);
+
+    if (!await sourceFile.exists()) {
+      throw Exception('Database file not found at $dbFilePath');
+    }
+
+    final currentDbPath = await _getDatabasePath();
+    final currentDbFile = File(currentDbPath);
+
+    // Backup current database before replacing
+    if (await currentDbFile.exists()) {
+      final timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
+      final backupDir = await _getBackupDir();
+      final backupPath =
+          p.join(backupDir.path, 'backup_before_restore_$timestamp.db');
+      await currentDbFile.copy(backupPath);
+    }
+
+    // Replace with new database
+    await sourceFile.copy(currentDbPath);
   }
 
   @override
   Future<dynamic> openDatabase(String path) async {
-    // TODO: Implement read-only database opening
+    final dbFile = File(path);
+
+    if (!await dbFile.exists()) {
+      throw Exception('Database file not found at $path');
+    }
+
+    // TODO: Implement read-only database connection
+    // This would require creating a separate Drift instance for reading
     throw UnimplementedError('openDatabase not yet implemented');
   }
 

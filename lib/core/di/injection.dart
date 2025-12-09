@@ -6,6 +6,8 @@ import 'package:sheet_scanner/features/backup/domain/repositories/backup_reposit
 import 'package:sheet_scanner/features/backup/domain/usecases/export_database_use_case.dart';
 import 'package:sheet_scanner/features/backup/domain/usecases/export_to_json_use_case.dart';
 import 'package:sheet_scanner/features/backup/domain/usecases/export_to_zip_use_case.dart';
+import 'package:sheet_scanner/features/backup/domain/usecases/import_backup_use_case.dart';
+import 'package:sheet_scanner/features/backup/domain/usecases/replace_database_use_case.dart';
 import 'package:sheet_scanner/features/backup/presentation/cubit/backup_cubit.dart';
 import 'package:sheet_scanner/features/ocr/data/datasources/ocr_local_datasource.dart';
 import 'package:sheet_scanner/features/ocr/data/repositories/ocr_repository_impl.dart';
@@ -117,6 +119,18 @@ void setupInjection() {
     ),
   );
 
+  getIt.registerSingleton<ImportBackupUseCase>(
+    ImportBackupUseCase(
+      repository: getIt<BackupRepository>(),
+    ),
+  );
+
+  getIt.registerSingleton<ReplaceDatabaseUseCase>(
+    ReplaceDatabaseUseCase(
+      repository: getIt<BackupRepository>(),
+    ),
+  );
+
   // OCR Use Cases
   getIt.registerSingleton<RecognizeTextUseCase>(
     RecognizeTextUseCase(
@@ -162,6 +176,8 @@ void setupInjection() {
       exportDatabaseUseCase: getIt<ExportDatabaseUseCase>(),
       exportToJsonUseCase: getIt<ExportToJsonUseCase>(),
       exportToZipUseCase: getIt<ExportToZipUseCase>(),
+      importBackupUseCase: getIt<ImportBackupUseCase>(),
+      replaceDatabaseUseCase: getIt<ReplaceDatabaseUseCase>(),
     ),
   );
 
