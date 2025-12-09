@@ -2,6 +2,7 @@
   "elements": {},
   "imports": [
     "package:flutter/material.dart",
-    "package:go_router/go_router.dart"
+    "package:go_router/go_router.dart",
+    "package:sheet_scanner/features/sheet_music/presentation/pages/home_page.dart"
   ]
 }

@@ -12,6 +12,8 @@ import 'package:sheet_scanner/features/search/domain/repositories/search_reposit
 import 'package:sheet_scanner/features/sheet_music/data/datasources/sheet_music_local_datasource.dart';
 import 'package:sheet_scanner/features/sheet_music/data/repositories/sheet_music_repository_impl.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/repositories/sheet_music_repository.dart';
+import 'package:sheet_scanner/features/sheet_music/domain/usecases/get_all_sheet_music_use_case.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/cubit/home_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -81,10 +83,18 @@ void setupInjection() {
   );
 
   // ==================== USE CASES ====================
-  // TODO: Register use case implementations as they are created
-  // Use cases provide the bridge between repositories and presentation layer
+  // Sheet Music Use Cases
+  getIt.registerSingleton<GetAllSheetMusicUseCase>(
+    GetAllSheetMusicUseCase(
+      repository: getIt<SheetMusicRepository>(),
+    ),
+  );
 
   // ==================== PRESENTATION ====================
-  // TODO: Register Cubit implementations as they are created
-  // Cubits manage state for each feature
+  // Sheet Music Cubits
+  getIt.registerSingleton<HomeCubit>(
+    HomeCubit(
+      getAllSheetMusicUseCase: getIt<GetAllSheetMusicUseCase>(),
+    ),
+  );
 }
