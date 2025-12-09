@@ -21,9 +21,11 @@ mixin _$OCRScanState {
     required TResult Function() initial,
     required TResult Function() cameraReady,
     required TResult Function() capturing,
-    required TResult Function(String imagePath, double progress, String? currentOperation)
+    required TResult Function(
+            String imagePath, double progress, String? currentOperation)
         processing,
-    required TResult Function(String imagePath, String extractedText, double confidence)
+    required TResult Function(
+            String imagePath, String extractedText, double confidence)
         ocrComplete,
     required TResult Function(Failure failure, String? imagePath) error,
     required TResult Function() permissionDenied,
@@ -34,8 +36,12 @@ mixin _$OCRScanState {
     TResult? Function()? initial,
     TResult? Function()? cameraReady,
     TResult? Function()? capturing,
-    TResult? Function(String imagePath, double progress, String? currentOperation)? processing,
-    TResult? Function(String imagePath, String extractedText, double confidence)? ocrComplete,
+    TResult? Function(
+            String imagePath, double progress, String? currentOperation)?
+        processing,
+    TResult? Function(
+            String imagePath, String extractedText, double confidence)?
+        ocrComplete,
     TResult? Function(Failure failure, String? imagePath)? error,
     TResult? Function()? permissionDenied,
   }) =>
@@ -45,8 +51,11 @@ mixin _$OCRScanState {
     TResult Function()? initial,
     TResult Function()? cameraReady,
     TResult Function()? capturing,
-    TResult Function(String imagePath, double progress, String? currentOperation)? processing,
-    TResult Function(String imagePath, String extractedText, double confidence)? ocrComplete,
+    TResult Function(
+            String imagePath, double progress, String? currentOperation)?
+        processing,
+    TResult Function(String imagePath, String extractedText, double confidence)?
+        ocrComplete,
     TResult Function(Failure failure, String? imagePath)? error,
     TResult Function()? permissionDenied,
     required TResult orElse(),
@@ -90,7 +99,8 @@ mixin _$OCRScanState {
 
 /// @nodoc
 abstract class $OCRScanStateCopyWith<$Res> {
-  factory $OCRScanStateCopyWith(OCRScanState value, $Res Function(OCRScanState) then) =
+  factory $OCRScanStateCopyWith(
+          OCRScanState value, $Res Function(OCRScanState) then) =
       _$OCRScanStateCopyWithImpl<$Res, OCRScanState>;
 }
 
@@ -110,14 +120,17 @@ class _$OCRScanStateCopyWithImpl<$Res, $Val extends OCRScanState>
 
 /// @nodoc
 abstract class _$$InitialImplCopyWith<$Res> {
-  factory _$$InitialImplCopyWith(_$InitialImpl value, $Res Function(_$InitialImpl) then) =
+  factory _$$InitialImplCopyWith(
+          _$InitialImpl value, $Res Function(_$InitialImpl) then) =
       __$$InitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$InitialImplCopyWithImpl<$Res> extends _$OCRScanStateCopyWithImpl<$Res, _$InitialImpl>
+class __$$InitialImplCopyWithImpl<$Res>
+    extends _$OCRScanStateCopyWithImpl<$Res, _$InitialImpl>
     implements _$$InitialImplCopyWith<$Res> {
-  __$$InitialImplCopyWithImpl(_$InitialImpl _value, $Res Function(_$InitialImpl) _then)
+  __$$InitialImplCopyWithImpl(
+      _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of OCRScanState
@@ -136,7 +149,8 @@ class _$InitialImpl implements _Initial {
 
   @override
   bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType && other is _$InitialImpl);
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$InitialImpl);
   }
 
   @override
@@ -148,9 +162,11 @@ class _$InitialImpl implements _Initial {
     required TResult Function() initial,
     required TResult Function() cameraReady,
     required TResult Function() capturing,
-    required TResult Function(String imagePath, double progress, String? currentOperation)
+    required TResult Function(
+            String imagePath, double progress, String? currentOperation)
         processing,
-    required TResult Function(String imagePath, String extractedText, double confidence)
+    required TResult Function(
+            String imagePath, String extractedText, double confidence)
         ocrComplete,
     required TResult Function(Failure failure, String? imagePath) error,
     required TResult Function() permissionDenied,
@@ -164,8 +180,12 @@ class _$InitialImpl implements _Initial {
     TResult? Function()? initial,
     TResult? Function()? cameraReady,
     TResult? Function()? capturing,
-    TResult? Function(String imagePath, double progress, String? currentOperation)? processing,
-    TResult? Function(String imagePath, String extractedText, double confidence)? ocrComplete,
+    TResult? Function(
+            String imagePath, double progress, String? currentOperation)?
+        processing,
+    TResult? Function(
+            String imagePath, String extractedText, double confidence)?
+        ocrComplete,
     TResult? Function(Failure failure, String? imagePath)? error,
     TResult? Function()? permissionDenied,
   }) {
@@ -178,8 +198,11 @@ class _$InitialImpl implements _Initial {
     TResult Function()? initial,
     TResult Function()? cameraReady,
     TResult Function()? capturing,
-    TResult Function(String imagePath, double progress, String? currentOperation)? processing,
-    TResult Function(String imagePath, String extractedText, double confidence)? ocrComplete,
+    TResult Function(
+            String imagePath, double progress, String? currentOperation)?
+        processing,
+    TResult Function(String imagePath, String extractedText, double confidence)?
+        ocrComplete,
     TResult Function(Failure failure, String? imagePath)? error,
     TResult Function()? permissionDenied,
     required TResult orElse(),
@@ -252,7 +275,8 @@ abstract class _$$CameraReadyImplCopyWith<$Res> {
 class __$$CameraReadyImplCopyWithImpl<$Res>
     extends _$OCRScanStateCopyWithImpl<$Res, _$CameraReadyImpl>
     implements _$$CameraReadyImplCopyWith<$Res> {
-  __$$CameraReadyImplCopyWithImpl(_$CameraReadyImpl _value, $Res Function(_$CameraReadyImpl) _then)
+  __$$CameraReadyImplCopyWithImpl(
+      _$CameraReadyImpl _value, $Res Function(_$CameraReadyImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of OCRScanState
@@ -284,9 +308,11 @@ class _$CameraReadyImpl implements _CameraReady {
     required TResult Function() initial,
     required TResult Function() cameraReady,
     required TResult Function() capturing,
-    required TResult Function(String imagePath, double progress, String? currentOperation)
+    required TResult Function(
+            String imagePath, double progress, String? currentOperation)
         processing,
-    required TResult Function(String imagePath, String extractedText, double confidence)
+    required TResult Function(
+            String imagePath, String extractedText, double confidence)
         ocrComplete,
     required TResult Function(Failure failure, String? imagePath) error,
     required TResult Function() permissionDenied,
@@ -300,8 +326,12 @@ class _$CameraReadyImpl implements _CameraReady {
     TResult? Function()? initial,
     TResult? Function()? cameraReady,
     TResult? Function()? capturing,
-    TResult? Function(String imagePath, double progress, String? currentOperation)? processing,
-    TResult? Function(String imagePath, String extractedText, double confidence)? ocrComplete,
+    TResult? Function(
+            String imagePath, double progress, String? currentOperation)?
+        processing,
+    TResult? Function(
+            String imagePath, String extractedText, double confidence)?
+        ocrComplete,
     TResult? Function(Failure failure, String? imagePath)? error,
     TResult? Function()? permissionDenied,
   }) {
@@ -314,8 +344,11 @@ class _$CameraReadyImpl implements _CameraReady {
     TResult Function()? initial,
     TResult Function()? cameraReady,
     TResult Function()? capturing,
-    TResult Function(String imagePath, double progress, String? currentOperation)? processing,
-    TResult Function(String imagePath, String extractedText, double confidence)? ocrComplete,
+    TResult Function(
+            String imagePath, double progress, String? currentOperation)?
+        processing,
+    TResult Function(String imagePath, String extractedText, double confidence)?
+        ocrComplete,
     TResult Function(Failure failure, String? imagePath)? error,
     TResult Function()? permissionDenied,
     required TResult orElse(),
@@ -379,14 +412,17 @@ abstract class _CameraReady implements OCRScanState {
 
 /// @nodoc
 abstract class _$$CapturingImplCopyWith<$Res> {
-  factory _$$CapturingImplCopyWith(_$CapturingImpl value, $Res Function(_$CapturingImpl) then) =
+  factory _$$CapturingImplCopyWith(
+          _$CapturingImpl value, $Res Function(_$CapturingImpl) then) =
       __$$CapturingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$CapturingImplCopyWithImpl<$Res> extends _$OCRScanStateCopyWithImpl<$Res, _$CapturingImpl>
+class __$$CapturingImplCopyWithImpl<$Res>
+    extends _$OCRScanStateCopyWithImpl<$Res, _$CapturingImpl>
     implements _$$CapturingImplCopyWith<$Res> {
-  __$$CapturingImplCopyWithImpl(_$CapturingImpl _value, $Res Function(_$CapturingImpl) _then)
+  __$$CapturingImplCopyWithImpl(
+      _$CapturingImpl _value, $Res Function(_$CapturingImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of OCRScanState
@@ -405,7 +441,8 @@ class _$CapturingImpl implements _Capturing {
 
   @override
   bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType && other is _$CapturingImpl);
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$CapturingImpl);
   }
 
   @override
@@ -417,9 +454,11 @@ class _$CapturingImpl implements _Capturing {
     required TResult Function() initial,
     required TResult Function() cameraReady,
     required TResult Function() capturing,
-    required TResult Function(String imagePath, double progress, String? currentOperation)
+    required TResult Function(
+            String imagePath, double progress, String? currentOperation)
         processing,
-    required TResult Function(String imagePath, String extractedText, double confidence)
+    required TResult Function(
+            String imagePath, String extractedText, double confidence)
         ocrComplete,
     required TResult Function(Failure failure, String? imagePath) error,
     required TResult Function() permissionDenied,
@@ -433,8 +472,12 @@ class _$CapturingImpl implements _Capturing {
     TResult? Function()? initial,
     TResult? Function()? cameraReady,
     TResult? Function()? capturing,
-    TResult? Function(String imagePath, double progress, String? currentOperation)? processing,
-    TResult? Function(String imagePath, String extractedText, double confidence)? ocrComplete,
+    TResult? Function(
+            String imagePath, double progress, String? currentOperation)?
+        processing,
+    TResult? Function(
+            String imagePath, String extractedText, double confidence)?
+        ocrComplete,
     TResult? Function(Failure failure, String? imagePath)? error,
     TResult? Function()? permissionDenied,
   }) {
@@ -447,8 +490,11 @@ class _$CapturingImpl implements _Capturing {
     TResult Function()? initial,
     TResult Function()? cameraReady,
     TResult Function()? capturing,
-    TResult Function(String imagePath, double progress, String? currentOperation)? processing,
-    TResult Function(String imagePath, String extractedText, double confidence)? ocrComplete,
+    TResult Function(
+            String imagePath, double progress, String? currentOperation)?
+        processing,
+    TResult Function(String imagePath, String extractedText, double confidence)?
+        ocrComplete,
     TResult Function(Failure failure, String? imagePath)? error,
     TResult Function()? permissionDenied,
     required TResult orElse(),
@@ -512,7 +558,8 @@ abstract class _Capturing implements OCRScanState {
 
 /// @nodoc
 abstract class _$$ProcessingImplCopyWith<$Res> {
-  factory _$$ProcessingImplCopyWith(_$ProcessingImpl value, $Res Function(_$ProcessingImpl) then) =
+  factory _$$ProcessingImplCopyWith(
+          _$ProcessingImpl value, $Res Function(_$ProcessingImpl) then) =
       __$$ProcessingImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String imagePath, double progress, String? currentOperation});
@@ -522,7 +569,8 @@ abstract class _$$ProcessingImplCopyWith<$Res> {
 class __$$ProcessingImplCopyWithImpl<$Res>
     extends _$OCRScanStateCopyWithImpl<$Res, _$ProcessingImpl>
     implements _$$ProcessingImplCopyWith<$Res> {
-  __$$ProcessingImplCopyWithImpl(_$ProcessingImpl _value, $Res Function(_$ProcessingImpl) _then)
+  __$$ProcessingImplCopyWithImpl(
+      _$ProcessingImpl _value, $Res Function(_$ProcessingImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of OCRScanState
@@ -554,7 +602,8 @@ class __$$ProcessingImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$ProcessingImpl implements _Processing {
-  const _$ProcessingImpl({required this.imagePath, required this.progress, this.currentOperation});
+  const _$ProcessingImpl(
+      {required this.imagePath, required this.progress, this.currentOperation});
 
   @override
   final String imagePath;
@@ -573,14 +622,17 @@ class _$ProcessingImpl implements _Processing {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ProcessingImpl &&
-            (identical(other.imagePath, imagePath) || other.imagePath == imagePath) &&
-            (identical(other.progress, progress) || other.progress == progress) &&
+            (identical(other.imagePath, imagePath) ||
+                other.imagePath == imagePath) &&
+            (identical(other.progress, progress) ||
+                other.progress == progress) &&
             (identical(other.currentOperation, currentOperation) ||
                 other.currentOperation == currentOperation));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, imagePath, progress, currentOperation);
+  int get hashCode =>
+      Object.hash(runtimeType, imagePath, progress, currentOperation);
 
   /// Create a copy of OCRScanState
   /// with the given fields replaced by the non-null parameter values.
@@ -596,9 +648,11 @@ class _$ProcessingImpl implements _Processing {
     required TResult Function() initial,
     required TResult Function() cameraReady,
     required TResult Function() capturing,
-    required TResult Function(String imagePath, double progress, String? currentOperation)
+    required TResult Function(
+            String imagePath, double progress, String? currentOperation)
         processing,
-    required TResult Function(String imagePath, String extractedText, double confidence)
+    required TResult Function(
+            String imagePath, String extractedText, double confidence)
         ocrComplete,
     required TResult Function(Failure failure, String? imagePath) error,
     required TResult Function() permissionDenied,
@@ -612,8 +666,12 @@ class _$ProcessingImpl implements _Processing {
     TResult? Function()? initial,
     TResult? Function()? cameraReady,
     TResult? Function()? capturing,
-    TResult? Function(String imagePath, double progress, String? currentOperation)? processing,
-    TResult? Function(String imagePath, String extractedText, double confidence)? ocrComplete,
+    TResult? Function(
+            String imagePath, double progress, String? currentOperation)?
+        processing,
+    TResult? Function(
+            String imagePath, String extractedText, double confidence)?
+        ocrComplete,
     TResult? Function(Failure failure, String? imagePath)? error,
     TResult? Function()? permissionDenied,
   }) {
@@ -626,8 +684,11 @@ class _$ProcessingImpl implements _Processing {
     TResult Function()? initial,
     TResult Function()? cameraReady,
     TResult Function()? capturing,
-    TResult Function(String imagePath, double progress, String? currentOperation)? processing,
-    TResult Function(String imagePath, String extractedText, double confidence)? ocrComplete,
+    TResult Function(
+            String imagePath, double progress, String? currentOperation)?
+        processing,
+    TResult Function(String imagePath, String extractedText, double confidence)?
+        ocrComplete,
     TResult Function(Failure failure, String? imagePath)? error,
     TResult Function()? permissionDenied,
     required TResult orElse(),
@@ -698,7 +759,8 @@ abstract class _Processing implements OCRScanState {
   /// Create a copy of OCRScanState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ProcessingImplCopyWith<_$ProcessingImpl> get copyWith => throw _privateConstructorUsedError;
+  _$$ProcessingImplCopyWith<_$ProcessingImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -714,7 +776,8 @@ abstract class _$$OCRCompleteImplCopyWith<$Res> {
 class __$$OCRCompleteImplCopyWithImpl<$Res>
     extends _$OCRScanStateCopyWithImpl<$Res, _$OCRCompleteImpl>
     implements _$$OCRCompleteImplCopyWith<$Res> {
-  __$$OCRCompleteImplCopyWithImpl(_$OCRCompleteImpl _value, $Res Function(_$OCRCompleteImpl) _then)
+  __$$OCRCompleteImplCopyWithImpl(
+      _$OCRCompleteImpl _value, $Res Function(_$OCRCompleteImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of OCRScanState
@@ -747,7 +810,9 @@ class __$$OCRCompleteImplCopyWithImpl<$Res>
 
 class _$OCRCompleteImpl implements _OCRComplete {
   const _$OCRCompleteImpl(
-      {required this.imagePath, required this.extractedText, required this.confidence});
+      {required this.imagePath,
+      required this.extractedText,
+      required this.confidence});
 
   @override
   final String imagePath;
@@ -766,14 +831,17 @@ class _$OCRCompleteImpl implements _OCRComplete {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$OCRCompleteImpl &&
-            (identical(other.imagePath, imagePath) || other.imagePath == imagePath) &&
+            (identical(other.imagePath, imagePath) ||
+                other.imagePath == imagePath) &&
             (identical(other.extractedText, extractedText) ||
                 other.extractedText == extractedText) &&
-            (identical(other.confidence, confidence) || other.confidence == confidence));
+            (identical(other.confidence, confidence) ||
+                other.confidence == confidence));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, imagePath, extractedText, confidence);
+  int get hashCode =>
+      Object.hash(runtimeType, imagePath, extractedText, confidence);
 
   /// Create a copy of OCRScanState
   /// with the given fields replaced by the non-null parameter values.
@@ -789,9 +857,11 @@ class _$OCRCompleteImpl implements _OCRComplete {
     required TResult Function() initial,
     required TResult Function() cameraReady,
     required TResult Function() capturing,
-    required TResult Function(String imagePath, double progress, String? currentOperation)
+    required TResult Function(
+            String imagePath, double progress, String? currentOperation)
         processing,
-    required TResult Function(String imagePath, String extractedText, double confidence)
+    required TResult Function(
+            String imagePath, String extractedText, double confidence)
         ocrComplete,
     required TResult Function(Failure failure, String? imagePath) error,
     required TResult Function() permissionDenied,
@@ -805,8 +875,12 @@ class _$OCRCompleteImpl implements _OCRComplete {
     TResult? Function()? initial,
     TResult? Function()? cameraReady,
     TResult? Function()? capturing,
-    TResult? Function(String imagePath, double progress, String? currentOperation)? processing,
-    TResult? Function(String imagePath, String extractedText, double confidence)? ocrComplete,
+    TResult? Function(
+            String imagePath, double progress, String? currentOperation)?
+        processing,
+    TResult? Function(
+            String imagePath, String extractedText, double confidence)?
+        ocrComplete,
     TResult? Function(Failure failure, String? imagePath)? error,
     TResult? Function()? permissionDenied,
   }) {
@@ -819,8 +893,11 @@ class _$OCRCompleteImpl implements _OCRComplete {
     TResult Function()? initial,
     TResult Function()? cameraReady,
     TResult Function()? capturing,
-    TResult Function(String imagePath, double progress, String? currentOperation)? processing,
-    TResult Function(String imagePath, String extractedText, double confidence)? ocrComplete,
+    TResult Function(
+            String imagePath, double progress, String? currentOperation)?
+        processing,
+    TResult Function(String imagePath, String extractedText, double confidence)?
+        ocrComplete,
     TResult Function(Failure failure, String? imagePath)? error,
     TResult Function()? permissionDenied,
     required TResult orElse(),
@@ -891,21 +968,25 @@ abstract class _OCRComplete implements OCRScanState {
   /// Create a copy of OCRScanState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$OCRCompleteImplCopyWith<_$OCRCompleteImpl> get copyWith => throw _privateConstructorUsedError;
+  _$$OCRCompleteImplCopyWith<_$OCRCompleteImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$ErrorImplCopyWith<$Res> {
-  factory _$$ErrorImplCopyWith(_$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
+  factory _$$ErrorImplCopyWith(
+          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
       __$$ErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({Failure failure, String? imagePath});
 }
 
 /// @nodoc
-class __$$ErrorImplCopyWithImpl<$Res> extends _$OCRScanStateCopyWithImpl<$Res, _$ErrorImpl>
+class __$$ErrorImplCopyWithImpl<$Res>
+    extends _$OCRScanStateCopyWithImpl<$Res, _$ErrorImpl>
     implements _$$ErrorImplCopyWith<$Res> {
-  __$$ErrorImplCopyWithImpl(_$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
+  __$$ErrorImplCopyWithImpl(
+      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of OCRScanState
@@ -950,7 +1031,8 @@ class _$ErrorImpl implements _Error {
         (other.runtimeType == runtimeType &&
             other is _$ErrorImpl &&
             (identical(other.failure, failure) || other.failure == failure) &&
-            (identical(other.imagePath, imagePath) || other.imagePath == imagePath));
+            (identical(other.imagePath, imagePath) ||
+                other.imagePath == imagePath));
   }
 
   @override
@@ -970,9 +1052,11 @@ class _$ErrorImpl implements _Error {
     required TResult Function() initial,
     required TResult Function() cameraReady,
     required TResult Function() capturing,
-    required TResult Function(String imagePath, double progress, String? currentOperation)
+    required TResult Function(
+            String imagePath, double progress, String? currentOperation)
         processing,
-    required TResult Function(String imagePath, String extractedText, double confidence)
+    required TResult Function(
+            String imagePath, String extractedText, double confidence)
         ocrComplete,
     required TResult Function(Failure failure, String? imagePath) error,
     required TResult Function() permissionDenied,
@@ -986,8 +1070,12 @@ class _$ErrorImpl implements _Error {
     TResult? Function()? initial,
     TResult? Function()? cameraReady,
     TResult? Function()? capturing,
-    TResult? Function(String imagePath, double progress, String? currentOperation)? processing,
-    TResult? Function(String imagePath, String extractedText, double confidence)? ocrComplete,
+    TResult? Function(
+            String imagePath, double progress, String? currentOperation)?
+        processing,
+    TResult? Function(
+            String imagePath, String extractedText, double confidence)?
+        ocrComplete,
     TResult? Function(Failure failure, String? imagePath)? error,
     TResult? Function()? permissionDenied,
   }) {
@@ -1000,8 +1088,11 @@ class _$ErrorImpl implements _Error {
     TResult Function()? initial,
     TResult Function()? cameraReady,
     TResult Function()? capturing,
-    TResult Function(String imagePath, double progress, String? currentOperation)? processing,
-    TResult Function(String imagePath, String extractedText, double confidence)? ocrComplete,
+    TResult Function(
+            String imagePath, double progress, String? currentOperation)?
+        processing,
+    TResult Function(String imagePath, String extractedText, double confidence)?
+        ocrComplete,
     TResult Function(Failure failure, String? imagePath)? error,
     TResult Function()? permissionDenied,
     required TResult orElse(),
@@ -1060,7 +1151,8 @@ class _$ErrorImpl implements _Error {
 }
 
 abstract class _Error implements OCRScanState {
-  const factory _Error({required final Failure failure, final String? imagePath}) = _$ErrorImpl;
+  const factory _Error(
+      {required final Failure failure, final String? imagePath}) = _$ErrorImpl;
 
   Failure get failure;
   String? get imagePath;
@@ -1068,13 +1160,14 @@ abstract class _Error implements OCRScanState {
   /// Create a copy of OCRScanState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith => throw _privateConstructorUsedError;
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$PermissionDeniedImplCopyWith<$Res> {
-  factory _$$PermissionDeniedImplCopyWith(
-          _$PermissionDeniedImpl value, $Res Function(_$PermissionDeniedImpl) then) =
+  factory _$$PermissionDeniedImplCopyWith(_$PermissionDeniedImpl value,
+          $Res Function(_$PermissionDeniedImpl) then) =
       __$$PermissionDeniedImplCopyWithImpl<$Res>;
 }
 
@@ -1082,8 +1175,8 @@ abstract class _$$PermissionDeniedImplCopyWith<$Res> {
 class __$$PermissionDeniedImplCopyWithImpl<$Res>
     extends _$OCRScanStateCopyWithImpl<$Res, _$PermissionDeniedImpl>
     implements _$$PermissionDeniedImplCopyWith<$Res> {
-  __$$PermissionDeniedImplCopyWithImpl(
-      _$PermissionDeniedImpl _value, $Res Function(_$PermissionDeniedImpl) _then)
+  __$$PermissionDeniedImplCopyWithImpl(_$PermissionDeniedImpl _value,
+      $Res Function(_$PermissionDeniedImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of OCRScanState
@@ -1115,9 +1208,11 @@ class _$PermissionDeniedImpl implements _PermissionDenied {
     required TResult Function() initial,
     required TResult Function() cameraReady,
     required TResult Function() capturing,
-    required TResult Function(String imagePath, double progress, String? currentOperation)
+    required TResult Function(
+            String imagePath, double progress, String? currentOperation)
         processing,
-    required TResult Function(String imagePath, String extractedText, double confidence)
+    required TResult Function(
+            String imagePath, String extractedText, double confidence)
         ocrComplete,
     required TResult Function(Failure failure, String? imagePath) error,
     required TResult Function() permissionDenied,
@@ -1131,8 +1226,12 @@ class _$PermissionDeniedImpl implements _PermissionDenied {
     TResult? Function()? initial,
     TResult? Function()? cameraReady,
     TResult? Function()? capturing,
-    TResult? Function(String imagePath, double progress, String? currentOperation)? processing,
-    TResult? Function(String imagePath, String extractedText, double confidence)? ocrComplete,
+    TResult? Function(
+            String imagePath, double progress, String? currentOperation)?
+        processing,
+    TResult? Function(
+            String imagePath, String extractedText, double confidence)?
+        ocrComplete,
     TResult? Function(Failure failure, String? imagePath)? error,
     TResult? Function()? permissionDenied,
   }) {
@@ -1145,8 +1244,11 @@ class _$PermissionDeniedImpl implements _PermissionDenied {
     TResult Function()? initial,
     TResult Function()? cameraReady,
     TResult Function()? capturing,
-    TResult Function(String imagePath, double progress, String? currentOperation)? processing,
-    TResult Function(String imagePath, String extractedText, double confidence)? ocrComplete,
+    TResult Function(
+            String imagePath, double progress, String? currentOperation)?
+        processing,
+    TResult Function(String imagePath, String extractedText, double confidence)?
+        ocrComplete,
     TResult Function(Failure failure, String? imagePath)? error,
     TResult Function()? permissionDenied,
     required TResult orElse(),

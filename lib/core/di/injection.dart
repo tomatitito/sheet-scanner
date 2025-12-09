@@ -3,6 +3,10 @@ import 'package:sheet_scanner/core/database/database.dart';
 import 'package:sheet_scanner/features/backup/data/datasources/backup_local_datasource.dart';
 import 'package:sheet_scanner/features/backup/data/repositories/backup_repository_impl.dart';
 import 'package:sheet_scanner/features/backup/domain/repositories/backup_repository.dart';
+import 'package:sheet_scanner/features/backup/domain/usecases/export_database_use_case.dart';
+import 'package:sheet_scanner/features/backup/domain/usecases/export_to_json_use_case.dart';
+import 'package:sheet_scanner/features/backup/domain/usecases/export_to_zip_use_case.dart';
+import 'package:sheet_scanner/features/backup/presentation/cubit/backup_cubit.dart';
 import 'package:sheet_scanner/features/ocr/data/datasources/ocr_local_datasource.dart';
 import 'package:sheet_scanner/features/ocr/data/repositories/ocr_repository_impl.dart';
 import 'package:sheet_scanner/features/ocr/domain/repositories/ocr_repository.dart';
@@ -94,6 +98,25 @@ void setupInjection() {
   );
 
   // ==================== USE CASES ====================
+  // Backup Use Cases
+  getIt.registerSingleton<ExportDatabaseUseCase>(
+    ExportDatabaseUseCase(
+      repository: getIt<BackupRepository>(),
+    ),
+  );
+
+  getIt.registerSingleton<ExportToJsonUseCase>(
+    ExportToJsonUseCase(
+      repository: getIt<BackupRepository>(),
+    ),
+  );
+
+  getIt.registerSingleton<ExportToZipUseCase>(
+    ExportToZipUseCase(
+      repository: getIt<BackupRepository>(),
+    ),
+  );
+
   // OCR Use Cases
   getIt.registerSingleton<RecognizeTextUseCase>(
     RecognizeTextUseCase(
@@ -133,6 +156,15 @@ void setupInjection() {
   );
 
   // ==================== PRESENTATION ====================
+  // Backup Cubits
+  getIt.registerSingleton<BackupCubit>(
+    BackupCubit(
+      exportDatabaseUseCase: getIt<ExportDatabaseUseCase>(),
+      exportToJsonUseCase: getIt<ExportToJsonUseCase>(),
+      exportToZipUseCase: getIt<ExportToZipUseCase>(),
+    ),
+  );
+
   // Sheet Music Cubits
   getIt.registerSingleton<HomeCubit>(
     HomeCubit(

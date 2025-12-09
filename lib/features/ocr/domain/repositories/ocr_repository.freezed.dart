@@ -22,7 +22,8 @@ mixin _$OCRResult {
   /// Create a copy of OCRResult
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $OCRResultCopyWith<OCRResult> get copyWith => throw _privateConstructorUsedError;
+  $OCRResultCopyWith<OCRResult> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -34,7 +35,8 @@ abstract class $OCRResultCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$OCRResultCopyWithImpl<$Res, $Val extends OCRResult> implements $OCRResultCopyWith<$Res> {
+class _$OCRResultCopyWithImpl<$Res, $Val extends OCRResult>
+    implements $OCRResultCopyWith<$Res> {
   _$OCRResultCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
@@ -64,8 +66,10 @@ class _$OCRResultCopyWithImpl<$Res, $Val extends OCRResult> implements $OCRResul
 }
 
 /// @nodoc
-abstract class _$$OCRResultImplCopyWith<$Res> implements $OCRResultCopyWith<$Res> {
-  factory _$$OCRResultImplCopyWith(_$OCRResultImpl value, $Res Function(_$OCRResultImpl) then) =
+abstract class _$$OCRResultImplCopyWith<$Res>
+    implements $OCRResultCopyWith<$Res> {
+  factory _$$OCRResultImplCopyWith(
+          _$OCRResultImpl value, $Res Function(_$OCRResultImpl) then) =
       __$$OCRResultImplCopyWithImpl<$Res>;
   @override
   @useResult
@@ -73,9 +77,11 @@ abstract class _$$OCRResultImplCopyWith<$Res> implements $OCRResultCopyWith<$Res
 }
 
 /// @nodoc
-class __$$OCRResultImplCopyWithImpl<$Res> extends _$OCRResultCopyWithImpl<$Res, _$OCRResultImpl>
+class __$$OCRResultImplCopyWithImpl<$Res>
+    extends _$OCRResultCopyWithImpl<$Res, _$OCRResultImpl>
     implements _$$OCRResultImplCopyWith<$Res> {
-  __$$OCRResultImplCopyWithImpl(_$OCRResultImpl _value, $Res Function(_$OCRResultImpl) _then)
+  __$$OCRResultImplCopyWithImpl(
+      _$OCRResultImpl _value, $Res Function(_$OCRResultImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of OCRResult
@@ -120,7 +126,8 @@ class _$OCRResultImpl implements _OCRResult {
         (other.runtimeType == runtimeType &&
             other is _$OCRResultImpl &&
             (identical(other.text, text) || other.text == text) &&
-            (identical(other.confidence, confidence) || other.confidence == confidence));
+            (identical(other.confidence, confidence) ||
+                other.confidence == confidence));
   }
 
   @override
@@ -136,8 +143,9 @@ class _$OCRResultImpl implements _OCRResult {
 }
 
 abstract class _OCRResult implements OCRResult {
-  const factory _OCRResult({required final String text, required final double confidence}) =
-      _$OCRResultImpl;
+  const factory _OCRResult(
+      {required final String text,
+      required final double confidence}) = _$OCRResultImpl;
 
   @override
   String get text;
@@ -148,5 +156,6 @@ abstract class _OCRResult implements OCRResult {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$OCRResultImplCopyWith<_$OCRResultImpl> get copyWith => throw _privateConstructorUsedError;
+  _$$OCRResultImplCopyWith<_$OCRResultImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
