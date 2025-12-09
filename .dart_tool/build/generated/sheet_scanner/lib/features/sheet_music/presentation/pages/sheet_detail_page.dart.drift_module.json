@@ -1,0 +1,10 @@
+{
+  "elements": {},
+  "imports": [
+    "package:flutter/material.dart",
+    "package:flutter_bloc/flutter_bloc.dart",
+    "package:sheet_scanner/core/di/injection.dart",
+    "package:sheet_scanner/features/sheet_music/presentation/cubit/sheet_detail_cubit.dart",
+    "package:sheet_scanner/features/sheet_music/presentation/cubit/sheet_detail_state.dart"
+  ]
+}

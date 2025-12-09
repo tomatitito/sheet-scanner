@@ -16,6 +16,8 @@
     "package:sheet_scanner/features/sheet_music/data/repositories/sheet_music_repository_impl.dart",
     "package:sheet_scanner/features/sheet_music/domain/repositories/sheet_music_repository.dart",
     "package:sheet_scanner/features/sheet_music/domain/usecases/get_all_sheet_music_use_case.dart",
-    "package:sheet_scanner/features/sheet_music/presentation/cubit/home_cubit.dart"
+    "package:sheet_scanner/features/sheet_music/domain/usecases/get_sheet_music_by_id_use_case.dart",
+    "package:sheet_scanner/features/sheet_music/presentation/cubit/home_cubit.dart",
+    "package:sheet_scanner/features/sheet_music/presentation/cubit/sheet_detail_cubit.dart"
   ]
 }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/home_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/home_state.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/pages/sheet_detail_page.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/empty_library_placeholder.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/sheet_music_list_item.dart';
 
@@ -107,7 +108,14 @@ class _HomeView extends StatelessWidget {
                   return SheetMusicListItem(
                     sheetMusic: sheetMusic,
                     onTap: () {
-                      // TODO: Navigate to sheet music detail screen
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (context) => SheetDetailPage(
+                          sheetMusicId: sheetMusic.id,
+                          onClose: () => Navigator.pop(context),
+                        ),
+                      );
                     },
                   );
                 },
@@ -120,15 +128,11 @@ class _HomeView extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: BlocBuilder<HomeCubit, HomeState>(
-        builder: (context, state) {
-          return FloatingActionButton(
-            onPressed: () {
-              // TODO: Navigate to add sheet music screen
-            },
-            child: const Icon(Icons.add),
-          );
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // TODO: Navigate to add sheet music screen
         },
+        child: const Icon(Icons.add),
       ),
     );
   }
