@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/sheet_detail_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/sheet_detail_state.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/pages/edit_sheet_page.dart';
 
 /// Page for displaying detailed view of a sheet music item
 /// Can be shown as a modal or full page depending on platform
@@ -274,7 +275,20 @@ class _SheetDetailView extends StatelessWidget {
                       Expanded(
                         child: ElevatedButton.icon(
                           onPressed: () {
-                            // TODO: Navigate to edit screen
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditSheetPage(
+                                  sheetMusicId: sheetMusic.id,
+                                  onSuccess: () {
+                                    context
+                                        .read<SheetDetailCubit>()
+                                        .refresh(sheetMusic.id);
+                                  },
+                                  onClose: () => Navigator.pop(context),
+                                ),
+                              ),
+                            );
                           },
                           icon: const Icon(Icons.edit),
                           label: const Text('Edit'),
