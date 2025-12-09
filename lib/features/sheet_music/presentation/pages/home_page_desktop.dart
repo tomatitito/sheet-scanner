@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sheet_scanner/core/accessibility/semantic_widgets.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
+import 'package:sheet_scanner/core/keyboard/keyboard_shortcuts.dart';
 import 'package:sheet_scanner/core/utils/platform_helper.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/home_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/home_state.dart';
@@ -31,62 +33,85 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
       return _buildMobileLayout();
     }
 
-    return BlocProvider(
-      create: (context) => getIt<HomeCubit>()..loadSheetMusic(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Sheet Music Library'),
-          elevation: 0,
-          actions: [
-            BlocBuilder<HomeCubit, HomeState>(
-              builder: (context, state) {
-                if (state is HomeLoaded && state.sheetMusicList.isNotEmpty) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        '${state.totalCount} items',
-                        style: Theme.of(context).textTheme.labelMedium,
+    return KeyboardShortcutsHandler(
+      onShortcut: _handleShortcut,
+      child: BlocProvider(
+        create: (context) => getIt<HomeCubit>()..loadSheetMusic(),
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Sheet Music Library'),
+            elevation: 0,
+            actions: [
+              BlocBuilder<HomeCubit, HomeState>(
+                builder: (context, state) {
+                  if (state is HomeLoaded && state.sheetMusicList.isNotEmpty) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          '${state.totalCount} items',
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
                       ),
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-            const SizedBox(width: 16),
-            ElevatedButton.icon(
-              onPressed: () {
-                setState(() {
-                  _showAddForm = true;
-                  _selectedSheetMusicId = null;
-                });
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('New'),
-            ),
-            const SizedBox(width: 16),
-          ],
-        ),
-        body: BlocBuilder<HomeCubit, HomeState>(
-          builder: (context, state) {
-            if (state is HomeInitial || state is HomeLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (state is HomeError) {
-              return _buildErrorView(context, state);
-            } else if (state is HomeLoaded) {
-              return _buildDesktopView(context, state);
-            }
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+              const SizedBox(width: 16),
+              SemanticButton(
+                label: 'New Sheet',
+                tooltip: 'Add a new sheet (Cmd+N)',
+                icon: Icons.add,
+                onPressed: () {
+                  setState(() {
+                    _showAddForm = true;
+                    _selectedSheetMusicId = null;
+                  });
+                },
+              ),
+              const SizedBox(width: 16),
+            ],
+          ),
+          body: BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              if (state is HomeInitial || state is HomeLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (state is HomeError) {
+                return _buildErrorView(context, state);
+              } else if (state is HomeLoaded) {
+                return _buildDesktopView(context, state);
+              }
 
-            return const Center(
-              child: Text('Unknown state'),
-            );
-          },
+              return const Center(
+                child: Text('Unknown state'),
+              );
+            },
+          ),
         ),
       ),
     );
+  }
+
+  void _handleShortcut(String actionKey) {
+    switch (actionKey) {
+      case KeyboardShortcuts.newItemAction:
+        setState(() {
+          _showAddForm = true;
+          _selectedSheetMusicId = null;
+        });
+        break;
+      case KeyboardShortcuts.escapeAction:
+        setState(() {
+          _showAddForm = false;
+          _selectedSheetMusicId = null;
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   Widget _buildDesktopView(BuildContext context, HomeLoaded state) {
