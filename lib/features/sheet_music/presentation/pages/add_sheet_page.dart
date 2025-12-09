@@ -314,10 +314,11 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed:
-                          (isSubmitting || state is AddSheetInvalid || state is AddSheetInitial)
-                              ? null
-                              : widget.onSubmit,
+                      onPressed: (isSubmitting ||
+                              state is AddSheetInvalid ||
+                              state is AddSheetInitial)
+                          ? null
+                          : widget.onSubmit,
                       icon: isSubmitting
                           ? const SizedBox(
                               width: 20,

@@ -243,7 +243,9 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                   const SizedBox(height: 32),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<EditSheetCubit>().refresh(widget.sheetMusicId);
+                      context
+                          .read<EditSheetCubit>()
+                          .refresh(widget.sheetMusicId);
                     },
                     child: const Text('Retry'),
                   ),
@@ -258,7 +260,8 @@ class _EditSheetFormState extends State<_EditSheetForm> {
             state is EditSheetSubmitting ||
             state is EditSheetSuccess) {
           // Initialize form fields from loaded data
-          final loadedSheet = state is EditSheetLoaded ? state.sheetMusic : null;
+          final loadedSheet =
+              state is EditSheetLoaded ? state.sheetMusic : null;
           if (loadedSheet != null &&
               widget.titleController.text.isEmpty &&
               widget.composerController.text.isEmpty) {
@@ -435,10 +438,9 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Text(
                         'Fields marked with * are required',
-                        style:
-                            Theme.of(context).textTheme.labelSmall?.copyWith(
-                                  color: Colors.grey[600],
-                                ),
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: Colors.grey[600],
+                            ),
                       ),
                     ),
                   ],

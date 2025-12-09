@@ -7,7 +7,8 @@ import 'home_state.dart';
 class HomeCubit extends Cubit<HomeState> {
   final GetAllSheetMusicUseCase getAllSheetMusicUseCase;
 
-  HomeCubit({required this.getAllSheetMusicUseCase}) : super(const HomeInitial());
+  HomeCubit({required this.getAllSheetMusicUseCase})
+      : super(const HomeInitial());
 
   /// Load all sheet music from the library
   Future<void> loadSheetMusic() async {
