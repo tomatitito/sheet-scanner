@@ -113,24 +113,4 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
   Future<List<String>> getTagsForSheetMusic(int sheetMusicId) {
     throw UnimplementedError('getTagsForSheetMusic not yet implemented');
   }
-
-  @override
-  Future<List<Tag>> getAllTags() {
-    throw UnimplementedError('getAllTags not yet implemented');
-  }
-
-  @override
-  Future<Tag> createTag(String name) {
-    throw UnimplementedError('createTag not yet implemented');
-  }
-
-  @override
-  Future<Tag> updateTag(int tagId, String newName) {
-    throw UnimplementedError('updateTag not yet implemented');
-  }
-
-  @override
-  Future<void> deleteTag(int tagId) {
-    throw UnimplementedError('deleteTag not yet implemented');
-  }
 }
