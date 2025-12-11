@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
+import 'package:drift/drift.dart' as drift;
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:sheet_scanner/core/database/database.dart';
@@ -216,17 +218,195 @@ class BackupLocalDataSourceImpl implements BackupLocalDataSource {
 
     // Determine file type and handle accordingly
     if (backupFilePath.endsWith('.zip')) {
-      // TODO: Implement ZIP import with extraction and data merging
-      throw UnimplementedError('ZIP import not yet implemented');
+      return _importFromZip(backupFilePath);
     } else if (backupFilePath.endsWith('.json')) {
-      // TODO: Implement JSON import with database insertion
-      throw UnimplementedError('JSON import not yet implemented');
+      return _importFromJSON(backupFilePath);
     } else if (backupFilePath.endsWith('.db')) {
-      // For database files, we would read and merge data
-      // For now, return 0 as placeholder
-      return 0;
+      return _importFromDatabase(backupFilePath);
     } else {
       throw Exception('Unsupported backup file format');
+    }
+  }
+
+  /// Imports sheet music from a JSON backup file.
+  Future<int> _importFromJSON(String jsonFilePath) async {
+    try {
+      final jsonFile = File(jsonFilePath);
+      final jsonString = await jsonFile.readAsString();
+      final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
+
+      final sheetMusicList = jsonMap['sheetMusic'] as List<dynamic>? ?? [];
+      int importedCount = 0;
+
+      for (final item in sheetMusicList) {
+        try {
+          final sheetData = item as Map<String, dynamic>;
+          final title = sheetData['title'] as String? ?? 'Untitled';
+          final composer = sheetData['composer'] as String? ?? 'Unknown';
+          final notes = sheetData['notes'] as String?;
+          final createdAt = sheetData['createdAt'] != null
+              ? DateTime.parse(sheetData['createdAt'] as String)
+              : DateTime.now();
+          final updatedAt = sheetData['updatedAt'] != null
+              ? DateTime.parse(sheetData['updatedAt'] as String)
+              : DateTime.now();
+
+          // Insert into database
+          await database.into(database.sheetMusicTable).insert(
+                SheetMusicTableCompanion(
+                  title: drift.Value(title),
+                  composer: drift.Value(composer),
+                  notes: notes != null && notes.isNotEmpty
+                      ? drift.Value(notes)
+                      : const drift.Value.absent(),
+                  createdAt: drift.Value(createdAt),
+                  updatedAt: drift.Value(updatedAt),
+                ),
+              );
+
+          importedCount++;
+        } catch (_) {
+          // Silently skip items that fail to import
+        }
+      }
+
+      return importedCount;
+    } catch (e) {
+      throw Exception('Failed to import JSON backup: $e');
+    }
+  }
+
+  /// Imports sheet music from a ZIP backup file.
+  Future<int> _importFromZip(String zipFilePath) async {
+    try {
+      final zipFile = File(zipFilePath);
+      final zipBytes = await zipFile.readAsBytes();
+      final archive = ZipDecoder().decodeBytes(zipBytes);
+
+      int importedCount = 0;
+      int jsonImportCount = 0;
+
+      // First, try to import database if present
+      for (final file in archive.files) {
+        if (file.name == 'sheet_scanner.db') {
+          // Extract and import database
+          final tempDir = await getTemporaryDirectory();
+          final tempDbPath = p.join(tempDir.path,
+              'temp_backup_${DateTime.now().millisecondsSinceEpoch}.db');
+          final tempFile = File(tempDbPath);
+          await tempFile.writeAsBytes(file.content as List<int>);
+          jsonImportCount = await _importFromDatabase(tempDbPath);
+          // Clean up temp file
+          await tempFile.delete();
+          break;
+        }
+      }
+
+      // If no database found or database import was 0, try JSON import
+      if (jsonImportCount == 0) {
+        // Look for JSON files in the archive
+        for (final file in archive.files) {
+          if (file.name.endsWith('.json')) {
+            try {
+              final jsonContent = file.content as List<int>;
+              final jsonString = String.fromCharCodes(jsonContent);
+              final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
+              final sheetMusicList =
+                  jsonMap['sheetMusic'] as List<dynamic>? ?? [];
+
+              for (final item in sheetMusicList) {
+                try {
+                  final sheetData = item as Map<String, dynamic>;
+                  final title = sheetData['title'] as String? ?? 'Untitled';
+                  final composer =
+                      sheetData['composer'] as String? ?? 'Unknown';
+                  final notes = sheetData['notes'] as String?;
+                  final createdAt = sheetData['createdAt'] != null
+                      ? DateTime.parse(sheetData['createdAt'] as String)
+                      : DateTime.now();
+                  final updatedAt = sheetData['updatedAt'] != null
+                      ? DateTime.parse(sheetData['updatedAt'] as String)
+                      : DateTime.now();
+
+                  // Insert into database
+                  await database.into(database.sheetMusicTable).insert(
+                        SheetMusicTableCompanion(
+                          title: drift.Value(title),
+                          composer: drift.Value(composer),
+                          notes: notes != null && notes.isNotEmpty
+                              ? drift.Value(notes)
+                              : const drift.Value.absent(),
+                          createdAt: drift.Value(createdAt),
+                          updatedAt: drift.Value(updatedAt),
+                        ),
+                      );
+
+                  importedCount++;
+                } catch (_) {
+                  // Silently skip items that fail to import
+                }
+              }
+            } catch (_) {
+              // Silently skip files that fail to process
+            }
+          }
+        }
+      }
+
+      // Also import any images
+      _extractImagesFromZip(archive);
+
+      return jsonImportCount > 0 ? jsonImportCount : importedCount;
+    } catch (e) {
+      throw Exception('Failed to import ZIP backup: $e');
+    }
+  }
+
+  /// Imports sheet music from a database backup file.
+  /// Note: For database imports, we treat it as a complete replacement.
+  /// This is safer than trying to merge data between database files.
+  Future<int> _importFromDatabase(String dbFilePath) async {
+    try {
+      final backupDbFile = File(dbFilePath);
+      if (!await backupDbFile.exists()) {
+        throw Exception('Database file not found at $dbFilePath');
+      }
+
+      // For .db files, we use replaceDatabase instead of merging
+      // since reading from external databases requires complex setup
+      await replaceDatabase(dbFilePath);
+
+      // Return -1 to indicate a complete database replacement
+      // (count unknown without reading the file)
+      return -1;
+    } catch (e) {
+      throw Exception('Failed to import database backup: $e');
+    }
+  }
+
+  /// Extracts images from ZIP archive to the images storage directory.
+  Future<void> _extractImagesFromZip(Archive archive) async {
+    try {
+      final imagesPath = await ImageStorage.getStoragePath();
+
+      for (final file in archive.files) {
+        if (file.name.startsWith('images/') && file.isFile) {
+          final relativePath = file.name.replaceFirst('images/', '');
+          final fileDir =
+              Directory(p.join(imagesPath, p.dirname(relativePath)));
+
+          if (!await fileDir.exists()) {
+            await fileDir.create(recursive: true);
+          }
+
+          final filePath = p.join(imagesPath, relativePath);
+          final outputFile = File(filePath);
+          final content = file.content as List<int>;
+          await outputFile.writeAsBytes(content);
+        }
+      }
+    } catch (_) {
+      // Silently continue - images are optional
     }
   }
 

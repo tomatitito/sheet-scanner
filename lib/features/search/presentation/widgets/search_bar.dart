@@ -8,10 +8,10 @@ class SearchBarWidget extends StatefulWidget {
   final VoidCallback onClear;
 
   const SearchBarWidget({
-    Key? key,
+    super.key,
     this.debounceDelay = const Duration(milliseconds: 500),
     required this.onClear,
-  }) : super(key: key);
+  });
 
   @override
   State<SearchBarWidget> createState() => _SearchBarWidgetState();

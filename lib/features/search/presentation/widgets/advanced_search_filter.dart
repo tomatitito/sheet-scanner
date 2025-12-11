@@ -9,11 +9,11 @@ class AdvancedSearchFilter extends StatefulWidget {
   final VoidCallback onClose;
 
   const AdvancedSearchFilter({
-    Key? key,
+    super.key,
     required this.availableTags,
     required this.onApply,
     required this.onClose,
-  }) : super(key: key);
+  });
 
   @override
   State<AdvancedSearchFilter> createState() => _AdvancedSearchFilterState();

@@ -6,12 +6,18 @@ import 'package:sheet_scanner/features/search/presentation/cubit/tag_state.dart'
 class TagCubit extends Cubit<TagState> {
   final GetAllTagsUseCase _getAllTagsUseCase;
   final CreateTagUseCase _createTagUseCase;
+  final DeleteTagUseCase _deleteTagUseCase;
+  final MergeTagsUseCase _mergeTagsUseCase;
 
   TagCubit({
     required GetAllTagsUseCase getAllTagsUseCase,
     required CreateTagUseCase createTagUseCase,
+    required DeleteTagUseCase deleteTagUseCase,
+    required MergeTagsUseCase mergeTagsUseCase,
   })  : _getAllTagsUseCase = getAllTagsUseCase,
         _createTagUseCase = createTagUseCase,
+        _deleteTagUseCase = deleteTagUseCase,
+        _mergeTagsUseCase = mergeTagsUseCase,
         super(const TagState.idle());
 
   /// Load all tags from the database.
@@ -37,6 +43,40 @@ class TagCubit extends Cubit<TagState> {
       },
       (_) {
         // Reload tags after creation
+        loadAllTags();
+        return true;
+      },
+    );
+  }
+
+  /// Delete a tag by ID.
+  Future<bool> deleteTag(int tagId) async {
+    final result = await _deleteTagUseCase(tagId);
+
+    return result.fold(
+      (failure) {
+        emit(TagState.error(message: 'Failed to delete tag: ${failure.message}'));
+        return false;
+      },
+      (_) {
+        // Reload tags after deletion
+        loadAllTags();
+        return true;
+      },
+    );
+  }
+
+  /// Merge two tags (source into target).
+  Future<bool> mergeTags(int sourceTagId, int targetTagId) async {
+    final result = await _mergeTagsUseCase(sourceTagId, targetTagId);
+
+    return result.fold(
+      (failure) {
+        emit(TagState.error(message: 'Failed to merge tags: ${failure.message}'));
+        return false;
+      },
+      (_) {
+        // Reload tags after merge
         loadAllTags();
         return true;
       },

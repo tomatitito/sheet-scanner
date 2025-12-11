@@ -12,13 +12,13 @@ class SearchResults extends StatelessWidget {
   final String? errorMessage;
 
   const SearchResults({
-    Key? key,
+    super.key,
     required this.results,
     required this.query,
     required this.onSheetTap,
     this.isLoading = false,
     this.errorMessage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -81,10 +81,10 @@ class SearchResultTile extends StatelessWidget {
   final VoidCallback onTap;
 
   const SearchResultTile({
-    Key? key,
+    super.key,
     required this.sheet,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

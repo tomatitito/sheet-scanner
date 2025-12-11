@@ -85,7 +85,16 @@ class BackupCubit extends Cubit<BackupState> {
 
     result.fold(
       (failure) => emit(BackupState.error(failure: failure)),
-      (_) => emit(const BackupState.initial()),
+      (_) => emit(
+        const BackupState.importSuccess(
+          result: ImportResult(
+            totalProcessed: 0,
+            imported: -1,
+            skipped: 0,
+            failed: 0,
+          ),
+        ),
+      ),
     );
   }
 }

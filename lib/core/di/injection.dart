@@ -101,10 +101,20 @@ void setupInjection() {
     SearchLocalDataSourceImpl(database: getIt<AppDatabase>()),
   );
 
+  getIt.registerSingleton<TagLocalDataSource>(
+    TagLocalDataSourceImpl(database: getIt<AppDatabase>()),
+  );
+
   // Repositories
   getIt.registerSingleton<SearchRepository>(
     SearchRepositoryImpl(
       localDataSource: getIt<SearchLocalDataSource>(),
+    ),
+  );
+
+  getIt.registerSingleton<TagRepository>(
+    TagRepositoryImpl(
+      localDataSource: getIt<TagLocalDataSource>(),
     ),
   );
 
@@ -185,6 +195,39 @@ void setupInjection() {
     ),
   );
 
+  // Tag Use Cases
+  getIt.registerSingleton<CreateTagUseCase>(
+    CreateTagUseCase(repository: getIt<TagRepository>()),
+  );
+
+  getIt.registerSingleton<GetAllTagsUseCase>(
+    GetAllTagsUseCase(repository: getIt<TagRepository>()),
+  );
+
+  getIt.registerSingleton<GetSheetTagsUseCase>(
+    GetSheetTagsUseCase(repository: getIt<TagRepository>()),
+  );
+
+  getIt.registerSingleton<DeleteTagUseCase>(
+    DeleteTagUseCase(repository: getIt<TagRepository>()),
+  );
+
+  getIt.registerSingleton<MergeTagsUseCase>(
+    MergeTagsUseCase(repository: getIt<TagRepository>()),
+  );
+
+  getIt.registerSingleton<SuggestTagsUseCase>(
+    SuggestTagsUseCase(repository: getIt<TagRepository>()),
+  );
+
+  getIt.registerSingleton<AddTagToSheetUseCase>(
+    AddTagToSheetUseCase(repository: getIt<TagRepository>()),
+  );
+
+  getIt.registerSingleton<RemoveTagFromSheetUseCase>(
+    RemoveTagFromSheetUseCase(repository: getIt<TagRepository>()),
+  );
+
   // ==================== PRESENTATION ====================
   // Backup Cubits
   getIt.registerSingleton<BackupCubit>(
@@ -261,6 +304,8 @@ void setupInjection() {
     TagCubit(
       getAllTagsUseCase: getIt<GetAllTagsUseCase>(),
       createTagUseCase: getIt<CreateTagUseCase>(),
+      deleteTagUseCase: getIt<DeleteTagUseCase>(),
+      mergeTagsUseCase: getIt<MergeTagsUseCase>(),
     ),
   );
 

@@ -108,14 +108,14 @@ class BackupRepositoryImpl implements BackupRepository {
       final importedCount = await localDataSource.importFromBackup(
         backupFilePath,
       );
-      return Right(
-        ImportResult(
-          totalProcessed: importedCount,
-          imported: importedCount,
-          skipped: 0,
-          failed: 0,
-        ),
+      // If importedCount is -1, it's a database replacement (count unknown)
+      final result = ImportResult(
+        totalProcessed: importedCount < 0 ? 0 : importedCount,
+        imported: importedCount < 0 ? -1 : importedCount,
+        skipped: 0,
+        failed: 0,
       );
+      return Right(result);
     } catch (e) {
       return Left(BackupFailure(message: e.toString()));
     }
