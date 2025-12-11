@@ -202,9 +202,12 @@ class AppDatabase extends _$AppDatabase {
 
   /// Update FTS5 index for a sheet
   Future<void> updateFTSIndex(SheetMusicModel sheet) async {
-    await delete(sheetMusicFtsTable)
-        .delete(sheetMusicFtsTable.id.equals(sheet.id));
+    // Delete existing FTS5 entry
+    await (delete(sheetMusicFtsTable)
+          ..where((t) => t.id.equals(sheet.id)))
+        .go();
 
+    // Insert updated FTS5 entry
     await into(sheetMusicFtsTable).insert(
       SheetMusicFtsTableCompanion(
         id: Value(sheet.id),

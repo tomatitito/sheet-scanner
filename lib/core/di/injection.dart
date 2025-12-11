@@ -13,10 +13,16 @@ import 'package:sheet_scanner/features/ocr/data/datasources/ocr_local_datasource
 import 'package:sheet_scanner/features/ocr/data/repositories/ocr_repository_impl.dart';
 import 'package:sheet_scanner/features/ocr/domain/repositories/ocr_repository.dart';
 import 'package:sheet_scanner/features/search/data/datasources/search_local_datasource.dart';
+import 'package:sheet_scanner/features/search/data/datasources/tag_local_datasource.dart';
 import 'package:sheet_scanner/features/search/data/repositories/search_repository_impl.dart';
+import 'package:sheet_scanner/features/search/data/repositories/tag_repository_impl.dart';
 import 'package:sheet_scanner/features/search/domain/repositories/search_repository.dart';
+import 'package:sheet_scanner/features/search/domain/repositories/tag_repository.dart';
 import 'package:sheet_scanner/features/search/domain/usecases/full_text_search_use_case.dart';
+import 'package:sheet_scanner/features/search/domain/usecases/tag_usecases.dart';
 import 'package:sheet_scanner/features/search/presentation/cubit/search_cubit.dart';
+import 'package:sheet_scanner/features/search/presentation/cubit/tag_cubit.dart';
+import 'package:sheet_scanner/features/search/presentation/cubit/tag_suggestion_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/data/datasources/sheet_music_local_datasource.dart';
 import 'package:sheet_scanner/features/sheet_music/data/repositories/sheet_music_repository_impl.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/repositories/sheet_music_repository.dart';
