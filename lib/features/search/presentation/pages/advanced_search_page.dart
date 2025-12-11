@@ -48,30 +48,29 @@ class AdvancedSearchPage extends StatelessWidget {
           Expanded(
             child: BlocBuilder<SearchCubit, SearchState>(
               builder: (context, state) {
-                return state.maybeWhen(
-                  initial: () => const Center(
+                return state.when(
+                  idle: () => const Center(
                     child: Text('Enter search criteria'),
                   ),
-                  loading: () => const Center(
+                  loading: (currentQuery) => const Center(
                     child: CircularProgressIndicator(),
                   ),
-                  loaded: (results) => results.isEmpty
-                      ? const Center(
-                          child: Text('No results found'),
-                        )
-                      : SearchResults(
-                          results: results,
-                          query: '',
-                          onSheetTap: (sheet) {
-                            // Navigate to sheet detail
-                            Navigator.pop(context, sheet);
-                          },
-                        ),
-                  error: (failure) => Center(
+                  loaded: (results, query, totalCount) => SearchResults(
+                    results: results,
+                    query: query,
+                    onSheetTap: (sheet) {
+                      // Navigate to sheet detail
+                      Navigator.pop(context, sheet);
+                    },
+                  ),
+                  empty: (query) => const Center(
+                    child: Text('No results found'),
+                  ),
+                  error: (message, query) => Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Error: ${failure.message}'),
+                        Text('Error: $message'),
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: () {
@@ -82,7 +81,6 @@ class AdvancedSearchPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  orElse: () => const SizedBox.shrink(),
                 );
               },
             ),
