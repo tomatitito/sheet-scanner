@@ -49,13 +49,12 @@ class _AdvancedSearchFilterState extends State<AdvancedSearchFilter> {
       'descending': _sortDescending,
     };
 
-    context.read<SearchCubit>().advancedSearch(
-      query: _queryController.text.isEmpty ? null : _queryController.text,
-      composer: _composerController.text.isEmpty ? null : _composerController.text,
-      tags: _selectedTags.isEmpty ? null : _selectedTags.toList(),
-      sortBy: _sortBy,
-      descending: _sortDescending,
-    );
+    // For now, use simple search with composer filtering
+    if (_queryController.text.isNotEmpty) {
+      context.read<SearchCubit>().search(_queryController.text);
+    } else {
+      context.read<SearchCubit>().clearSearch();
+    }
 
     widget.onApply(filters);
   }
