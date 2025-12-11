@@ -252,8 +252,21 @@ void setupInjection() {
   // Search Cubits
   getIt.registerSingleton<SearchCubit>(
     SearchCubit(
-      searchRepository: getIt<SearchRepository>(),
-      sheetMusicRepository: getIt<SheetMusicRepository>(),
+      fullTextSearchUseCase: getIt<FullTextSearchUseCase>(),
+      getAllTagsUseCase: getIt<GetAllTagsUseCase>(),
+    ),
+  );
+
+  getIt.registerSingleton<TagCubit>(
+    TagCubit(
+      getAllTagsUseCase: getIt<GetAllTagsUseCase>(),
+      createTagUseCase: getIt<CreateTagUseCase>(),
+    ),
+  );
+
+  getIt.registerSingleton<TagSuggestionCubit>(
+    TagSuggestionCubit(
+      getAllTagsUseCase: getIt<GetAllTagsUseCase>(),
     ),
   );
 }
