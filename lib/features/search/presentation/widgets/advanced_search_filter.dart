@@ -166,9 +166,11 @@ class _AdvancedSearchFilterState extends State<AdvancedSearchFilter> {
                     value: _sortBy,
                     isExpanded: true,
                     items: const [
-                      DropdownMenuItem(value: 'createdAt', child: Text('Date Created')),
+                      DropdownMenuItem(
+                          value: 'createdAt', child: Text('Date Created')),
                       DropdownMenuItem(value: 'title', child: Text('Title')),
-                      DropdownMenuItem(value: 'composer', child: Text('Composer')),
+                      DropdownMenuItem(
+                          value: 'composer', child: Text('Composer')),
                     ],
                     onChanged: (value) {
                       if (value != null) {

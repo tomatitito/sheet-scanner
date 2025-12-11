@@ -115,7 +115,8 @@ class TagRepositoryImpl implements TagRepository {
       await localDataSource.removeTagFromSheet(sheetMusicId, tagId);
       return Right(true);
     } catch (e) {
-      return Left(SearchFailure(message: 'Failed to remove tag from sheet: $e'));
+      return Left(
+          SearchFailure(message: 'Failed to remove tag from sheet: $e'));
     }
   }
 }

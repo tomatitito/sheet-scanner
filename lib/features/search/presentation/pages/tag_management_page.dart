@@ -241,7 +241,8 @@ class _TagManagementPageState extends State<TagManagementPage> {
               child: Text(tag.count.toString()),
             ),
             title: Text(tag.name),
-            subtitle: Text('Used in ${tag.count} sheet${tag.count != 1 ? 's' : ''}'),
+            subtitle:
+                Text('Used in ${tag.count} sheet${tag.count != 1 ? 's' : ''}'),
             trailing: PopupMenuButton(
               itemBuilder: (BuildContext context) => [
                 PopupMenuItem(

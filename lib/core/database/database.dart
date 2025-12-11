@@ -84,7 +84,7 @@ class AppDatabase extends _$AppDatabase {
       variables: [Variable<String>(escapedQuery)],
       readsFrom: {sheetMusicTable},
     ).get();
-    
+
     return results.map((row) {
       return SheetMusicModel(
         id: row.read<int>('id'),
@@ -99,8 +99,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Search by title
   Future<List<SheetMusicModel>> searchByTitle(String title) {
-    return (select(sheetMusicTable)
-          ..where((s) => s.title.like('%$title%')))
+    return (select(sheetMusicTable)..where((s) => s.title.like('%$title%')))
         .get();
   }
 
@@ -189,12 +188,27 @@ class AppDatabase extends _$AppDatabase {
     // Sorting
     switch (sortBy) {
       case 'title':
-        q = q..orderBy([(s) => OrderingTerm(expression: s.title, mode: descending ? OrderingMode.desc : OrderingMode.asc)]);
+        q = q
+          ..orderBy([
+            (s) => OrderingTerm(
+                expression: s.title,
+                mode: descending ? OrderingMode.desc : OrderingMode.asc)
+          ]);
       case 'composer':
-        q = q..orderBy([(s) => OrderingTerm(expression: s.composer, mode: descending ? OrderingMode.desc : OrderingMode.asc)]);
+        q = q
+          ..orderBy([
+            (s) => OrderingTerm(
+                expression: s.composer,
+                mode: descending ? OrderingMode.desc : OrderingMode.asc)
+          ]);
       case 'createdAt':
       default:
-        q = q..orderBy([(s) => OrderingTerm(expression: s.createdAt, mode: descending ? OrderingMode.desc : OrderingMode.asc)]);
+        q = q
+          ..orderBy([
+            (s) => OrderingTerm(
+                expression: s.createdAt,
+                mode: descending ? OrderingMode.desc : OrderingMode.asc)
+          ]);
     }
 
     return q.get();
@@ -203,8 +217,7 @@ class AppDatabase extends _$AppDatabase {
   /// Update FTS5 index for a sheet
   Future<void> updateFTSIndex(SheetMusicModel sheet) async {
     // Delete existing FTS5 entry
-    await (delete(sheetMusicFtsTable)
-          ..where((t) => t.id.equals(sheet.id)))
+    await (delete(sheetMusicFtsTable)..where((t) => t.id.equals(sheet.id)))
         .go();
 
     // Insert updated FTS5 entry

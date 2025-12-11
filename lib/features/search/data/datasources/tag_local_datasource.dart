@@ -60,8 +60,7 @@ class TagLocalDataSourceImpl implements TagLocalDataSource {
         .go();
 
     // Delete the tag itself
-    await (database.delete(database.tagsTable)
-          ..where((t) => t.id.equals(id)))
+    await (database.delete(database.tagsTable)..where((t) => t.id.equals(id)))
         .go();
   }
 
@@ -101,18 +100,17 @@ class TagLocalDataSourceImpl implements TagLocalDataSource {
   @override
   Future<void> mergeTags(int sourceTagId, int targetTagId) async {
     // Get all sheets with the source tag
-    final sheetIdsWithSourceTag = await (database
-            .select(database.sheetMusicTagsTable)
-          ..where((t) => t.tagId.equals(sourceTagId)))
-        .map((row) => row.sheetMusicId)
-        .get();
+    final sheetIdsWithSourceTag =
+        await (database.select(database.sheetMusicTagsTable)
+              ..where((t) => t.tagId.equals(sourceTagId)))
+            .map((row) => row.sheetMusicId)
+            .get();
 
     // Reassign to target tag (avoid duplicates)
     for (final sheetId in sheetIdsWithSourceTag) {
-      final existing = await (database
-              .select(database.sheetMusicTagsTable)
-            ..where((t) => t.sheetMusicId.equals(sheetId) &
-                t.tagId.equals(targetTagId)))
+      final existing = await (database.select(database.sheetMusicTagsTable)
+            ..where((t) =>
+                t.sheetMusicId.equals(sheetId) & t.tagId.equals(targetTagId)))
           .getSingleOrNull();
 
       if (existing == null) {
@@ -152,10 +150,10 @@ class TagLocalDataSourceImpl implements TagLocalDataSource {
   Future<Tag> updateTag(int id, String newName) async {
     await (database.update(database.tagsTable)..where((t) => t.id.equals(id)))
         .write(
-          TagsTableCompanion(
-            name: drift.Value(newName),
-          ),
-        );
+      TagsTableCompanion(
+        name: drift.Value(newName),
+      ),
+    );
 
     // Get updated tag
     final tagModel = await (database.select(database.tagsTable)
@@ -173,10 +171,9 @@ class TagLocalDataSourceImpl implements TagLocalDataSource {
   @override
   Future<void> addTagToSheet(int sheetMusicId, int tagId) async {
     // Check if already exists
-    final existing = await (database
-            .select(database.sheetMusicTagsTable)
-          ..where((t) => t.sheetMusicId.equals(sheetMusicId) &
-              t.tagId.equals(tagId)))
+    final existing = await (database.select(database.sheetMusicTagsTable)
+          ..where((t) =>
+              t.sheetMusicId.equals(sheetMusicId) & t.tagId.equals(tagId)))
         .getSingleOrNull();
 
     if (existing == null) {
@@ -192,8 +189,8 @@ class TagLocalDataSourceImpl implements TagLocalDataSource {
   @override
   Future<void> removeTagFromSheet(int sheetMusicId, int tagId) async {
     await (database.delete(database.sheetMusicTagsTable)
-          ..where((t) => t.sheetMusicId.equals(sheetMusicId) &
-              t.tagId.equals(tagId)))
+          ..where((t) =>
+              t.sheetMusicId.equals(sheetMusicId) & t.tagId.equals(tagId)))
         .go();
   }
 }

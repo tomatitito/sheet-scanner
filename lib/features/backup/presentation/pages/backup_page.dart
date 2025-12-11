@@ -104,7 +104,8 @@ class BackupPage extends StatelessWidget {
                   const SizedBox(height: 24),
                   _ImportButton(
                     label: 'Import Backup',
-                    description: 'Import sheet music from a backup file (merge with existing)',
+                    description:
+                        'Import sheet music from a backup file (merge with existing)',
                     isLoading: state.maybeWhen(
                       loading: () => true,
                       orElse: () => false,
@@ -126,7 +127,8 @@ class BackupPage extends StatelessWidget {
                   const SizedBox(height: 16),
                   _ImportButton(
                     label: 'Replace Database',
-                    description: 'Replace entire database with backup (loses current data)',
+                    description:
+                        'Replace entire database with backup (loses current data)',
                     isLoading: state.maybeWhen(
                       loading: () => true,
                       orElse: () => false,
@@ -138,7 +140,8 @@ class BackupPage extends StatelessWidget {
                       );
                       if (result != null && result.files.isNotEmpty) {
                         if (context.mounted) {
-                          final confirmed = await _confirmReplaceDatabase(context);
+                          final confirmed =
+                              await _confirmReplaceDatabase(context);
                           if (confirmed && context.mounted) {
                             context.read<BackupCubit>().replaceDatabase(
                                   dbFilePath: result.files.first.path!,
@@ -166,26 +169,26 @@ class BackupPage extends StatelessWidget {
 
   Future<bool> _confirmReplaceDatabase(BuildContext context) async {
     return await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Replace Database?'),
-        content: const Text(
-          'This will replace your entire database with the backup file. '
-          'Current data will be lost. Are you sure?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Replace Database?'),
+            content: const Text(
+              'This will replace your entire database with the backup file. '
+              'Current data will be lost. Are you sure?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: const Text('Replace'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Replace'),
-          ),
-        ],
-      ),
-    ) ??
+        ) ??
         false;
   }
 }

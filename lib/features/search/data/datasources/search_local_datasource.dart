@@ -74,7 +74,8 @@ class SearchLocalDataSourceImpl implements SearchLocalDataSource {
     final allSheets = await database.select(database.sheetMusicTable).get();
     return allSheets
         .where((sheet) =>
-            sheet.createdAt.isAfter(startDate.subtract(const Duration(seconds: 1))) &&
+            sheet.createdAt
+                .isAfter(startDate.subtract(const Duration(seconds: 1))) &&
             sheet.createdAt.isBefore(endDate.add(const Duration(seconds: 1))))
         .toList();
   }

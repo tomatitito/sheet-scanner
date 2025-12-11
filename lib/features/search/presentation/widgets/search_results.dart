@@ -102,7 +102,7 @@ class SearchResultTile extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             )
-           : Container(
+          : Container(
               width: 48,
               height: 48,
               decoration: BoxDecoration(

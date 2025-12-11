@@ -38,7 +38,8 @@ class TagCubit extends Cubit<TagState> {
 
     return result.fold(
       (failure) {
-        emit(TagState.error(message: 'Failed to create tag: ${failure.message}'));
+        emit(TagState.error(
+            message: 'Failed to create tag: ${failure.message}'));
         return false;
       },
       (_) {
@@ -55,7 +56,8 @@ class TagCubit extends Cubit<TagState> {
 
     return result.fold(
       (failure) {
-        emit(TagState.error(message: 'Failed to delete tag: ${failure.message}'));
+        emit(TagState.error(
+            message: 'Failed to delete tag: ${failure.message}'));
         return false;
       },
       (_) {
@@ -72,7 +74,8 @@ class TagCubit extends Cubit<TagState> {
 
     return result.fold(
       (failure) {
-        emit(TagState.error(message: 'Failed to merge tags: ${failure.message}'));
+        emit(TagState.error(
+            message: 'Failed to merge tags: ${failure.message}'));
         return false;
       },
       (_) {
