@@ -59,7 +59,14 @@ class AdvancedSearchPage extends StatelessWidget {
                       ? const Center(
                           child: Text('No results found'),
                         )
-                      : SearchResults(results: results),
+                      : SearchResults(
+                          results: results,
+                          query: '',
+                          onSheetTap: (sheet) {
+                            // Navigate to sheet detail
+                            Navigator.pop(context, sheet);
+                          },
+                        ),
                   error: (failure) => Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
