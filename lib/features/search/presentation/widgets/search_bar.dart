@@ -43,7 +43,9 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
     }
 
     _debounceTimer = Future.delayed(widget.debounceDelay, () {
-      context.read<SearchCubit>().search(query);
+      if (mounted) {
+        context.read<SearchCubit>().search(query);
+      }
     });
   }
 

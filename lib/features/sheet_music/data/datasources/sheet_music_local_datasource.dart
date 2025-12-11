@@ -1,5 +1,4 @@
 import 'package:sheet_scanner/core/database/database.dart';
-import 'package:sheet_scanner/features/sheet_music/domain/entities/tag.dart';
 
 /// Abstract interface for local sheet music data source.
 abstract class SheetMusicLocalDataSource {
@@ -41,18 +40,6 @@ abstract class SheetMusicLocalDataSource {
 
   /// Gets all tags for a sheet music entry.
   Future<List<String>> getTagsForSheetMusic(int sheetMusicId);
-
-  /// Gets all tags with their usage counts.
-  Future<List<Tag>> getAllTags();
-
-  /// Creates a new tag.
-  Future<Tag> createTag(String name);
-
-  /// Updates a tag's name.
-  Future<Tag> updateTag(int tagId, String newName);
-
-  /// Deletes a tag and removes it from all sheets.
-  Future<void> deleteTag(int tagId);
 }
 
 /// Implementation of SheetMusicLocalDataSource using Drift.
