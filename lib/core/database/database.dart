@@ -71,15 +71,30 @@ class AppDatabase extends _$AppDatabase {
 
   /// Full-text search query using FTS5
   Future<List<SheetMusicModel>> fullTextSearch(String query) async {
+    if (query.trim().isEmpty) {
+      return [];
+    }
     final escapedQuery = query.replaceAll('"', '""');
-    return customSelect(
-      'SELECT sm.* FROM sheet_music sm '
+    final results = await customSelect(
+      'SELECT sm.id, sm.title, sm.composer, sm.notes, sm.created_at, sm.updated_at '
+      'FROM sheet_music sm '
       'WHERE sm.id IN ('
       '  SELECT id FROM sheet_music_fts WHERE sheet_music_fts MATCH ?'
       ')',
-      variables: [escapedQuery],
+      variables: [Variable<String>(escapedQuery)],
       readsFrom: {sheetMusicTable},
-    ).map((row) => SheetMusicModel.fromData(row.data, this)).get();
+    ).get();
+    
+    return results.map((row) {
+      return SheetMusicModel(
+        id: row.read<int>('id'),
+        title: row.read<String>('title'),
+        composer: row.read<String>('composer'),
+        notes: row.read<String?>('notes'),
+        createdAt: row.read<DateTime>('created_at'),
+        updatedAt: row.read<DateTime>('updated_at'),
+      );
+    }).toList();
   }
 
   /// Search by title
@@ -140,7 +155,7 @@ class AppDatabase extends _$AppDatabase {
       final escapedQuery = query.replaceAll('"', '""');
       final ftsResults = await customSelect(
         'SELECT id FROM sheet_music_fts WHERE sheet_music_fts MATCH ?',
-        variables: [escapedQuery],
+        variables: [Variable<String>(escapedQuery)],
         readsFrom: {sheetMusicTable},
       ).get();
       final ftsIds = ftsResults.map((row) => row.read<int>('id')).toList();
