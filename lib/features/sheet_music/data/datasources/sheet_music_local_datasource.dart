@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:sheet_scanner/core/database/database.dart';
 
 /// Abstract interface for local sheet music data source.
@@ -51,38 +52,86 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
   SheetMusicLocalDataSourceImpl({required this.database});
 
   @override
-  Future<int> insertSheetMusic(SheetMusicModel model) {
-    throw UnimplementedError('insertSheetMusic not yet implemented');
+  Future<int> insertSheetMusic(SheetMusicModel model) async {
+    return database.into(database.sheetMusicTable).insert(
+      SheetMusicTableCompanion(
+        title: Value(model.title),
+        composer: Value(model.composer),
+        notes: Value(model.notes),
+        createdAt: Value(model.createdAt),
+        updatedAt: Value(model.updatedAt),
+      ),
+    );
   }
 
   @override
   Future<SheetMusicModel?> getSheetMusicById(int id) {
-    throw UnimplementedError('getSheetMusicById not yet implemented');
+    return (database.select(database.sheetMusicTable)
+          ..where((s) => s.id.equals(id)))
+        .getSingleOrNull();
   }
 
   @override
   Future<List<SheetMusicModel>> getAllSheetMusic() {
-    throw UnimplementedError('getAllSheetMusic not yet implemented');
+    return (database.select(database.sheetMusicTable)
+          ..orderBy([(s) => OrderingTerm(expression: s.createdAt, mode: OrderingMode.desc)]))
+        .get();
   }
 
   @override
-  Future<bool> updateSheetMusic(SheetMusicModel model) {
-    throw UnimplementedError('updateSheetMusic not yet implemented');
+  Future<bool> updateSheetMusic(SheetMusicModel model) async {
+    return database.update(database.sheetMusicTable).replace(
+      SheetMusicTableCompanion(
+        id: Value(model.id),
+        title: Value(model.title),
+        composer: Value(model.composer),
+        notes: Value(model.notes),
+        createdAt: Value(model.createdAt),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   @override
-  Future<bool> deleteSheetMusic(int id) {
-    throw UnimplementedError('deleteSheetMusic not yet implemented');
+  Future<bool> deleteSheetMusic(int id) async {
+    final deleted = await (database.delete(database.sheetMusicTable)
+          ..where((s) => s.id.equals(id)))
+        .go();
+    
+    // Also delete from FTS index
+    await (database.delete(database.sheetMusicFtsTable)
+          ..where((t) => t.id.equals(id)))
+        .go();
+    
+    return deleted > 0;
   }
 
   @override
   Future<List<SheetMusicModel>> getSheetMusicByComposer(String composer) {
-    throw UnimplementedError('getSheetMusicByComposer not yet implemented');
+    return database.searchByComposer(composer);
   }
 
   @override
-  Future<List<SheetMusicModel>> getSheetMusicByTag(String tag) {
-    throw UnimplementedError('getSheetMusicByTag not yet implemented');
+  Future<List<SheetMusicModel>> getSheetMusicByTag(String tag) async {
+    // Find the tag first
+    final tagModel = await (database.select(database.tagsTable)
+          ..where((t) => t.name.equals(tag)))
+        .getSingleOrNull();
+    
+    if (tagModel == null) return [];
+    
+    // Get sheet music with this tag
+    final sheetIds = await (database.select(database.sheetMusicTagsTable)
+          ..where((t) => t.tagId.equals(tagModel.id)))
+        .map((row) => row.sheetMusicId)
+        .get();
+    
+    if (sheetIds.isEmpty) return [];
+    
+    return (database.select(database.sheetMusicTable)
+          ..where((s) => s.id.isIn(sheetIds))
+          ..orderBy([(s) => OrderingTerm(expression: s.createdAt, mode: OrderingMode.desc)]))
+        .get();
   }
 
   @override
@@ -90,27 +139,62 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
     String title,
     String composer,
   ) {
-    throw UnimplementedError(
-        'findSheetMusicByTitleAndComposer not yet implemented');
+    return (database.select(database.sheetMusicTable)
+          ..where((s) => s.title.equals(title) & s.composer.equals(composer)))
+        .getSingleOrNull();
   }
 
   @override
-  Future<void> deleteAllSheetMusic() {
-    throw UnimplementedError('deleteAllSheetMusic not yet implemented');
+  Future<void> deleteAllSheetMusic() async {
+    await database.delete(database.sheetMusicTable).go();
+    await database.delete(database.sheetMusicFtsTable).go();
   }
 
   @override
-  Future<void> addTagToSheetMusic(int sheetMusicId, String tagName) {
-    throw UnimplementedError('addTagToSheetMusic not yet implemented');
+  Future<void> addTagToSheetMusic(int sheetMusicId, String tagName) async {
+    // Get or create tag
+    var tagModel = await (database.select(database.tagsTable)
+          ..where((t) => t.name.equals(tagName)))
+        .getSingleOrNull();
+    
+    if (tagModel == null) {
+      final tagId = await database.into(database.tagsTable).insert(
+        TagsTableCompanion(name: Value(tagName)),
+      );
+      tagModel = TagModel(id: tagId, name: tagName);
+    }
+    
+    // Add the association (ignore if already exists)
+    try {
+      await database.into(database.sheetMusicTagsTable).insert(
+        SheetMusicTagsTableCompanion(
+          sheetMusicId: Value(sheetMusicId),
+          tagId: Value(tagModel.id),
+        ),
+      );
+    } catch (_) {
+      // Tag association already exists, which is fine
+    }
   }
 
   @override
-  Future<void> removeTagFromSheetMusic(int sheetMusicId, String tagName) {
-    throw UnimplementedError('removeTagFromSheetMusic not yet implemented');
+  Future<void> removeTagFromSheetMusic(int sheetMusicId, String tagName) async {
+    // Find the tag
+    final tagModel = await (database.select(database.tagsTable)
+          ..where((t) => t.name.equals(tagName)))
+        .getSingleOrNull();
+    
+    if (tagModel == null) return;
+    
+    // Delete the association
+    await (database.delete(database.sheetMusicTagsTable)
+          ..where((t) => t.sheetMusicId.equals(sheetMusicId) & t.tagId.equals(tagModel.id)))
+        .go();
   }
 
   @override
-  Future<List<String>> getTagsForSheetMusic(int sheetMusicId) {
-    throw UnimplementedError('getTagsForSheetMusic not yet implemented');
+  Future<List<String>> getTagsForSheetMusic(int sheetMusicId) async {
+    final tags = await database.getTagsForSheet(sheetMusicId);
+    return tags.map((tag) => tag.name).toList();
   }
 }
