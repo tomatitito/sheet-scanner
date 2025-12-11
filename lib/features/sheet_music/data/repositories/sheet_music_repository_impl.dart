@@ -3,10 +3,10 @@ import 'package:sheet_scanner/core/utils/either.dart';
 import 'package:sheet_scanner/features/sheet_music/data/datasources/sheet_music_local_datasource.dart';
 import 'package:sheet_scanner/features/sheet_music/data/models/sheet_music_model.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/entities/sheet_music.dart';
+import 'package:sheet_scanner/features/sheet_music/domain/entities/tag.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/repositories/sheet_music_repository.dart';
 
 /// Implementation of SheetMusicRepository using local database.
-/// TODO: Complete implementation with actual database queries.
 class SheetMusicRepositoryImpl implements SheetMusicRepository {
   final SheetMusicLocalDataSource localDataSource;
 
@@ -152,6 +152,46 @@ class SheetMusicRepositoryImpl implements SheetMusicRepository {
       }
 
       return Right(sheetMusic);
+    } catch (e) {
+      return Left(DatabaseFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Tag>>> getAllTags() async {
+    try {
+      final tags = await localDataSource.getAllTags();
+      return Right(tags);
+    } catch (e) {
+      return Left(DatabaseFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Tag>> createTag(String name) async {
+    try {
+      final tag = await localDataSource.createTag(name);
+      return Right(tag);
+    } catch (e) {
+      return Left(DatabaseFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Tag>> updateTag(int tagId, String newName) async {
+    try {
+      final tag = await localDataSource.updateTag(tagId, newName);
+      return Right(tag);
+    } catch (e) {
+      return Left(DatabaseFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteTag(int tagId) async {
+    try {
+      await localDataSource.deleteTag(tagId);
+      return Right<Failure, void>(null);
     } catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
     }

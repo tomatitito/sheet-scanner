@@ -13,8 +13,14 @@ import 'package:sheet_scanner/features/ocr/data/datasources/ocr_local_datasource
 import 'package:sheet_scanner/features/ocr/data/repositories/ocr_repository_impl.dart';
 import 'package:sheet_scanner/features/ocr/domain/repositories/ocr_repository.dart';
 import 'package:sheet_scanner/features/search/data/datasources/search_local_datasource.dart';
+import 'package:sheet_scanner/features/search/data/datasources/tag_local_datasource.dart';
 import 'package:sheet_scanner/features/search/data/repositories/search_repository_impl.dart';
+import 'package:sheet_scanner/features/search/data/repositories/tag_repository_impl.dart';
 import 'package:sheet_scanner/features/search/domain/repositories/search_repository.dart';
+import 'package:sheet_scanner/features/search/domain/repositories/tag_repository.dart';
+import 'package:sheet_scanner/features/search/domain/usecases/full_text_search_use_case.dart';
+import 'package:sheet_scanner/features/search/domain/usecases/tag_usecases.dart';
+import 'package:sheet_scanner/features/search/presentation/cubit/search_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/data/datasources/sheet_music_local_datasource.dart';
 import 'package:sheet_scanner/features/sheet_music/data/repositories/sheet_music_repository_impl.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/repositories/sheet_music_repository.dart';
@@ -93,10 +99,20 @@ void setupInjection() {
     SearchLocalDataSourceImpl(database: getIt<AppDatabase>()),
   );
 
+  getIt.registerSingleton<TagLocalDataSource>(
+    TagLocalDataSourceImpl(database: getIt<AppDatabase>()),
+  );
+
   // Repositories
   getIt.registerSingleton<SearchRepository>(
     SearchRepositoryImpl(
       localDataSource: getIt<SearchLocalDataSource>(),
+    ),
+  );
+
+  getIt.registerSingleton<TagRepository>(
+    TagRepositoryImpl(
+      localDataSource: getIt<TagLocalDataSource>(),
     ),
   );
 
@@ -170,6 +186,55 @@ void setupInjection() {
     ),
   );
 
+  // Search Use Cases
+  getIt.registerSingleton<FullTextSearchUseCase>(
+    FullTextSearchUseCase(
+      repository: getIt<SearchRepository>(),
+    ),
+  );
+
+  getIt.registerSingleton<GetAllTagsUseCase>(
+    GetAllTagsUseCase(
+      repository: getIt<TagRepository>(),
+    ),
+  );
+
+  getIt.registerSingleton<CreateTagUseCase>(
+    CreateTagUseCase(
+      repository: getIt<TagRepository>(),
+    ),
+  );
+
+  getIt.registerSingleton<DeleteTagUseCase>(
+    DeleteTagUseCase(
+      repository: getIt<TagRepository>(),
+    ),
+  );
+
+  getIt.registerSingleton<MergeTagsUseCase>(
+    MergeTagsUseCase(
+      repository: getIt<TagRepository>(),
+    ),
+  );
+
+  getIt.registerSingleton<SuggestTagsUseCase>(
+    SuggestTagsUseCase(
+      repository: getIt<TagRepository>(),
+    ),
+  );
+
+  getIt.registerSingleton<AddTagToSheetUseCase>(
+    AddTagToSheetUseCase(
+      repository: getIt<TagRepository>(),
+    ),
+  );
+
+  getIt.registerSingleton<RemoveTagFromSheetUseCase>(
+    RemoveTagFromSheetUseCase(
+      repository: getIt<TagRepository>(),
+    ),
+  );
+
   // ==================== PRESENTATION ====================
   // Backup Cubits
   getIt.registerSingleton<BackupCubit>(
@@ -231,6 +296,32 @@ void setupInjection() {
   getIt.registerSingleton<OCRScanCubit>(
     OCRScanCubit(
       recognizeTextUseCase: getIt<RecognizeTextUseCase>(),
+    ),
+  );
+
+  // Search Cubits
+  getIt.registerSingleton<SearchCubit>(
+    SearchCubit(
+      fullTextSearchUseCase: getIt<FullTextSearchUseCase>(),
+      getAllTagsUseCase: getIt<GetAllTagsUseCase>(),
+      suggestTagsUseCase: getIt<SuggestTagsUseCase>(),
+      addTagToSheetUseCase: getIt<AddTagToSheetUseCase>(),
+      removeTagFromSheetUseCase: getIt<RemoveTagFromSheetUseCase>(),
+    ),
+  );
+
+  getIt.registerSingleton<TagCubit>(
+    TagCubit(
+      getAllTagsUseCase: getIt<GetAllTagsUseCase>(),
+      createTagUseCase: getIt<CreateTagUseCase>(),
+      deleteTagUseCase: getIt<DeleteTagUseCase>(),
+      mergeTagsUseCase: getIt<MergeTagsUseCase>(),
+    ),
+  );
+
+  getIt.registerSingleton<TagSuggestionCubit>(
+    TagSuggestionCubit(
+      suggestTagsUseCase: getIt<SuggestTagsUseCase>(),
     ),
   );
 }

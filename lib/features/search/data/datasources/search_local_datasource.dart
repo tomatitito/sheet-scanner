@@ -32,7 +32,7 @@ abstract class SearchLocalDataSource {
 }
 
 /// Implementation of SearchLocalDataSource using Drift.
-/// TODO: Complete implementation with actual Drift queries.
+/// Uses FTS5 for full-text search and Drift queries for filtering.
 class SearchLocalDataSourceImpl implements SearchLocalDataSource {
   final AppDatabase database;
 
@@ -45,35 +45,78 @@ class SearchLocalDataSourceImpl implements SearchLocalDataSource {
     String? composer,
     String? sortBy,
     bool descending = false,
-  }) {
-    throw UnimplementedError('advancedSearch not yet implemented');
+  }) async {
+    // Get tag IDs from tag names
+    List<int>? tagIds;
+    if (tags != null && tags.isNotEmpty) {
+      final tagModels = await (database.select(database.tagsTable)
+            ..where((t) => t.name.isIn(tags)))
+          .get();
+      tagIds = tagModels.map((t) => t.id).toList();
+    }
+
+    return database.advancedSearch(
+      query: query,
+      tagIds: tagIds,
+      composer: composer,
+      sortBy: sortBy,
+      descending: descending,
+    );
   }
 
   @override
   Future<List<SheetMusicModel>> filterByDateRange(
     DateTime startDate,
     DateTime endDate,
-  ) {
-    throw UnimplementedError('filterByDateRange not yet implemented');
+  ) async {
+    // Get all sheet music and filter in Dart by date
+    // (Drift doesn't provide convenient DateTime comparison operators)
+    final allSheets = await database.select(database.sheetMusicTable).get();
+    return allSheets
+        .where((sheet) =>
+            sheet.createdAt.isAfter(startDate.subtract(const Duration(seconds: 1))) &&
+            sheet.createdAt.isBefore(endDate.add(const Duration(seconds: 1))))
+        .toList();
   }
 
   @override
-  Future<List<SheetMusicModel>> filterByTags(List<String> tags) {
-    throw UnimplementedError('filterByTags not yet implemented');
+  Future<List<SheetMusicModel>> filterByTags(List<String> tags) async {
+    if (tags.isEmpty) return [];
+
+    // Get tag IDs from tag names
+    final tagModels = await (database.select(database.tagsTable)
+          ..where((t) => t.name.isIn(tags)))
+        .get();
+
+    if (tagModels.isEmpty) return [];
+
+    final tagIds = tagModels.map((t) => t.id).toList();
+
+    // Get sheet IDs that have ANY of the specified tags
+    final sheetIds = await (database.select(database.sheetMusicTagsTable)
+          ..where((st) => st.tagId.isIn(tagIds)))
+        .map((row) => row.sheetMusicId)
+        .get();
+
+    if (sheetIds.isEmpty) return [];
+
+    return (database.select(database.sheetMusicTable)
+          ..where((s) => s.id.isIn(sheetIds)))
+        .get();
   }
 
   @override
   Future<List<SheetMusicModel>> fullTextSearch(String query) {
-    throw UnimplementedError('fullTextSearch not yet implemented');
+    return database.fullTextSearch(query);
   }
 
   @override
   Future<List<SheetMusicModel>> searchByComposer(String composer) {
-    throw UnimplementedError('searchByComposer not yet implemented');
+    return database.searchByComposer(composer);
   }
 
   @override
   Future<List<SheetMusicModel>> searchByTitle(String title) {
-    throw UnimplementedError('searchByTitle not yet implemented');
+    return database.searchByTitle(title);
   }
 }

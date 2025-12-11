@@ -1,4 +1,5 @@
 import 'package:sheet_scanner/core/database/database.dart';
+import 'package:sheet_scanner/features/sheet_music/domain/entities/tag.dart';
 
 /// Abstract interface for local sheet music data source.
 abstract class SheetMusicLocalDataSource {
@@ -40,6 +41,18 @@ abstract class SheetMusicLocalDataSource {
 
   /// Gets all tags for a sheet music entry.
   Future<List<String>> getTagsForSheetMusic(int sheetMusicId);
+
+  /// Gets all tags with their usage counts.
+  Future<List<Tag>> getAllTags();
+
+  /// Creates a new tag.
+  Future<Tag> createTag(String name);
+
+  /// Updates a tag's name.
+  Future<Tag> updateTag(int tagId, String newName);
+
+  /// Deletes a tag and removes it from all sheets.
+  Future<void> deleteTag(int tagId);
 }
 
 /// Implementation of SheetMusicLocalDataSource using Drift.
@@ -112,5 +125,25 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
   @override
   Future<List<String>> getTagsForSheetMusic(int sheetMusicId) {
     throw UnimplementedError('getTagsForSheetMusic not yet implemented');
+  }
+
+  @override
+  Future<List<Tag>> getAllTags() {
+    throw UnimplementedError('getAllTags not yet implemented');
+  }
+
+  @override
+  Future<Tag> createTag(String name) {
+    throw UnimplementedError('createTag not yet implemented');
+  }
+
+  @override
+  Future<Tag> updateTag(int tagId, String newName) {
+    throw UnimplementedError('updateTag not yet implemented');
+  }
+
+  @override
+  Future<void> deleteTag(int tagId) {
+    throw UnimplementedError('deleteTag not yet implemented');
   }
 }
