@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/ocr/presentation/cubit/ocr_scan_cubit.dart';
 import 'package:sheet_scanner/features/ocr/presentation/cubit/ocr_scan_state.dart';
@@ -543,9 +544,16 @@ class _ScanCameraPageState extends State<ScanCameraPage>
     );
   }
 
-  void _openAppSettings() {
-    // TODO: Implement opening app settings
-    // Can use app_settings or url_launcher
+  Future<void> _openAppSettings() async {
+    // Open the app settings page so user can grant camera permissions
+    try {
+      await openAppSettings();
+      _logger.info('Opened app settings for permissions');
+    } catch (e) {
+      _logger.severe('Failed to open app settings: $e');
+      if (!mounted) return;
+      _showError('Failed to open settings: $e');
+    }
   }
 }
 
