@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/sheet_music/data/services/file_picker_service.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/add_sheet_cubit.dart';
@@ -310,6 +311,47 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                           .toList(),
                     ),
                   const SizedBox(height: 32),
+
+                  // Scan button - OCR text recognition
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: isSubmitting
+                          ? null
+                          : () {
+                              // Navigate to scan camera page for OCR
+                              context.go('/scan');
+                            },
+                      icon: const Icon(Icons.camera_alt),
+                      label: const Text('Scan Sheet Music'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Divider with "OR" text
+                  Row(
+                    children: [
+                      const Expanded(child: Divider()),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'OR',
+                          style:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    color: Colors.grey[600],
+                                  ),
+                        ),
+                      ),
+                      const Expanded(child: Divider()),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
 
                   // File picker section - using enhanced drop zone widget
                   FilePickerDropZone(
