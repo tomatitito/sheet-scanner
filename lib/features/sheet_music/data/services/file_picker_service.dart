@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:file_picker/file_picker.dart';
 
 /// Service for handling file selection with cross-platform support.
@@ -78,8 +79,14 @@ class FilePickerServiceImpl implements FilePickerService {
 
   @override
   Future<bool> hasCameraSupport() async {
-    // For now, assume camera is available on mobile platforms
-    // TODO: Implement actual camera capability check
-    return true;
+    try {
+      // Check if any cameras are available on the device
+      final cameras = await availableCameras();
+      return cameras.isNotEmpty;
+    } catch (e) {
+      // If camera plugin fails to initialize or enumerate cameras,
+      // assume no camera support (e.g., desktop platforms without cameras)
+      return false;
+    }
   }
 }

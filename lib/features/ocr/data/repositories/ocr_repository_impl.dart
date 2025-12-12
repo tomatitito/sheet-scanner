@@ -4,7 +4,6 @@ import 'package:sheet_scanner/features/ocr/data/datasources/ocr_local_datasource
 import 'package:sheet_scanner/features/ocr/domain/repositories/ocr_repository.dart';
 
 /// Implementation of OCRRepository using ML Kit for text recognition.
-/// TODO: Complete implementation with actual OCR logic.
 class OCRRepositoryImpl implements OCRRepository {
   final OCRLocalDataSource localDataSource;
 
