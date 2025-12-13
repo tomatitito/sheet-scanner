@@ -11,6 +11,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/ocr/presentation/cubit/ocr_scan_cubit.dart';
 import 'package:sheet_scanner/features/ocr/presentation/cubit/ocr_scan_state.dart';
+import 'package:sheet_scanner/features/ocr/presentation/widgets/adjustable_scan_frame.dart';
 
 /// Mobile camera scanning page for sheet music covers
 /// Allows user to capture or select image, then process with OCR
@@ -281,39 +282,15 @@ class _ScanCameraPageState extends State<ScanCameraPage>
                   ),
                 ),
 
-                // Guide overlay
+                // Adjustable scanning frame overlay
                 if (_isCameraInitialized &&
                     !state.maybeWhen(
                       processing: (imagePath, progress, currentOperation) =>
                           true,
                       orElse: () => false,
                     ))
-                  Center(
-                    child: Container(
-                      width: 280,
-                      height: 380,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.7),
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Position cover page\nwithin frame',
-                            textAlign: TextAlign.center,
-                            style:
-                                Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  const AdjustableScanFrame(
+                    showGuideText: true,
                   ),
 
                 // Grid overlay (when enabled)
