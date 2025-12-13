@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/core/keyboard/keyboard_shortcuts.dart';
 import 'package:sheet_scanner/core/router/app_router.dart';
@@ -58,8 +59,8 @@ class _MainAppState extends State<MainApp> {
         break;
       case KeyboardShortcuts.escapeAction:
         // Close dialogs or go back
-        if (Navigator.canPop(context)) {
-          Navigator.pop(context);
+        if (context.canPop()) {
+          context.pop();
         }
         break;
       default:

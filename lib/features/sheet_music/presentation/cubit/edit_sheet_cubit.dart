@@ -144,4 +144,10 @@ class EditSheetCubit extends Cubit<EditSheetState> {
 
   /// Reload the sheet music data
   Future<void> refresh(int sheetMusicId) => loadSheetMusic(sheetMusicId);
+
+  @override
+  Future<void> close() async {
+    // Clean up resources if needed
+    return super.close();
+  }
 }

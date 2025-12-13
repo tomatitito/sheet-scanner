@@ -157,4 +157,10 @@ class OCRReviewCubit extends Cubit<OCRReviewState> {
   void reset() {
     emit(const OCRReviewState.initial());
   }
+
+  @override
+  Future<void> close() async {
+    // Clean up resources if needed
+    return super.close();
+  }
 }

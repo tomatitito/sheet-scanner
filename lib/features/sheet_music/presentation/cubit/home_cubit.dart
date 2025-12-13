@@ -29,4 +29,10 @@ class HomeCubit extends Cubit<HomeState> {
 
   /// Refresh the sheet music list
   Future<void> refresh() => loadSheetMusic();
+
+  @override
+  Future<void> close() async {
+    // Clean up resources if needed
+    return super.close();
+  }
 }

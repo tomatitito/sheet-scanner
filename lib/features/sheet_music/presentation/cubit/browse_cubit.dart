@@ -146,4 +146,10 @@ class BrowseCubit extends Cubit<BrowseState> {
     }
     return tagsSet.toList()..sort();
   }
+
+  @override
+  Future<void> close() async {
+    // Clean up resources if needed
+    return super.close();
+  }
 }

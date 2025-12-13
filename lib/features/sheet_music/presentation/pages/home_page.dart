@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/core/utils/platform_helper.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/home_cubit.dart';
@@ -109,7 +110,7 @@ class _HomeView extends StatelessWidget {
                       onSuccess: () {
                         context.read<HomeCubit>().refresh();
                       },
-                      onClose: () => Navigator.pop(context),
+                      onClose: () => context.pop(),
                     ),
                   );
                 },
@@ -131,7 +132,7 @@ class _HomeView extends StatelessWidget {
                         isScrollControlled: true,
                         builder: (context) => SheetDetailPage(
                           sheetMusicId: sheetMusic.id,
-                          onClose: () => Navigator.pop(context),
+                          onClose: () => context.pop(),
                         ),
                       );
                     },
@@ -155,7 +156,7 @@ class _HomeView extends StatelessWidget {
               onSuccess: () {
                 context.read<HomeCubit>().refresh();
               },
-              onClose: () => Navigator.pop(context),
+              onClose: () => context.pop(),
             ),
           );
         },

@@ -58,4 +58,10 @@ class SheetDetailCubit extends Cubit<SheetDetailState> {
       );
     }
   }
+
+  @override
+  Future<void> close() async {
+    // Clean up resources if needed
+    return super.close();
+  }
 }

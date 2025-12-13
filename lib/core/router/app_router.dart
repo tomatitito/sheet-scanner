@@ -46,11 +46,28 @@ final appRouter = GoRouter(
             body: Center(child: Text('Invalid OCR review parameters')),
           );
         }
+
+        // Safely extract and validate required fields
+        final imagePath = extra['imagePath'] as String?;
+        final detectedTitle = extra['detectedTitle'] as String?;
+        final detectedComposer = extra['detectedComposer'] as String?;
+        final confidence = extra['confidence'] as double?;
+
+        // Validate all required parameters are present and have correct types
+        if (imagePath == null || detectedTitle == null ||
+            detectedComposer == null || confidence == null) {
+          return const Scaffold(
+            body: Center(
+              child: Text('Invalid OCR review parameters: missing required fields'),
+            ),
+          );
+        }
+
         return OCRReviewWrapper(
-          imagePath: extra['imagePath'] as String,
-          detectedTitle: extra['detectedTitle'] as String,
-          detectedComposer: extra['detectedComposer'] as String,
-          confidence: extra['confidence'] as double,
+          imagePath: imagePath,
+          detectedTitle: detectedTitle,
+          detectedComposer: detectedComposer,
+          confidence: confidence,
         );
       },
     ),

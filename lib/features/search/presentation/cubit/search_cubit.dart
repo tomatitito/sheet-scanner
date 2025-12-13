@@ -64,4 +64,10 @@ class SearchCubit extends Cubit<SearchState> {
   void clearSearch() {
     emit(const SearchState.idle());
   }
+
+  @override
+  Future<void> close() async {
+    // Clean up resources if needed
+    return super.close();
+  }
 }

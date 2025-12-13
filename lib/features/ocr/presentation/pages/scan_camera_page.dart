@@ -183,6 +183,7 @@ class _ScanCameraPageState extends State<ScanCameraPage>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _cameraController?.dispose();
+    _ocrScanCubit.close();
     super.dispose();
   }
 
@@ -506,7 +507,7 @@ class _ScanCameraPageState extends State<ScanCameraPage>
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('Got it'),
           ),
         ],
@@ -524,12 +525,12 @@ class _ScanCameraPageState extends State<ScanCameraPage>
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              context.pop();
               _openAppSettings();
             },
             child: const Text('Open Settings'),

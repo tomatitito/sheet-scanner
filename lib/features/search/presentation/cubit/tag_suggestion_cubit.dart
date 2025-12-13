@@ -22,4 +22,10 @@ class TagSuggestionCubit extends Cubit<TagSuggestionState> {
       (tags) => emit(TagSuggestionState.loaded(suggestions: tags)),
     );
   }
+
+  @override
+  Future<void> close() async {
+    // Clean up resources if needed
+    return super.close();
+  }
 }

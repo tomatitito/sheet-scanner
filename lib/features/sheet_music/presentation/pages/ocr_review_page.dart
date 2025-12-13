@@ -239,7 +239,7 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.close),
-          onPressed: widget.onClose ?? () => Navigator.pop(context),
+          onPressed: widget.onClose ?? () => context.pop(),
         ),
         title: const Text('Review & Edit'),
         actions: [
@@ -516,7 +516,7 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
               child: OutlinedButton(
                 onPressed: isSubmitting
                     ? null
-                    : (widget.onClose ?? () => Navigator.pop(context)),
+                    : (widget.onClose ?? () => context.pop()),
                 child: const Text('Cancel'),
               ),
             ),

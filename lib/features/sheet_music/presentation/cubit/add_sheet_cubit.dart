@@ -115,4 +115,10 @@ class AddSheetCubit extends Cubit<AddSheetState> {
   void reset() {
     emit(const AddSheetInitial());
   }
+
+  @override
+  Future<void> close() async {
+    // Clean up resources if needed
+    return super.close();
+  }
 }
