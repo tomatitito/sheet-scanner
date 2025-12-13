@@ -23,7 +23,7 @@ class MockOCRRepository implements OCRRepository {
 
     // Return mock OCR results
     return Right(
-      OCRResult(
+      const OCRResult(
         text: 'Test Title\nTest Composer',
         confidence: 0.95,
       ),
@@ -36,7 +36,7 @@ class MockOCRRepository implements OCRRepository {
   ) async {
     return Right(
       imagePaths
-          .map((path) => OCRResult(
+          .map((path) => const OCRResult(
                 text: 'Test Title\nTest Composer',
                 confidence: 0.95,
               ))

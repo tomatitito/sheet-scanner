@@ -318,9 +318,56 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                     child: OutlinedButton.icon(
                       onPressed: isSubmitting
                           ? null
-                          : () {
-                              // Navigate to scan camera page for OCR
-                              context.push('/scan');
+                          : () async {
+                              // Navigate to scan camera page for OCR and await result
+                              debugPrint('[AddSheetPage] Navigating to /scan for OCR');
+                              final result = await context.push<Map<String, dynamic>>('/scan');
+
+                              // If OCR data was returned, populate the form
+                              if (result != null) {
+                                debugPrint('[AddSheetPage] Received OCR data: ${result.keys.join(", ")}');
+
+                                if (!mounted) {
+                                  debugPrint('[AddSheetPage] Widget not mounted, cannot update form');
+                                  return;
+                                }
+
+                                setState(() {
+                                  if (result['title'] != null) {
+                                    widget.titleController.text = result['title'] as String;
+                                    debugPrint('[AddSheetPage] Set title: "${result['title']}"');
+                                  }
+                                  if (result['composer'] != null) {
+                                    widget.composerController.text = result['composer'] as String;
+                                    debugPrint('[AddSheetPage] Set composer: "${result['composer']}"');
+                                  }
+                                  if (result['notes'] != null) {
+                                    widget.notesController.text = result['notes'] as String;
+                                    debugPrint('[AddSheetPage] Set notes: "${result['notes']}"');
+                                  }
+                                  if (result['tags'] != null && result['tags'] is List) {
+                                    widget.tags.clear();
+                                    widget.tags.addAll((result['tags'] as List).cast<String>());
+                                    debugPrint('[AddSheetPage] Set tags: ${widget.tags.join(", ")}');
+                                  }
+                                });
+
+                                // Validate the form with the new data
+                                _validateForm();
+
+                                // Show success message
+                                if (mounted) {
+                                  // ignore: use_build_context_synchronously
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Form populated with scanned data'),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                debugPrint('[AddSheetPage] Scan returned null (user cancelled)');
+                              }
                             },
                       icon: const Icon(Icons.camera_alt),
                       label: const Text('Scan Sheet Music'),

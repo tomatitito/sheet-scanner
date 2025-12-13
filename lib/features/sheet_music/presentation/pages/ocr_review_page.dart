@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/ocr_review_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/ocr_review_state.dart';
@@ -109,12 +110,35 @@ class _OCRReviewPageState extends State<OCRReviewPage> {
   }
 
   void _submitForm() {
-    context.read<OCRReviewCubit>().submitForm(
+    // Validate the form first
+    context.read<OCRReviewCubit>().validate(
           title: _titleController.text,
           composer: _composerController.text,
           notes: _notesController.text,
           tags: _tags,
         );
+
+    // Return the OCR data to the previous page
+    final isValid = context.read<OCRReviewCubit>().state.maybeWhen(
+          initialized: (dTitle, dComposer, conf, image, eTitle, eComposer,
+                  eNotes, tags, isValid, errors, isSubmitting, error) =>
+              isValid,
+          orElse: () => false,
+        );
+
+    if (isValid) {
+      // Pop with OCR data to return to previous page (ScanCameraPage or AddSheetPage)
+      final result = {
+        'title': _titleController.text.trim(),
+        'composer': _composerController.text.trim(),
+        'notes': _notesController.text.isEmpty ? null : _notesController.text.trim(),
+        'tags': List<String>.from(_tags),
+      };
+
+      if (mounted) {
+        context.pop(result);
+      }
+    }
   }
 
   @override
@@ -127,32 +151,7 @@ class _OCRReviewPageState extends State<OCRReviewPage> {
           confidence: widget.confidence,
           capturedImage: widget.capturedImage,
         ),
-      child: BlocListener<OCRReviewCubit, OCRReviewState>(
-        listener: (context, state) {
-          state.whenOrNull(
-            success: (sheetMusic, message) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(message),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-              widget.onSuccess?.call();
-              if (mounted && context.mounted) {
-                Navigator.pop(context);
-              }
-            },
-            error: (message) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Error: $message'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            },
-          );
-        },
-        child: _OCRReviewForm(
+      child: _OCRReviewForm(
           capturedImage: widget.capturedImage,
           confidence: widget.confidence,
           titleController: _titleController,
@@ -167,7 +166,6 @@ class _OCRReviewPageState extends State<OCRReviewPage> {
           onSubmit: _submitForm,
           onClose: widget.onClose,
         ),
-      ),
     );
   }
 }
@@ -247,12 +245,6 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
         actions: [
           BlocBuilder<OCRReviewCubit, OCRReviewState>(
             builder: (context, state) {
-              final isSubmitting = state.maybeWhen(
-                initialized: (dTitle, dComposer, conf, image, eTitle, eComposer,
-                        eNotes, tags, isValid, errors, isSubmitting, error) =>
-                    isSubmitting,
-                orElse: () => false,
-              );
               final isValid = state.maybeWhen(
                 initialized: (dTitle, dComposer, conf, image, eTitle, eComposer,
                         eNotes, tags, isValid, errors, isSubmitting, error) =>
@@ -260,14 +252,8 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
                 orElse: () => false,
               );
               return TextButton(
-                onPressed: (isSubmitting || !isValid) ? null : widget.onSubmit,
-                child: isSubmitting
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Save'),
+                onPressed: !isValid ? null : widget.onSubmit,
+                child: const Text('Use These Values'),
               );
             },
           ),
@@ -537,15 +523,9 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
             const SizedBox(width: 8),
             Expanded(
               child: ElevatedButton.icon(
-                onPressed: (isSubmitting) ? null : widget.onSubmit,
-                icon: isSubmitting
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.check),
-                label: Text(isSubmitting ? 'Saving...' : 'Save Sheet'),
+                onPressed: widget.onSubmit,
+                icon: const Icon(Icons.check),
+                label: const Text('Use These Values'),
               ),
             ),
           ],

@@ -201,7 +201,7 @@ class _ScanCameraPageState extends State<ScanCameraPage>
             processing: (imagePath, progress, currentOperation) {
               // User can see progress
             },
-            ocrComplete: (imagePath, extractedText, confidence) {
+            ocrComplete: (imagePath, extractedText, confidence) async {
               // Navigate to review page with OCR results
               _logger.info('OCR complete, navigating to review');
               // Parse the extracted text to extract title and composer
@@ -213,8 +213,13 @@ class _ScanCameraPageState extends State<ScanCameraPage>
               final detectedTitle = lines.isNotEmpty ? lines.first : '';
               final detectedComposer = lines.length > 1 ? lines[1] : '';
 
-              if (!mounted) return;
-              context.push(
+              if (!mounted) {
+                _logger.warning('Widget not mounted, skipping OCR review navigation');
+                return;
+              }
+
+              _logger.info('Pushing to /ocr-review with detectedTitle="$detectedTitle", detectedComposer="$detectedComposer"');
+              final result = await context.push<Map<String, dynamic>>(
                 '/ocr-review',
                 extra: {
                   'imagePath': imagePath,
@@ -223,6 +228,19 @@ class _ScanCameraPageState extends State<ScanCameraPage>
                   'confidence': confidence,
                 },
               );
+
+              // If user confirmed OCR results, pop back to AddSheetPage with the data
+              if (result != null) {
+                if (!mounted) {
+                  _logger.warning('Widget not mounted after OCR review, cannot pop with result');
+                  return;
+                }
+                _logger.info('OCR review returned data: ${result.keys.join(", ")}. Popping back to AddSheetPage.');
+                // ignore: use_build_context_synchronously
+                context.pop(result);
+              } else {
+                _logger.info('OCR review returned null (user cancelled)');
+              }
             },
             error: (failure, imagePath) {
               _showError(failure.message);
