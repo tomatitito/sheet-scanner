@@ -230,8 +230,8 @@ void setupInjection() {
 
   // ==================== PRESENTATION ====================
   // Backup Cubits
-  getIt.registerSingleton<BackupCubit>(
-    BackupCubit(
+  getIt.registerFactory<BackupCubit>(
+    () => BackupCubit(
       exportDatabaseUseCase: getIt<ExportDatabaseUseCase>(),
       exportToJsonUseCase: getIt<ExportToJsonUseCase>(),
       exportToZipUseCase: getIt<ExportToZipUseCase>(),
@@ -241,67 +241,67 @@ void setupInjection() {
   );
 
   // Sheet Music Cubits
-  getIt.registerSingleton<HomeCubit>(
-    HomeCubit(
+  getIt.registerFactory<HomeCubit>(
+    () => HomeCubit(
       getAllSheetMusicUseCase: getIt<GetAllSheetMusicUseCase>(),
     ),
   );
 
-  getIt.registerSingleton<SheetDetailCubit>(
-    SheetDetailCubit(
+  getIt.registerFactory<SheetDetailCubit>(
+    () => SheetDetailCubit(
       getSheetMusicByIdUseCase: getIt<GetSheetMusicByIdUseCase>(),
       deleteSheetMusicUseCase: getIt<DeleteSheetMusicUseCase>(),
     ),
   );
 
-  getIt.registerSingleton<AddSheetCubit>(
-    AddSheetCubit(
+  getIt.registerFactory<AddSheetCubit>(
+    () => AddSheetCubit(
       addSheetMusicUseCase: getIt<AddSheetMusicUseCase>(),
     ),
   );
 
-  getIt.registerSingleton<EditSheetCubit>(
-    EditSheetCubit(
+  getIt.registerFactory<EditSheetCubit>(
+    () => EditSheetCubit(
       getSheetMusicByIdUseCase: getIt<GetSheetMusicByIdUseCase>(),
       updateSheetMusicUseCase: getIt<UpdateSheetMusicUseCase>(),
     ),
   );
 
-  getIt.registerSingleton<BrowseCubit>(
-    BrowseCubit(
+  getIt.registerFactory<BrowseCubit>(
+    () => BrowseCubit(
       getAllSheetMusicUseCase: getIt<GetAllSheetMusicUseCase>(),
     ),
   );
 
-  getIt.registerSingleton<BulkOperationsCubit>(
-    BulkOperationsCubit(
+  getIt.registerFactory<BulkOperationsCubit>(
+    () => BulkOperationsCubit(
       deleteSheetMusicUseCase: getIt<DeleteSheetMusicUseCase>(),
     ),
   );
 
-  getIt.registerSingleton<OCRReviewCubit>(
-    OCRReviewCubit(
+  getIt.registerFactory<OCRReviewCubit>(
+    () => OCRReviewCubit(
       getIt<AddSheetMusicUseCase>(),
     ),
   );
 
   // OCR Cubits
-  getIt.registerSingleton<OCRScanCubit>(
-    OCRScanCubit(
+  getIt.registerFactory<OCRScanCubit>(
+    () => OCRScanCubit(
       recognizeTextUseCase: getIt<RecognizeTextUseCase>(),
     ),
   );
 
   // Search Cubits
-  getIt.registerSingleton<SearchCubit>(
-    SearchCubit(
+  getIt.registerFactory<SearchCubit>(
+    () => SearchCubit(
       fullTextSearchUseCase: getIt<FullTextSearchUseCase>(),
       getAllTagsUseCase: getIt<GetAllTagsUseCase>(),
     ),
   );
 
-  getIt.registerSingleton<TagCubit>(
-    TagCubit(
+  getIt.registerFactory<TagCubit>(
+    () => TagCubit(
       getAllTagsUseCase: getIt<GetAllTagsUseCase>(),
       createTagUseCase: getIt<CreateTagUseCase>(),
       deleteTagUseCase: getIt<DeleteTagUseCase>(),
@@ -309,8 +309,8 @@ void setupInjection() {
     ),
   );
 
-  getIt.registerSingleton<TagSuggestionCubit>(
-    TagSuggestionCubit(
+  getIt.registerFactory<TagSuggestionCubit>(
+    () => TagSuggestionCubit(
       getAllTagsUseCase: getIt<GetAllTagsUseCase>(),
     ),
   );
