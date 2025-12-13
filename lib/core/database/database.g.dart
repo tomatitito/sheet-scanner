@@ -1,0 +1,1178 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'database.dart';
+
+// ignore_for_file: type=lint
+class $SheetMusicTableTable extends SheetMusicTable
+    with TableInfo<$SheetMusicTableTable, SheetMusicModel> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SheetMusicTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _composerMeta =
+      const VerificationMeta('composer');
+  @override
+  late final GeneratedColumn<String> composer = GeneratedColumn<String>(
+      'composer', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+      'notes', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, title, composer, notes, createdAt, updatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sheet_music_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<SheetMusicModel> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('composer')) {
+      context.handle(_composerMeta,
+          composer.isAcceptableOrUnknown(data['composer']!, _composerMeta));
+    } else if (isInserting) {
+      context.missing(_composerMeta);
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+          _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SheetMusicModel map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SheetMusicModel(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      composer: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}composer'])!,
+      notes: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}notes']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $SheetMusicTableTable createAlias(String alias) {
+    return $SheetMusicTableTable(attachedDatabase, alias);
+  }
+}
+
+class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
+  final int id;
+  final String title;
+  final String composer;
+  final String? notes;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const SheetMusicModel(
+      {required this.id,
+      required this.title,
+      required this.composer,
+      this.notes,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['title'] = Variable<String>(title);
+    map['composer'] = Variable<String>(composer);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  SheetMusicTableCompanion toCompanion(bool nullToAbsent) {
+    return SheetMusicTableCompanion(
+      id: Value(id),
+      title: Value(title),
+      composer: Value(composer),
+      notes:
+          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory SheetMusicModel.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SheetMusicModel(
+      id: serializer.fromJson<int>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      composer: serializer.fromJson<String>(json['composer']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'title': serializer.toJson<String>(title),
+      'composer': serializer.toJson<String>(composer),
+      'notes': serializer.toJson<String?>(notes),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  SheetMusicModel copyWith(
+          {int? id,
+          String? title,
+          String? composer,
+          Value<String?> notes = const Value.absent(),
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      SheetMusicModel(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        composer: composer ?? this.composer,
+        notes: notes.present ? notes.value : this.notes,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  SheetMusicModel copyWithCompanion(SheetMusicTableCompanion data) {
+    return SheetMusicModel(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      composer: data.composer.present ? data.composer.value : this.composer,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SheetMusicModel(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('composer: $composer, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, title, composer, notes, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SheetMusicModel &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.composer == this.composer &&
+          other.notes == this.notes &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
+  final Value<int> id;
+  final Value<String> title;
+  final Value<String> composer;
+  final Value<String?> notes;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const SheetMusicTableCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.composer = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  SheetMusicTableCompanion.insert({
+    this.id = const Value.absent(),
+    required String title,
+    required String composer,
+    this.notes = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  })  : title = Value(title),
+        composer = Value(composer),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<SheetMusicModel> custom({
+    Expression<int>? id,
+    Expression<String>? title,
+    Expression<String>? composer,
+    Expression<String>? notes,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (composer != null) 'composer': composer,
+      if (notes != null) 'notes': notes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  SheetMusicTableCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? title,
+      Value<String>? composer,
+      Value<String?>? notes,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt}) {
+    return SheetMusicTableCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      composer: composer ?? this.composer,
+      notes: notes ?? this.notes,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (composer.present) {
+      map['composer'] = Variable<String>(composer.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SheetMusicTableCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('composer: $composer, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $TagsTableTable extends TagsTable
+    with TableInfo<$TagsTableTable, TagModel> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TagsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+  @override
+  List<GeneratedColumn> get $columns => [id, name];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'tags_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<TagModel> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TagModel map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TagModel(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+    );
+  }
+
+  @override
+  $TagsTableTable createAlias(String alias) {
+    return $TagsTableTable(attachedDatabase, alias);
+  }
+}
+
+class TagModel extends DataClass implements Insertable<TagModel> {
+  final int id;
+  final String name;
+  const TagModel({required this.id, required this.name});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    return map;
+  }
+
+  TagsTableCompanion toCompanion(bool nullToAbsent) {
+    return TagsTableCompanion(
+      id: Value(id),
+      name: Value(name),
+    );
+  }
+
+  factory TagModel.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TagModel(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+    };
+  }
+
+  TagModel copyWith({int? id, String? name}) => TagModel(
+        id: id ?? this.id,
+        name: name ?? this.name,
+      );
+  TagModel copyWithCompanion(TagsTableCompanion data) {
+    return TagModel(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TagModel(')
+          ..write('id: $id, ')
+          ..write('name: $name')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, name);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TagModel && other.id == this.id && other.name == this.name);
+}
+
+class TagsTableCompanion extends UpdateCompanion<TagModel> {
+  final Value<int> id;
+  final Value<String> name;
+  const TagsTableCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+  });
+  TagsTableCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+  }) : name = Value(name);
+  static Insertable<TagModel> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+    });
+  }
+
+  TagsTableCompanion copyWith({Value<int>? id, Value<String>? name}) {
+    return TagsTableCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TagsTableCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SheetMusicTagsTableTable extends SheetMusicTagsTable
+    with TableInfo<$SheetMusicTagsTableTable, SheetMusicTagModel> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SheetMusicTagsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _sheetMusicIdMeta =
+      const VerificationMeta('sheetMusicId');
+  @override
+  late final GeneratedColumn<int> sheetMusicId = GeneratedColumn<int>(
+      'sheet_music_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _tagIdMeta = const VerificationMeta('tagId');
+  @override
+  late final GeneratedColumn<int> tagId = GeneratedColumn<int>(
+      'tag_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [sheetMusicId, tagId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sheet_music_tags_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<SheetMusicTagModel> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('sheet_music_id')) {
+      context.handle(
+          _sheetMusicIdMeta,
+          sheetMusicId.isAcceptableOrUnknown(
+              data['sheet_music_id']!, _sheetMusicIdMeta));
+    } else if (isInserting) {
+      context.missing(_sheetMusicIdMeta);
+    }
+    if (data.containsKey('tag_id')) {
+      context.handle(
+          _tagIdMeta, tagId.isAcceptableOrUnknown(data['tag_id']!, _tagIdMeta));
+    } else if (isInserting) {
+      context.missing(_tagIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {sheetMusicId, tagId};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+        {sheetMusicId, tagId},
+      ];
+  @override
+  SheetMusicTagModel map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SheetMusicTagModel(
+      sheetMusicId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}sheet_music_id'])!,
+      tagId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}tag_id'])!,
+    );
+  }
+
+  @override
+  $SheetMusicTagsTableTable createAlias(String alias) {
+    return $SheetMusicTagsTableTable(attachedDatabase, alias);
+  }
+}
+
+class SheetMusicTagModel extends DataClass
+    implements Insertable<SheetMusicTagModel> {
+  final int sheetMusicId;
+  final int tagId;
+  const SheetMusicTagModel({required this.sheetMusicId, required this.tagId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['sheet_music_id'] = Variable<int>(sheetMusicId);
+    map['tag_id'] = Variable<int>(tagId);
+    return map;
+  }
+
+  SheetMusicTagsTableCompanion toCompanion(bool nullToAbsent) {
+    return SheetMusicTagsTableCompanion(
+      sheetMusicId: Value(sheetMusicId),
+      tagId: Value(tagId),
+    );
+  }
+
+  factory SheetMusicTagModel.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SheetMusicTagModel(
+      sheetMusicId: serializer.fromJson<int>(json['sheetMusicId']),
+      tagId: serializer.fromJson<int>(json['tagId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'sheetMusicId': serializer.toJson<int>(sheetMusicId),
+      'tagId': serializer.toJson<int>(tagId),
+    };
+  }
+
+  SheetMusicTagModel copyWith({int? sheetMusicId, int? tagId}) =>
+      SheetMusicTagModel(
+        sheetMusicId: sheetMusicId ?? this.sheetMusicId,
+        tagId: tagId ?? this.tagId,
+      );
+  SheetMusicTagModel copyWithCompanion(SheetMusicTagsTableCompanion data) {
+    return SheetMusicTagModel(
+      sheetMusicId: data.sheetMusicId.present
+          ? data.sheetMusicId.value
+          : this.sheetMusicId,
+      tagId: data.tagId.present ? data.tagId.value : this.tagId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SheetMusicTagModel(')
+          ..write('sheetMusicId: $sheetMusicId, ')
+          ..write('tagId: $tagId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(sheetMusicId, tagId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SheetMusicTagModel &&
+          other.sheetMusicId == this.sheetMusicId &&
+          other.tagId == this.tagId);
+}
+
+class SheetMusicTagsTableCompanion extends UpdateCompanion<SheetMusicTagModel> {
+  final Value<int> sheetMusicId;
+  final Value<int> tagId;
+  final Value<int> rowid;
+  const SheetMusicTagsTableCompanion({
+    this.sheetMusicId = const Value.absent(),
+    this.tagId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SheetMusicTagsTableCompanion.insert({
+    required int sheetMusicId,
+    required int tagId,
+    this.rowid = const Value.absent(),
+  })  : sheetMusicId = Value(sheetMusicId),
+        tagId = Value(tagId);
+  static Insertable<SheetMusicTagModel> custom({
+    Expression<int>? sheetMusicId,
+    Expression<int>? tagId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (sheetMusicId != null) 'sheet_music_id': sheetMusicId,
+      if (tagId != null) 'tag_id': tagId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SheetMusicTagsTableCompanion copyWith(
+      {Value<int>? sheetMusicId, Value<int>? tagId, Value<int>? rowid}) {
+    return SheetMusicTagsTableCompanion(
+      sheetMusicId: sheetMusicId ?? this.sheetMusicId,
+      tagId: tagId ?? this.tagId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (sheetMusicId.present) {
+      map['sheet_music_id'] = Variable<int>(sheetMusicId.value);
+    }
+    if (tagId.present) {
+      map['tag_id'] = Variable<int>(tagId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SheetMusicTagsTableCompanion(')
+          ..write('sheetMusicId: $sheetMusicId, ')
+          ..write('tagId: $tagId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+abstract class _$AppDatabase extends GeneratedDatabase {
+  _$AppDatabase(QueryExecutor e) : super(e);
+  $AppDatabaseManager get managers => $AppDatabaseManager(this);
+  late final $SheetMusicTableTable sheetMusicTable =
+      $SheetMusicTableTable(this);
+  late final $TagsTableTable tagsTable = $TagsTableTable(this);
+  late final $SheetMusicTagsTableTable sheetMusicTagsTable =
+      $SheetMusicTagsTableTable(this);
+  @override
+  Iterable<TableInfo<Table, Object?>> get allTables =>
+      allSchemaEntities.whereType<TableInfo<Table, Object?>>();
+  @override
+  List<DatabaseSchemaEntity> get allSchemaEntities =>
+      [sheetMusicTable, tagsTable, sheetMusicTagsTable];
+}
+
+typedef $$SheetMusicTableTableCreateCompanionBuilder = SheetMusicTableCompanion
+    Function({
+  Value<int> id,
+  required String title,
+  required String composer,
+  Value<String?> notes,
+  required DateTime createdAt,
+  required DateTime updatedAt,
+});
+typedef $$SheetMusicTableTableUpdateCompanionBuilder = SheetMusicTableCompanion
+    Function({
+  Value<int> id,
+  Value<String> title,
+  Value<String> composer,
+  Value<String?> notes,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+});
+
+class $$SheetMusicTableTableFilterComposer
+    extends Composer<_$AppDatabase, $SheetMusicTableTable> {
+  $$SheetMusicTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get title => $composableBuilder(
+      column: $table.title, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get composer => $composableBuilder(
+      column: $table.composer, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get notes => $composableBuilder(
+      column: $table.notes, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$SheetMusicTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $SheetMusicTableTable> {
+  $$SheetMusicTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get title => $composableBuilder(
+      column: $table.title, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get composer => $composableBuilder(
+      column: $table.composer, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+      column: $table.notes, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$SheetMusicTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SheetMusicTableTable> {
+  $$SheetMusicTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get composer =>
+      $composableBuilder(column: $table.composer, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$SheetMusicTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $SheetMusicTableTable,
+    SheetMusicModel,
+    $$SheetMusicTableTableFilterComposer,
+    $$SheetMusicTableTableOrderingComposer,
+    $$SheetMusicTableTableAnnotationComposer,
+    $$SheetMusicTableTableCreateCompanionBuilder,
+    $$SheetMusicTableTableUpdateCompanionBuilder,
+    (
+      SheetMusicModel,
+      BaseReferences<_$AppDatabase, $SheetMusicTableTable, SheetMusicModel>
+    ),
+    SheetMusicModel,
+    PrefetchHooks Function()> {
+  $$SheetMusicTableTableTableManager(
+      _$AppDatabase db, $SheetMusicTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SheetMusicTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SheetMusicTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SheetMusicTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> composer = const Value.absent(),
+            Value<String?> notes = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+          }) =>
+              SheetMusicTableCompanion(
+            id: id,
+            title: title,
+            composer: composer,
+            notes: notes,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String title,
+            required String composer,
+            Value<String?> notes = const Value.absent(),
+            required DateTime createdAt,
+            required DateTime updatedAt,
+          }) =>
+              SheetMusicTableCompanion.insert(
+            id: id,
+            title: title,
+            composer: composer,
+            notes: notes,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$SheetMusicTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $SheetMusicTableTable,
+    SheetMusicModel,
+    $$SheetMusicTableTableFilterComposer,
+    $$SheetMusicTableTableOrderingComposer,
+    $$SheetMusicTableTableAnnotationComposer,
+    $$SheetMusicTableTableCreateCompanionBuilder,
+    $$SheetMusicTableTableUpdateCompanionBuilder,
+    (
+      SheetMusicModel,
+      BaseReferences<_$AppDatabase, $SheetMusicTableTable, SheetMusicModel>
+    ),
+    SheetMusicModel,
+    PrefetchHooks Function()>;
+typedef $$TagsTableTableCreateCompanionBuilder = TagsTableCompanion Function({
+  Value<int> id,
+  required String name,
+});
+typedef $$TagsTableTableUpdateCompanionBuilder = TagsTableCompanion Function({
+  Value<int> id,
+  Value<String> name,
+});
+
+class $$TagsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $TagsTableTable> {
+  $$TagsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
+}
+
+class $$TagsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $TagsTableTable> {
+  $$TagsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
+}
+
+class $$TagsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TagsTableTable> {
+  $$TagsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+}
+
+class $$TagsTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $TagsTableTable,
+    TagModel,
+    $$TagsTableTableFilterComposer,
+    $$TagsTableTableOrderingComposer,
+    $$TagsTableTableAnnotationComposer,
+    $$TagsTableTableCreateCompanionBuilder,
+    $$TagsTableTableUpdateCompanionBuilder,
+    (TagModel, BaseReferences<_$AppDatabase, $TagsTableTable, TagModel>),
+    TagModel,
+    PrefetchHooks Function()> {
+  $$TagsTableTableTableManager(_$AppDatabase db, $TagsTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TagsTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TagsTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TagsTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+          }) =>
+              TagsTableCompanion(
+            id: id,
+            name: name,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String name,
+          }) =>
+              TagsTableCompanion.insert(
+            id: id,
+            name: name,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$TagsTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $TagsTableTable,
+    TagModel,
+    $$TagsTableTableFilterComposer,
+    $$TagsTableTableOrderingComposer,
+    $$TagsTableTableAnnotationComposer,
+    $$TagsTableTableCreateCompanionBuilder,
+    $$TagsTableTableUpdateCompanionBuilder,
+    (TagModel, BaseReferences<_$AppDatabase, $TagsTableTable, TagModel>),
+    TagModel,
+    PrefetchHooks Function()>;
+typedef $$SheetMusicTagsTableTableCreateCompanionBuilder
+    = SheetMusicTagsTableCompanion Function({
+  required int sheetMusicId,
+  required int tagId,
+  Value<int> rowid,
+});
+typedef $$SheetMusicTagsTableTableUpdateCompanionBuilder
+    = SheetMusicTagsTableCompanion Function({
+  Value<int> sheetMusicId,
+  Value<int> tagId,
+  Value<int> rowid,
+});
+
+class $$SheetMusicTagsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $SheetMusicTagsTableTable> {
+  $$SheetMusicTagsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get sheetMusicId => $composableBuilder(
+      column: $table.sheetMusicId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get tagId => $composableBuilder(
+      column: $table.tagId, builder: (column) => ColumnFilters(column));
+}
+
+class $$SheetMusicTagsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $SheetMusicTagsTableTable> {
+  $$SheetMusicTagsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get sheetMusicId => $composableBuilder(
+      column: $table.sheetMusicId,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get tagId => $composableBuilder(
+      column: $table.tagId, builder: (column) => ColumnOrderings(column));
+}
+
+class $$SheetMusicTagsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SheetMusicTagsTableTable> {
+  $$SheetMusicTagsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get sheetMusicId => $composableBuilder(
+      column: $table.sheetMusicId, builder: (column) => column);
+
+  GeneratedColumn<int> get tagId =>
+      $composableBuilder(column: $table.tagId, builder: (column) => column);
+}
+
+class $$SheetMusicTagsTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $SheetMusicTagsTableTable,
+    SheetMusicTagModel,
+    $$SheetMusicTagsTableTableFilterComposer,
+    $$SheetMusicTagsTableTableOrderingComposer,
+    $$SheetMusicTagsTableTableAnnotationComposer,
+    $$SheetMusicTagsTableTableCreateCompanionBuilder,
+    $$SheetMusicTagsTableTableUpdateCompanionBuilder,
+    (
+      SheetMusicTagModel,
+      BaseReferences<_$AppDatabase, $SheetMusicTagsTableTable,
+          SheetMusicTagModel>
+    ),
+    SheetMusicTagModel,
+    PrefetchHooks Function()> {
+  $$SheetMusicTagsTableTableTableManager(
+      _$AppDatabase db, $SheetMusicTagsTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SheetMusicTagsTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SheetMusicTagsTableTableOrderingComposer(
+                  $db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SheetMusicTagsTableTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> sheetMusicId = const Value.absent(),
+            Value<int> tagId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              SheetMusicTagsTableCompanion(
+            sheetMusicId: sheetMusicId,
+            tagId: tagId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int sheetMusicId,
+            required int tagId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              SheetMusicTagsTableCompanion.insert(
+            sheetMusicId: sheetMusicId,
+            tagId: tagId,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$SheetMusicTagsTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $SheetMusicTagsTableTable,
+    SheetMusicTagModel,
+    $$SheetMusicTagsTableTableFilterComposer,
+    $$SheetMusicTagsTableTableOrderingComposer,
+    $$SheetMusicTagsTableTableAnnotationComposer,
+    $$SheetMusicTagsTableTableCreateCompanionBuilder,
+    $$SheetMusicTagsTableTableUpdateCompanionBuilder,
+    (
+      SheetMusicTagModel,
+      BaseReferences<_$AppDatabase, $SheetMusicTagsTableTable,
+          SheetMusicTagModel>
+    ),
+    SheetMusicTagModel,
+    PrefetchHooks Function()>;
+
+class $AppDatabaseManager {
+  final _$AppDatabase _db;
+  $AppDatabaseManager(this._db);
+  $$SheetMusicTableTableTableManager get sheetMusicTable =>
+      $$SheetMusicTableTableTableManager(_db, _db.sheetMusicTable);
+  $$TagsTableTableTableManager get tagsTable =>
+      $$TagsTableTableTableManager(_db, _db.tagsTable);
+  $$SheetMusicTagsTableTableTableManager get sheetMusicTagsTable =>
+      $$SheetMusicTagsTableTableTableManager(_db, _db.sheetMusicTagsTable);
+}

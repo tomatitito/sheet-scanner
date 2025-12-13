@@ -1,0 +1,80 @@
+name: sheet_scanner
+description: A local-first Flutter app for cataloging sheet music with OCR scanning, search, and backup functionality.
+
+publish_to: 'none'
+
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management & Dependency Injection
+  flutter_bloc: ^8.1.5
+  get_it: ^7.6.0
+
+  # Equality
+  equatable: ^2.0.5
+
+  # Database
+  drift: ^2.18.0
+  sqlite3_flutter_libs: ^0.5.20
+
+  # File Storage & Paths
+  path_provider: ^2.1.2
+  path: ^1.8.3
+
+  # ML Kit (OCR) - Mobile only
+  google_mlkit_text_recognition: ^0.15.0
+
+  # Image Processing for OCR preprocessing
+  image: ^4.0.0
+
+  # Camera - Mobile only
+  camera: ^0.10.5
+  image_picker: ^1.0.0
+
+  # File Operations
+  file_picker: ^10.3.0
+  share_plus: ^12.0.1
+
+  # Compression
+  archive: ^3.4.12
+
+  # Date/Time
+  intl: ^0.19.0
+
+  # Logging
+  logging: ^1.2.0
+
+  # Navigation
+  go_router: ^14.1.4
+
+  # Freezed for immutable data classes
+  freezed_annotation: ^2.4.3
+  permission_handler: ^12.0.1
+  shared_preferences: ^2.5.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  integration_test:
+    sdk: flutter
+
+  flutter_lints: ^3.0.1
+
+  # Code generation
+  build_runner: ^2.4.12
+  drift_dev: ^2.18.0
+  freezed: ^2.4.7
+  json_serializable: ^6.8.0
+
+  # Testing
+  mocktail: ^1.0.3
+
+flutter:
+  uses-material-design: true
