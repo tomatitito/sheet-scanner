@@ -54,11 +54,14 @@ final appRouter = GoRouter(
         final confidence = extra['confidence'] as double?;
 
         // Validate all required parameters are present and have correct types
-        if (imagePath == null || detectedTitle == null ||
-            detectedComposer == null || confidence == null) {
+        if (imagePath == null ||
+            detectedTitle == null ||
+            detectedComposer == null ||
+            confidence == null) {
           return const Scaffold(
             body: Center(
-              child: Text('Invalid OCR review parameters: missing required fields'),
+              child: Text(
+                  'Invalid OCR review parameters: missing required fields'),
             ),
           );
         }

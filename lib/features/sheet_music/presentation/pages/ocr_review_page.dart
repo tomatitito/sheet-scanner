@@ -131,7 +131,8 @@ class _OCRReviewPageState extends State<OCRReviewPage> {
       final result = {
         'title': _titleController.text.trim(),
         'composer': _composerController.text.trim(),
-        'notes': _notesController.text.isEmpty ? null : _notesController.text.trim(),
+        'notes':
+            _notesController.text.isEmpty ? null : _notesController.text.trim(),
         'tags': List<String>.from(_tags),
       };
 
@@ -152,20 +153,20 @@ class _OCRReviewPageState extends State<OCRReviewPage> {
           capturedImage: widget.capturedImage,
         ),
       child: _OCRReviewForm(
-          capturedImage: widget.capturedImage,
-          confidence: widget.confidence,
-          titleController: _titleController,
-          composerController: _composerController,
-          notesController: _notesController,
-          tags: _tags,
-          onTitleChanged: _onTitleChanged,
-          onComposerChanged: _onComposerChanged,
-          onNotesChanged: _onNotesChanged,
-          onAddTag: _addTag,
-          onRemoveTag: _removeTag,
-          onSubmit: _submitForm,
-          onClose: widget.onClose,
-        ),
+        capturedImage: widget.capturedImage,
+        confidence: widget.confidence,
+        titleController: _titleController,
+        composerController: _composerController,
+        notesController: _notesController,
+        tags: _tags,
+        onTitleChanged: _onTitleChanged,
+        onComposerChanged: _onComposerChanged,
+        onNotesChanged: _onNotesChanged,
+        onAddTag: _addTag,
+        onRemoveTag: _removeTag,
+        onSubmit: _submitForm,
+        onClose: widget.onClose,
+      ),
     );
   }
 }

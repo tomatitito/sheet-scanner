@@ -320,35 +320,48 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                           ? null
                           : () async {
                               // Navigate to scan camera page for OCR and await result
-                              debugPrint('[AddSheetPage] Navigating to /scan for OCR');
-                              final result = await context.push<Map<String, dynamic>>('/scan');
+                              debugPrint(
+                                  '[AddSheetPage] Navigating to /scan for OCR');
+                              final result = await context
+                                  .push<Map<String, dynamic>>('/scan');
 
                               // If OCR data was returned, populate the form
                               if (result != null) {
-                                debugPrint('[AddSheetPage] Received OCR data: ${result.keys.join(", ")}');
+                                debugPrint(
+                                    '[AddSheetPage] Received OCR data: ${result.keys.join(", ")}');
 
                                 if (!mounted) {
-                                  debugPrint('[AddSheetPage] Widget not mounted, cannot update form');
+                                  debugPrint(
+                                      '[AddSheetPage] Widget not mounted, cannot update form');
                                   return;
                                 }
 
                                 setState(() {
                                   if (result['title'] != null) {
-                                    widget.titleController.text = result['title'] as String;
-                                    debugPrint('[AddSheetPage] Set title: "${result['title']}"');
+                                    widget.titleController.text =
+                                        result['title'] as String;
+                                    debugPrint(
+                                        '[AddSheetPage] Set title: "${result['title']}"');
                                   }
                                   if (result['composer'] != null) {
-                                    widget.composerController.text = result['composer'] as String;
-                                    debugPrint('[AddSheetPage] Set composer: "${result['composer']}"');
+                                    widget.composerController.text =
+                                        result['composer'] as String;
+                                    debugPrint(
+                                        '[AddSheetPage] Set composer: "${result['composer']}"');
                                   }
                                   if (result['notes'] != null) {
-                                    widget.notesController.text = result['notes'] as String;
-                                    debugPrint('[AddSheetPage] Set notes: "${result['notes']}"');
+                                    widget.notesController.text =
+                                        result['notes'] as String;
+                                    debugPrint(
+                                        '[AddSheetPage] Set notes: "${result['notes']}"');
                                   }
-                                  if (result['tags'] != null && result['tags'] is List) {
+                                  if (result['tags'] != null &&
+                                      result['tags'] is List) {
                                     widget.tags.clear();
-                                    widget.tags.addAll((result['tags'] as List).cast<String>());
-                                    debugPrint('[AddSheetPage] Set tags: ${widget.tags.join(", ")}');
+                                    widget.tags.addAll((result['tags'] as List)
+                                        .cast<String>());
+                                    debugPrint(
+                                        '[AddSheetPage] Set tags: ${widget.tags.join(", ")}');
                                   }
                                 });
 
@@ -360,13 +373,15 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                                   // ignore: use_build_context_synchronously
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content: Text('Form populated with scanned data'),
+                                      content: Text(
+                                          'Form populated with scanned data'),
                                       duration: Duration(seconds: 2),
                                     ),
                                   );
                                 }
                               } else {
-                                debugPrint('[AddSheetPage] Scan returned null (user cancelled)');
+                                debugPrint(
+                                    '[AddSheetPage] Scan returned null (user cancelled)');
                               }
                             },
                       icon: const Icon(Icons.camera_alt),

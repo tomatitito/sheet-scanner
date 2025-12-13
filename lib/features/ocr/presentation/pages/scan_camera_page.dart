@@ -215,11 +215,13 @@ class _ScanCameraPageState extends State<ScanCameraPage>
               final detectedComposer = lines.length > 1 ? lines[1] : '';
 
               if (!mounted) {
-                _logger.warning('Widget not mounted, skipping OCR review navigation');
+                _logger.warning(
+                    'Widget not mounted, skipping OCR review navigation');
                 return;
               }
 
-              _logger.info('Pushing to /ocr-review with detectedTitle="$detectedTitle", detectedComposer="$detectedComposer"');
+              _logger.info(
+                  'Pushing to /ocr-review with detectedTitle="$detectedTitle", detectedComposer="$detectedComposer"');
               final result = await context.push<Map<String, dynamic>>(
                 '/ocr-review',
                 extra: {
@@ -233,10 +235,12 @@ class _ScanCameraPageState extends State<ScanCameraPage>
               // If user confirmed OCR results, pop back to AddSheetPage with the data
               if (result != null) {
                 if (!mounted) {
-                  _logger.warning('Widget not mounted after OCR review, cannot pop with result');
+                  _logger.warning(
+                      'Widget not mounted after OCR review, cannot pop with result');
                   return;
                 }
-                _logger.info('OCR review returned data: ${result.keys.join(", ")}. Popping back to AddSheetPage.');
+                _logger.info(
+                    'OCR review returned data: ${result.keys.join(", ")}. Popping back to AddSheetPage.');
                 // ignore: use_build_context_synchronously
                 context.pop(result);
               } else {

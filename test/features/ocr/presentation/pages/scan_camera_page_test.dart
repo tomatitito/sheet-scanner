@@ -18,7 +18,6 @@ import 'package:flutter_test/flutter_test.dart';
 /// - Dialog dismissals correctly use Navigator.pop() (not page navigation)
 void main() {
   group('ScanCameraPage - Cancel Navigation Documentation', () {
-
     test(
       'Documentation: Cancel button behavior '
       '(ScanCameraPage line 259, _close method line 161)',
@@ -40,7 +39,8 @@ void main() {
         // This is GoRouter-compatible and fixes the P0 navigation bug
 
         expect(true, isTrue,
-            reason: 'Cancel button uses context.pop() for GoRouter compatibility');
+            reason:
+                'Cancel button uses context.pop() for GoRouter compatibility');
       },
     );
 
