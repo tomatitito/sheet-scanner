@@ -60,7 +60,7 @@ class _ScanCameraPageState extends State<ScanCameraPage>
 
       _cameraController = CameraController(
         firstCamera,
-        ResolutionPreset.high,
+        ResolutionPreset.veryHigh,
         enableAudio: false,
       );
 
@@ -112,7 +112,7 @@ class _ScanCameraPageState extends State<ScanCameraPage>
 
       final pickedFile = await _imagePicker.pickImage(
         source: ImageSource.gallery,
-        imageQuality: 85,
+        imageQuality: 100,
       );
 
       if (pickedFile != null) {
