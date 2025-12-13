@@ -331,12 +331,12 @@ void main() {
         expect(find.text('Classical'), findsAtLeast(1),
             reason: 'Tag should be added to the list');
 
-        // ACT 5 - Save the sheet music
-        final saveButton = find.text('Save');
-        expect(saveButton, findsAtLeast(1),
-            reason: 'Save button should be present');
+        // ACT 5 - Save the OCR results (button text is "Use These Values")
+        final useValuesButton = find.text('Use These Values');
+        expect(useValuesButton, findsAtLeast(1),
+            reason: 'Use These Values button should be present');
 
-        await tester.tap(saveButton.first);
+        await tester.tap(useValuesButton.first);
         await tester.pumpAndSettle(const Duration(seconds: 2));
 
         // ASSERT 1 - Verify success message appears
@@ -469,25 +469,25 @@ void main() {
         final initialCount =
             (await testDatabase.select(testDatabase.sheetMusicTable).get()).length;
 
-        // ACT - Try to save without filling required fields
-        final saveButton = find.text('Save');
+        // ACT - Try to use values without filling required fields
+        final useValuesButton = find.text('Use These Values');
 
-        // Save button should be disabled when form is invalid
-        final saveButtonWidget = tester.widget<TextButton>(saveButton.first);
-        expect(saveButtonWidget.onPressed, isNull,
-            reason: 'Save button should be disabled when form is invalid');
+        // Use These Values button should be disabled when form is invalid
+        final useValuesButtonWidget = tester.widget<TextButton>(useValuesButton.first);
+        expect(useValuesButtonWidget.onPressed, isNull,
+            reason: 'Use These Values button should be disabled when form is invalid');
 
         // Try to fill with whitespace only (should still be invalid)
         final titleField = find.byType(TextFormField).first;
         await tester.enterText(titleField, '   ');
         await tester.pumpAndSettle();
 
-        // Save should still be disabled
-        final saveButtonWidget2 =
-            tester.widget<TextButton>(find.text('Save').first);
-        expect(saveButtonWidget2.onPressed, isNull,
+        // Button should still be disabled
+        final useValuesButtonWidget2 =
+            tester.widget<TextButton>(find.text('Use These Values').first);
+        expect(useValuesButtonWidget2.onPressed, isNull,
             reason:
-                'Save button should remain disabled with whitespace-only input');
+                'Use These Values button should remain disabled with whitespace-only input');
 
         // ASSERT - Verify no data was saved
         final finalCount =
