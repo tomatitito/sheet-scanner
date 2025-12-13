@@ -86,10 +86,10 @@ class _AdjustableScanFrameState extends State<AdjustableScanFrame> {
       // Pinch-to-zoom gesture
       final scaleDelta = details.scale / _initialPinchScale;
       setState(() {
-        _frameWidth = (_initialFrameWidth * scaleDelta)
-            .clamp(_minWidth, _maxWidth);
-        _frameHeight = (_initialFrameHeight * scaleDelta)
-            .clamp(_minHeight, _maxHeight);
+        _frameWidth =
+            (_initialFrameWidth * scaleDelta).clamp(_minWidth, _maxWidth);
+        _frameHeight =
+            (_initialFrameHeight * scaleDelta).clamp(_minHeight, _maxHeight);
       });
       _initialPinchScale = details.scale;
     }
@@ -116,26 +116,26 @@ class _AdjustableScanFrameState extends State<AdjustableScanFrame> {
     setState(() {
       switch (_activeDragHandle!) {
         case _DragHandle.topLeft:
-          _frameWidth = (_initialFrameWidth - delta.dx * 2)
-              .clamp(_minWidth, _maxWidth);
+          _frameWidth =
+              (_initialFrameWidth - delta.dx * 2).clamp(_minWidth, _maxWidth);
           _frameHeight = (_initialFrameHeight - delta.dy * 2)
               .clamp(_minHeight, _maxHeight);
           break;
         case _DragHandle.topRight:
-          _frameWidth = (_initialFrameWidth + delta.dx * 2)
-              .clamp(_minWidth, _maxWidth);
+          _frameWidth =
+              (_initialFrameWidth + delta.dx * 2).clamp(_minWidth, _maxWidth);
           _frameHeight = (_initialFrameHeight - delta.dy * 2)
               .clamp(_minHeight, _maxHeight);
           break;
         case _DragHandle.bottomLeft:
-          _frameWidth = (_initialFrameWidth - delta.dx * 2)
-              .clamp(_minWidth, _maxWidth);
+          _frameWidth =
+              (_initialFrameWidth - delta.dx * 2).clamp(_minWidth, _maxWidth);
           _frameHeight = (_initialFrameHeight + delta.dy * 2)
               .clamp(_minHeight, _maxHeight);
           break;
         case _DragHandle.bottomRight:
-          _frameWidth = (_initialFrameWidth + delta.dx * 2)
-              .clamp(_minWidth, _maxWidth);
+          _frameWidth =
+              (_initialFrameWidth + delta.dx * 2).clamp(_minWidth, _maxWidth);
           _frameHeight = (_initialFrameHeight + delta.dy * 2)
               .clamp(_minHeight, _maxHeight);
           break;
