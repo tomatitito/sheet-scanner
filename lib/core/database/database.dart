@@ -37,35 +37,104 @@ class SheetMusicTagsTable extends Table {
       ];
 }
 
-/// Virtual FTS5 table for full-text search on sheet music
-@DataClassName('SheetMusicFTSModel')
-class SheetMusicFtsTable extends Table {
-  IntColumn get id => integer()();
-  TextColumn get title => text()();
-  TextColumn get composer => text()();
-  TextColumn get notes => text().nullable()();
-
-  @override
-  String? get tableName => 'sheet_music_fts';
-}
-
 @DriftDatabase(tables: [
   SheetMusicTable,
   TagsTable,
   SheetMusicTagsTable,
-  SheetMusicFtsTable,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        onCreate: (Migrator m) => m.createAll(),
+        onCreate: (Migrator m) async {
+          // Create all regular tables
+          await m.createAll();
+
+          // Create FTS5 virtual table
+          await customStatement(
+            'CREATE VIRTUAL TABLE sheet_music_fts USING fts5('
+            'id UNINDEXED, ' // Don't index id since we only use it for joins
+            'title, '
+            'composer, '
+            'notes, '
+            'content=sheet_music_table, ' // Link to content table
+            'content_rowid=id' // Use id as rowid
+            ')',
+          );
+
+          // Trigger: Insert into FTS when inserting into main table
+          await customStatement(
+            'CREATE TRIGGER sheet_music_fts_insert AFTER INSERT ON sheet_music_table BEGIN '
+            'INSERT INTO sheet_music_fts(rowid, id, title, composer, notes) '
+            'VALUES (new.id, new.id, new.title, new.composer, new.notes); '
+            'END',
+          );
+
+          // Trigger: Update FTS when updating main table
+          await customStatement(
+            'CREATE TRIGGER sheet_music_fts_update AFTER UPDATE ON sheet_music_table BEGIN '
+            'UPDATE sheet_music_fts SET title = new.title, composer = new.composer, notes = new.notes '
+            'WHERE rowid = old.id; '
+            'END',
+          );
+
+          // Trigger: Delete from FTS when deleting from main table
+          await customStatement(
+            'CREATE TRIGGER sheet_music_fts_delete AFTER DELETE ON sheet_music_table BEGIN '
+            'DELETE FROM sheet_music_fts WHERE rowid = old.id; '
+            'END',
+          );
+        },
         onUpgrade: (Migrator m, int from, int to) async {
-          // Handle migrations here
+          if (from < 2) {
+            // Migration from v1 to v2: Add FTS5 table and triggers
+
+            // Drop old FTS table if it exists (it was created incorrectly as a regular table)
+            await customStatement('DROP TABLE IF EXISTS sheet_music_fts');
+
+            // Create FTS5 virtual table
+            await customStatement(
+              'CREATE VIRTUAL TABLE sheet_music_fts USING fts5('
+              'id UNINDEXED, '
+              'title, '
+              'composer, '
+              'notes, '
+              'content=sheet_music_table, '
+              'content_rowid=id'
+              ')',
+            );
+
+            // Populate FTS table from existing data
+            await customStatement(
+              'INSERT INTO sheet_music_fts(rowid, id, title, composer, notes) '
+              'SELECT id, id, title, composer, notes FROM sheet_music_table',
+            );
+
+            // Create triggers
+            await customStatement(
+              'CREATE TRIGGER sheet_music_fts_insert AFTER INSERT ON sheet_music_table BEGIN '
+              'INSERT INTO sheet_music_fts(rowid, id, title, composer, notes) '
+              'VALUES (new.id, new.id, new.title, new.composer, new.notes); '
+              'END',
+            );
+
+            await customStatement(
+              'CREATE TRIGGER sheet_music_fts_update AFTER UPDATE ON sheet_music_table BEGIN '
+              'UPDATE sheet_music_fts SET title = new.title, composer = new.composer, notes = new.notes '
+              'WHERE rowid = old.id; '
+              'END',
+            );
+
+            await customStatement(
+              'CREATE TRIGGER sheet_music_fts_delete AFTER DELETE ON sheet_music_table BEGIN '
+              'DELETE FROM sheet_music_fts WHERE rowid = old.id; '
+              'END',
+            );
+          }
         },
       );
 
@@ -212,23 +281,6 @@ class AppDatabase extends _$AppDatabase {
     }
 
     return q.get();
-  }
-
-  /// Update FTS5 index for a sheet
-  Future<void> updateFTSIndex(SheetMusicModel sheet) async {
-    // Delete existing FTS5 entry
-    await (delete(sheetMusicFtsTable)..where((t) => t.id.equals(sheet.id)))
-        .go();
-
-    // Insert updated FTS5 entry
-    await into(sheetMusicFtsTable).insert(
-      SheetMusicFtsTableCompanion(
-        id: Value(sheet.id),
-        title: Value(sheet.title),
-        composer: Value(sheet.composer),
-        notes: Value(sheet.notes),
-      ),
-    );
   }
 }
 

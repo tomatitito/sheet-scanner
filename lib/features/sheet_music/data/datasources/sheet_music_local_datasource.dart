@@ -54,14 +54,14 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
   @override
   Future<int> insertSheetMusic(SheetMusicModel model) async {
     return database.into(database.sheetMusicTable).insert(
-      SheetMusicTableCompanion(
-        title: Value(model.title),
-        composer: Value(model.composer),
-        notes: Value(model.notes),
-        createdAt: Value(model.createdAt),
-        updatedAt: Value(model.updatedAt),
-      ),
-    );
+          SheetMusicTableCompanion(
+            title: Value(model.title),
+            composer: Value(model.composer),
+            notes: Value(model.notes),
+            createdAt: Value(model.createdAt),
+            updatedAt: Value(model.updatedAt),
+          ),
+        );
   }
 
   @override
@@ -74,35 +74,34 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
   @override
   Future<List<SheetMusicModel>> getAllSheetMusic() {
     return (database.select(database.sheetMusicTable)
-          ..orderBy([(s) => OrderingTerm(expression: s.createdAt, mode: OrderingMode.desc)]))
+          ..orderBy([
+            (s) =>
+                OrderingTerm(expression: s.createdAt, mode: OrderingMode.desc)
+          ]))
         .get();
   }
 
   @override
   Future<bool> updateSheetMusic(SheetMusicModel model) async {
     return database.update(database.sheetMusicTable).replace(
-      SheetMusicTableCompanion(
-        id: Value(model.id),
-        title: Value(model.title),
-        composer: Value(model.composer),
-        notes: Value(model.notes),
-        createdAt: Value(model.createdAt),
-        updatedAt: Value(DateTime.now()),
-      ),
-    );
+          SheetMusicTableCompanion(
+            id: Value(model.id),
+            title: Value(model.title),
+            composer: Value(model.composer),
+            notes: Value(model.notes),
+            createdAt: Value(model.createdAt),
+            updatedAt: Value(DateTime.now()),
+          ),
+        );
   }
 
   @override
   Future<bool> deleteSheetMusic(int id) async {
+    // FTS index is automatically maintained by database triggers
     final deleted = await (database.delete(database.sheetMusicTable)
           ..where((s) => s.id.equals(id)))
         .go();
-    
-    // Also delete from FTS index
-    await (database.delete(database.sheetMusicFtsTable)
-          ..where((t) => t.id.equals(id)))
-        .go();
-    
+
     return deleted > 0;
   }
 
@@ -117,20 +116,23 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
     final tagModel = await (database.select(database.tagsTable)
           ..where((t) => t.name.equals(tag)))
         .getSingleOrNull();
-    
+
     if (tagModel == null) return [];
-    
+
     // Get sheet music with this tag
     final sheetIds = await (database.select(database.sheetMusicTagsTable)
           ..where((t) => t.tagId.equals(tagModel.id)))
         .map((row) => row.sheetMusicId)
         .get();
-    
+
     if (sheetIds.isEmpty) return [];
-    
+
     return (database.select(database.sheetMusicTable)
           ..where((s) => s.id.isIn(sheetIds))
-          ..orderBy([(s) => OrderingTerm(expression: s.createdAt, mode: OrderingMode.desc)]))
+          ..orderBy([
+            (s) =>
+                OrderingTerm(expression: s.createdAt, mode: OrderingMode.desc)
+          ]))
         .get();
   }
 
@@ -146,8 +148,8 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
 
   @override
   Future<void> deleteAllSheetMusic() async {
+    // FTS index is automatically maintained by database triggers
     await database.delete(database.sheetMusicTable).go();
-    await database.delete(database.sheetMusicFtsTable).go();
   }
 
   @override
@@ -156,22 +158,22 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
     var tagModel = await (database.select(database.tagsTable)
           ..where((t) => t.name.equals(tagName)))
         .getSingleOrNull();
-    
+
     if (tagModel == null) {
       final tagId = await database.into(database.tagsTable).insert(
-        TagsTableCompanion(name: Value(tagName)),
-      );
+            TagsTableCompanion(name: Value(tagName)),
+          );
       tagModel = TagModel(id: tagId, name: tagName);
     }
-    
+
     // Add the association (ignore if already exists)
     try {
       await database.into(database.sheetMusicTagsTable).insert(
-        SheetMusicTagsTableCompanion(
-          sheetMusicId: Value(sheetMusicId),
-          tagId: Value(tagModel.id),
-        ),
-      );
+            SheetMusicTagsTableCompanion(
+              sheetMusicId: Value(sheetMusicId),
+              tagId: Value(tagModel.id),
+            ),
+          );
     } catch (_) {
       // Tag association already exists, which is fine
     }
@@ -183,12 +185,14 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
     final tagModel = await (database.select(database.tagsTable)
           ..where((t) => t.name.equals(tagName)))
         .getSingleOrNull();
-    
+
     if (tagModel == null) return;
-    
+
     // Delete the association
     await (database.delete(database.sheetMusicTagsTable)
-          ..where((t) => t.sheetMusicId.equals(sheetMusicId) & t.tagId.equals(tagModel.id)))
+          ..where((t) =>
+              t.sheetMusicId.equals(sheetMusicId) &
+              t.tagId.equals(tagModel.id)))
         .go();
   }
 
