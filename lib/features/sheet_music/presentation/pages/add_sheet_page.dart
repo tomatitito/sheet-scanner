@@ -63,7 +63,7 @@ class _AddSheetPageState extends State<AddSheetPage> {
             );
             widget.onSuccess?.call();
             if (mounted && context.mounted) {
-              Navigator.pop(context);
+              context.pop();
             }
           } else if (state is AddSheetError) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -192,7 +192,7 @@ class _AddSheetFormState extends State<_AddSheetForm> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.close),
-          onPressed: widget.onClose ?? () => Navigator.pop(context),
+          onPressed: widget.onClose ?? () => context.pop(),
         ),
         title: const Text('Add Sheet Music'),
         elevation: 0,
@@ -320,7 +320,7 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                           ? null
                           : () {
                               // Navigate to scan camera page for OCR
-                              context.go('/scan');
+                              context.push('/scan');
                             },
                       icon: const Icon(Icons.camera_alt),
                       label: const Text('Scan Sheet Music'),

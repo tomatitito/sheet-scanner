@@ -158,7 +158,7 @@ class _ScanCameraPageState extends State<ScanCameraPage>
 
   void _close() {
     _ocrScanCubit.reset();
-    Navigator.of(context).pop();
+    context.pop();
   }
 
   @override
