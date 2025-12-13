@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:drift/drift.dart' hide isNull;
 import 'package:sheet_scanner/core/database/database.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/core/router/app_router.dart';
@@ -217,9 +218,9 @@ void main() {
       testDatabase = GetIt.instance<AppDatabase>();
 
       // Clean database before each test
-      await testDatabase.delete(testDatabase.sheetMusic).go();
-      await testDatabase.delete(testDatabase.tags).go();
-      await testDatabase.delete(testDatabase.sheetMusicTags).go();
+      await testDatabase.delete(testDatabase.sheetMusicTable).go();
+      await testDatabase.delete(testDatabase.tagsTable).go();
+      await testDatabase.delete(testDatabase.sheetMusicTagsTable).go();
     });
 
     tearDownAll(() async {
@@ -251,8 +252,7 @@ void main() {
 
         // Navigate to AddSheetPage from home
         // First, find and tap the "Add Sheet Music" button on HomePage
-        final addButton =
-            find.text('Add Sheet Music').or(find.byIcon(Icons.add));
+        final addButton = find.text('Add Sheet Music');
         expect(addButton, findsAtLeast(1),
             reason: 'Add Sheet Music button should be present on home page');
 
@@ -360,7 +360,7 @@ void main() {
 
         // ASSERT 3 - Verify data was saved to database
         final allSheets =
-            await testDatabase.select(testDatabase.sheetMusic).get();
+            await testDatabase.select(testDatabase.sheetMusicTable).get();
         expect(allSheets.length, 1,
             reason: 'Exactly one sheet music entry should be saved');
 
@@ -371,16 +371,17 @@ void main() {
             reason: 'Composer should be saved');
 
         // ASSERT 4 - Verify tags were saved
-        final savedTags = await testDatabase
-            .select(testDatabase.sheetMusicTags)
-            .join([
+        final savedTags = await (testDatabase
+                .select(testDatabase.sheetMusicTagsTable)
+                .join([
               innerJoin(
-                testDatabase.tags,
-                testDatabase.tags.id
-                    .equalsExp(testDatabase.sheetMusicTags.tagId),
+                testDatabase.tagsTable,
+                testDatabase.tagsTable.id
+                    .equalsExp(testDatabase.sheetMusicTagsTable.tagId),
               )
             ])
-            .where(testDatabase.sheetMusicTags.sheetId.equals(savedSheet.id))
+              ..where(
+                  testDatabase.sheetMusicTagsTable.sheetMusicId.equals(savedSheet.id)))
             .get();
 
         expect(savedTags.length, greaterThan(0),
@@ -418,7 +419,7 @@ void main() {
 
         // Get initial sheet music count
         final initialCount =
-            (await testDatabase.select(testDatabase.sheetMusic).get()).length;
+            (await testDatabase.select(testDatabase.sheetMusicTable).get()).length;
 
         // ACT - Tap cancel/close button
         final closeButton = find.byIcon(Icons.close);
@@ -430,7 +431,7 @@ void main() {
 
         // ASSERT - Verify no data was saved
         final finalCount =
-            (await testDatabase.select(testDatabase.sheetMusic).get()).length;
+            (await testDatabase.select(testDatabase.sheetMusicTable).get()).length;
         expect(finalCount, equals(initialCount),
             reason: 'No sheet music should be saved when canceling');
 
@@ -466,7 +467,7 @@ void main() {
 
         // Get initial count
         final initialCount =
-            (await testDatabase.select(testDatabase.sheetMusic).get()).length;
+            (await testDatabase.select(testDatabase.sheetMusicTable).get()).length;
 
         // ACT - Try to save without filling required fields
         final saveButton = find.text('Save');
@@ -490,7 +491,7 @@ void main() {
 
         // ASSERT - Verify no data was saved
         final finalCount =
-            (await testDatabase.select(testDatabase.sheetMusic).get()).length;
+            (await testDatabase.select(testDatabase.sheetMusicTable).get()).length;
         expect(finalCount, equals(initialCount),
             reason: 'No data should be saved when validation fails');
       },
