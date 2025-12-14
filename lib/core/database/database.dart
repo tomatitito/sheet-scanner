@@ -179,16 +179,41 @@ class AppDatabase extends _$AppDatabase {
         .get();
   }
 
+  /// Filter sheet music by date range
+  Future<List<SheetMusicModel>> filterSheetMusicByDateRange(
+    DateTime startDate,
+    DateTime endDate,
+  ) {
+    return (select(sheetMusicTable)
+          ..where((s) =>
+              s.createdAt.isBiggerOrEqualValue(startDate) &
+              s.createdAt.isSmallerOrEqualValue(endDate)))
+        .get();
+  }
+
   /// Get all tags with their usage count
   Future<List<(TagModel, int)>> getAllTagsWithCount() async {
-    final tags = await select(tagsTable).get();
+    // Use raw SQL query instead of N+1 queries for better performance
+    // Query: SELECT t.*, COUNT(st.sheet_music_id) as count
+    //        FROM tags t LEFT JOIN sheet_music_tags st ON t.id = st.tag_id
+    //        GROUP BY t.id ORDER BY t.title
+    const query = '''
+      SELECT t.id, t.name, COUNT(st.sheet_music_id) as count
+      FROM tags t
+      LEFT JOIN sheet_music_tags st ON t.id = st.tag_id
+      GROUP BY t.id
+      ORDER BY t.name
+    ''';
+
+    final rows = await customSelect(query).get();
     final result = <(TagModel, int)>[];
 
-    for (final tag in tags) {
-      final count = await (select(sheetMusicTagsTable)
-            ..where((t) => t.tagId.equals(tag.id)))
-          .get()
-          .then((rows) => rows.length);
+    for (final row in rows) {
+      final tag = TagModel(
+        id: row.read<int>('id'),
+        name: row.read<String>('name'),
+      );
+      final count = row.read<int>('count');
       result.add((tag, count));
     }
 

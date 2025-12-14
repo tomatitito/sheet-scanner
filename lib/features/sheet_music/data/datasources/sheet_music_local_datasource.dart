@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:drift/drift.dart';
 import 'package:sheet_scanner/core/database/database.dart';
 
@@ -174,8 +176,21 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
               tagId: Value(tagModel.id),
             ),
           );
-    } catch (_) {
-      // Tag association already exists, which is fine
+    } on SqliteException catch (e) {
+      // Ignore unique constraint violations (tag already associated)
+      if (e.extendedResultCode != 2067) {
+        // 2067 = SQLITE_CONSTRAINT_UNIQUE (the tag is already associated)
+        // Re-throw other database errors
+        rethrow;
+      }
+    } catch (e) {
+      // Log unexpected exceptions for debugging
+      developer.log(
+        'Unexpected error adding tag to sheet music: $e',
+        name: 'SheetMusicLocalDataSource',
+        error: e,
+      );
+      rethrow;
     }
   }
 

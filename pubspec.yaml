@@ -37,6 +37,9 @@ dependencies:
   camera: ^0.10.5
   image_picker: ^1.0.0
 
+  # Voice Input - Speech to Text
+  speech_to_text: ^7.3.0
+
   # File Operations
   file_picker: ^10.3.0
   share_plus: ^12.0.1
