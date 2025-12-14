@@ -176,21 +176,25 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
               tagId: Value(tagModel.id),
             ),
           );
-    } on SqliteException catch (e) {
-      // Ignore unique constraint violations (tag already associated)
-      if (e.extendedResultCode != 2067) {
-        // 2067 = SQLITE_CONSTRAINT_UNIQUE (the tag is already associated)
-        // Re-throw other database errors
+    } catch (e) {
+      // Check if this is a unique constraint violation (tag already associated)
+      final errorMessage = e.toString();
+      if (errorMessage.contains('UNIQUE constraint failed') ||
+          errorMessage.contains('Unique constraint')) {
+        // Tag is already associated with this sheet music, which is fine
+        developer.log(
+          'Tag already associated with sheet music (expected)',
+          name: 'SheetMusicLocalDataSource',
+        );
+      } else {
+        // Log and re-throw other database errors (connection lost, disk full, etc)
+        developer.log(
+          'Database error adding tag to sheet music: $errorMessage',
+          name: 'SheetMusicLocalDataSource',
+          error: e,
+        );
         rethrow;
       }
-    } catch (e) {
-      // Log unexpected exceptions for debugging
-      developer.log(
-        'Unexpected error adding tag to sheet music: $e',
-        name: 'SheetMusicLocalDataSource',
-        error: e,
-      );
-      rethrow;
     }
   }
 
