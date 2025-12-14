@@ -37,8 +37,9 @@ class DictationCubit extends Cubit<DictationState> {
   }) async {
     // If already listening, ignore
     final isListening = state.whenOrNull(
-      listening: (_, __) => true,
-    ) ?? false;
+          listening: (_, __) => true,
+        ) ??
+        false;
     if (isListening) {
       return;
     }
@@ -84,8 +85,9 @@ class DictationCubit extends Cubit<DictationState> {
   /// Called when the user manually stops the recording.
   Future<void> stopDictation() async {
     final isListening = state.whenOrNull(
-      listening: (_, __) => true,
-    ) ?? false;
+          listening: (_, __) => true,
+        ) ??
+        false;
     if (!isListening) {
       return;
     }
@@ -121,8 +123,9 @@ class DictationCubit extends Cubit<DictationState> {
   /// Called when a partial result is received during listening.
   void updatePartialResult(String text) {
     final isListening = state.whenOrNull(
-      listening: (_, __) => true,
-    ) ?? false;
+          listening: (_, __) => true,
+        ) ??
+        false;
     if (isListening) {
       emit(DictationState.partialResult(text: text));
     }

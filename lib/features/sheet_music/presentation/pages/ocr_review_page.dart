@@ -569,10 +569,12 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
-                  onPressed: isSubmitting ? null : () {
-                    // Go back to scan page to capture a new image
-                    context.go('/scan');
-                  },
+                  onPressed: isSubmitting
+                      ? null
+                      : () {
+                          // Go back to scan page to capture a new image
+                          context.go('/scan');
+                        },
                   child: const Text('Change Image'),
                 ),
               ),

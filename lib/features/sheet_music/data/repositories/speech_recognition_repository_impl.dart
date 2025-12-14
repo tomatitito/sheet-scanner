@@ -19,7 +19,8 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
   /// Completer to handle async operations.
   Completer<DictationResult>? _listenCompleter;
 
-  SpeechRecognitionRepositoryImpl({required SpeechRecognitionService speechService})
+  SpeechRecognitionRepositoryImpl(
+      {required SpeechRecognitionService speechService})
       : _speechService = speechService;
 
   @override
@@ -76,7 +77,8 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
       );
 
       // Wait for the listening session to complete or timeout
-      final timeoutDuration = Duration(milliseconds: listenFor.inMilliseconds + 1000);
+      final timeoutDuration =
+          Duration(milliseconds: listenFor.inMilliseconds + 1000);
       final result = await _listenCompleter!.future.timeout(
         timeoutDuration,
         onTimeout: () {

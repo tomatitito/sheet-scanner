@@ -115,7 +115,9 @@ class _SheetDetailView extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () {
                         // Retry loading the sheet music using the stored ID
-                        context.read<SheetDetailCubit>().loadSheetMusic(sheetMusicId);
+                        context
+                            .read<SheetDetailCubit>()
+                            .loadSheetMusic(sheetMusicId);
                       },
                       child: const Text('Retry'),
                     ),

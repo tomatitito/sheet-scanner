@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/edit_sheet_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/edit_sheet_state.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/voice_input_button.dart';
 
 /// Page for editing an existing sheet music entry
 class EditSheetPage extends StatefulWidget {
@@ -314,34 +315,96 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Composer field
-                    TextFormField(
-                      controller: widget.composerController,
-                      enabled: !isSubmitting,
-                      onChanged: widget.onComposerChanged,
-                      decoration: InputDecoration(
-                        labelText: 'Composer *',
-                        hintText: 'Enter composer name',
-                        errorText: errors['composer'],
-                        border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.person),
-                      ),
+                    // Composer field with voice input
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: widget.composerController,
+                            enabled: !isSubmitting,
+                            onChanged: widget.onComposerChanged,
+                            decoration: InputDecoration(
+                              labelText: 'Composer *',
+                              hintText: 'Enter composer name',
+                              errorText: errors['composer'],
+                              border: const OutlineInputBorder(),
+                              prefixIcon: const Icon(Icons.person),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: VoiceInputButton(
+                            onDictationComplete: (text) {
+                              widget.composerController.text = text;
+                              widget.onComposerChanged(text);
+                            },
+                            onError: (error) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Voice input error: $error'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            },
+                            tooltip: 'Voice input for composer',
+                            size: 48.0,
+                            idleColor: Colors.blue,
+                            listeningColor: Colors.red,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
 
-                    // Notes field
-                    TextFormField(
-                      controller: widget.notesController,
-                      enabled: !isSubmitting,
-                      onChanged: widget.onNotesChanged,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        labelText: 'Notes',
-                        hintText: 'Optional notes about the piece',
-                        errorText: errors['notes'],
-                        border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.notes),
-                      ),
+                    // Notes field with voice input
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: widget.notesController,
+                            enabled: !isSubmitting,
+                            onChanged: widget.onNotesChanged,
+                            maxLines: 3,
+                            decoration: InputDecoration(
+                              labelText: 'Notes',
+                              hintText: 'Optional notes about the piece',
+                              errorText: errors['notes'],
+                              border: const OutlineInputBorder(),
+                              prefixIcon: const Icon(Icons.notes),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: VoiceInputButton(
+                            onDictationComplete: (text) {
+                              final currentText = widget.notesController.text;
+                              widget.notesController.text = currentText.isEmpty
+                                  ? text
+                                  : '$currentText $text';
+                              widget
+                                  .onNotesChanged(widget.notesController.text);
+                            },
+                            onError: (error) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Voice input error: $error'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            },
+                            tooltip: 'Voice input for notes',
+                            size: 48.0,
+                            idleColor: Colors.blue,
+                            listeningColor: Colors.red,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 24),
 

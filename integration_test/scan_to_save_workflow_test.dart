@@ -371,18 +371,17 @@ void main() {
             reason: 'Composer should be saved');
 
         // ASSERT 4 - Verify tags were saved
-        final savedTags = await (testDatabase
-                .select(testDatabase.sheetMusicTagsTable)
-                .join([
-              innerJoin(
-                testDatabase.tagsTable,
-                testDatabase.tagsTable.id
-                    .equalsExp(testDatabase.sheetMusicTagsTable.tagId),
-              )
-            ])
-              ..where(
-                  testDatabase.sheetMusicTagsTable.sheetMusicId.equals(savedSheet.id)))
-            .get();
+        final savedTags =
+            await (testDatabase.select(testDatabase.sheetMusicTagsTable).join([
+          innerJoin(
+            testDatabase.tagsTable,
+            testDatabase.tagsTable.id
+                .equalsExp(testDatabase.sheetMusicTagsTable.tagId),
+          )
+        ])
+                  ..where(testDatabase.sheetMusicTagsTable.sheetMusicId
+                      .equals(savedSheet.id)))
+                .get();
 
         expect(savedTags.length, greaterThan(0),
             reason:
@@ -419,7 +418,8 @@ void main() {
 
         // Get initial sheet music count
         final initialCount =
-            (await testDatabase.select(testDatabase.sheetMusicTable).get()).length;
+            (await testDatabase.select(testDatabase.sheetMusicTable).get())
+                .length;
 
         // ACT - Tap cancel/close button
         final closeButton = find.byIcon(Icons.close);
@@ -431,7 +431,8 @@ void main() {
 
         // ASSERT - Verify no data was saved
         final finalCount =
-            (await testDatabase.select(testDatabase.sheetMusicTable).get()).length;
+            (await testDatabase.select(testDatabase.sheetMusicTable).get())
+                .length;
         expect(finalCount, equals(initialCount),
             reason: 'No sheet music should be saved when canceling');
 
@@ -467,15 +468,18 @@ void main() {
 
         // Get initial count
         final initialCount =
-            (await testDatabase.select(testDatabase.sheetMusicTable).get()).length;
+            (await testDatabase.select(testDatabase.sheetMusicTable).get())
+                .length;
 
         // ACT - Try to use values without filling required fields
         final useValuesButton = find.text('Use These Values');
 
         // Use These Values button should be disabled when form is invalid
-        final useValuesButtonWidget = tester.widget<TextButton>(useValuesButton.first);
+        final useValuesButtonWidget =
+            tester.widget<TextButton>(useValuesButton.first);
         expect(useValuesButtonWidget.onPressed, isNull,
-            reason: 'Use These Values button should be disabled when form is invalid');
+            reason:
+                'Use These Values button should be disabled when form is invalid');
 
         // Try to fill with whitespace only (should still be invalid)
         final titleField = find.byType(TextFormField).first;
@@ -491,7 +495,8 @@ void main() {
 
         // ASSERT - Verify no data was saved
         final finalCount =
-            (await testDatabase.select(testDatabase.sheetMusicTable).get()).length;
+            (await testDatabase.select(testDatabase.sheetMusicTable).get())
+                .length;
         expect(finalCount, equals(initialCount),
             reason: 'No data should be saved when validation fails');
       },
