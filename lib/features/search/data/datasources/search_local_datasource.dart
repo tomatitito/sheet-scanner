@@ -69,15 +69,8 @@ class SearchLocalDataSourceImpl implements SearchLocalDataSource {
     DateTime startDate,
     DateTime endDate,
   ) async {
-    // Get all sheet music and filter in Dart by date
-    // (Drift doesn't provide convenient DateTime comparison operators)
-    final allSheets = await database.select(database.sheetMusicTable).get();
-    return allSheets
-        .where((sheet) =>
-            sheet.createdAt
-                .isAfter(startDate.subtract(const Duration(seconds: 1))) &&
-            sheet.createdAt.isBefore(endDate.add(const Duration(seconds: 1))))
-        .toList();
+    // Use efficient database-level filtering instead of loading all data into memory
+    return database.filterSheetMusicByDateRange(startDate, endDate);
   }
 
   @override

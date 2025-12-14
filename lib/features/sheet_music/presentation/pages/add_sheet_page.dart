@@ -36,7 +36,7 @@ class _AddSheetPageState extends State<AddSheetPage> {
     _titleController = TextEditingController();
     _composerController = TextEditingController();
     _notesController = TextEditingController();
-    _filePickerService = FilePickerServiceImpl();
+    _filePickerService = getIt<FilePickerService>();
   }
 
   @override

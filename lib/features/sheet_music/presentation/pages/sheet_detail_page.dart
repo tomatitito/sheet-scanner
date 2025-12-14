@@ -22,15 +22,19 @@ class SheetDetailPage extends StatelessWidget {
     return BlocProvider(
       create: (context) =>
           getIt<SheetDetailCubit>()..loadSheetMusic(sheetMusicId),
-      child: _SheetDetailView(onClose: onClose),
+      child: _SheetDetailView(onClose: onClose, sheetMusicId: sheetMusicId),
     );
   }
 }
 
 class _SheetDetailView extends StatelessWidget {
   final VoidCallback? onClose;
+  final int sheetMusicId;
 
-  const _SheetDetailView({this.onClose});
+  const _SheetDetailView({
+    this.onClose,
+    required this.sheetMusicId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -110,13 +114,8 @@ class _SheetDetailView extends StatelessWidget {
                     const SizedBox(height: 32),
                     ElevatedButton(
                       onPressed: () {
-                        // Cannot retry without knowing the ID - this shouldn't happen
-                        // as error is shown when loading fails
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Unable to retry - ID unknown'),
-                          ),
-                        );
+                        // Retry loading the sheet music using the stored ID
+                        context.read<SheetDetailCubit>().loadSheetMusic(sheetMusicId);
                       },
                       child: const Text('Retry'),
                     ),

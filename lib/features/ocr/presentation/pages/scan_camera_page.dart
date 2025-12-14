@@ -24,10 +24,10 @@ class ScanCameraPage extends StatefulWidget {
 
 class _ScanCameraPageState extends State<ScanCameraPage>
     with WidgetsBindingObserver {
-  late final CameraController? _cameraController;
-  late final OCRScanCubit _ocrScanCubit;
+  CameraController? _cameraController;
+  late OCRScanCubit _ocrScanCubit;
   late List<CameraDescription> _cameras;
-  late final ImagePicker _imagePicker;
+  late ImagePicker _imagePicker;
 
   final _logger = Logger('ScanCameraPage');
 

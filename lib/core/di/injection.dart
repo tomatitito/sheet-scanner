@@ -25,6 +25,7 @@ import 'package:sheet_scanner/features/search/presentation/cubit/tag_cubit.dart'
 import 'package:sheet_scanner/features/search/presentation/cubit/tag_suggestion_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/data/datasources/sheet_music_local_datasource.dart';
 import 'package:sheet_scanner/features/sheet_music/data/repositories/sheet_music_repository_impl.dart';
+import 'package:sheet_scanner/features/sheet_music/data/services/file_picker_service.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/repositories/sheet_music_repository.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/usecases/add_sheet_music_use_case.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/usecases/delete_sheet_music_use_case.dart';
@@ -57,6 +58,11 @@ void setupInjection() {
   getIt.registerSingleton<AppDatabase>(AppDatabase());
 
   // ==================== SHEET MUSIC FEATURE ====================
+  // Services
+  getIt.registerSingleton<FilePickerService>(
+    FilePickerServiceImpl(),
+  );
+
   // Data sources
   getIt.registerSingleton<SheetMusicLocalDataSource>(
     SheetMusicLocalDataSourceImpl(database: getIt<AppDatabase>()),
