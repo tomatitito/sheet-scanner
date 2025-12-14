@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:sheet_scanner/core/database/database.dart';
+import 'package:sheet_scanner/core/services/speech_recognition_service.dart';
 import 'package:sheet_scanner/features/backup/data/datasources/backup_local_datasource.dart';
 import 'package:sheet_scanner/features/backup/data/repositories/backup_repository_impl.dart';
 import 'package:sheet_scanner/features/backup/domain/repositories/backup_repository.dart';
@@ -25,8 +26,10 @@ import 'package:sheet_scanner/features/search/presentation/cubit/tag_cubit.dart'
 import 'package:sheet_scanner/features/search/presentation/cubit/tag_suggestion_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/data/datasources/sheet_music_local_datasource.dart';
 import 'package:sheet_scanner/features/sheet_music/data/repositories/sheet_music_repository_impl.dart';
+import 'package:sheet_scanner/features/sheet_music/data/repositories/speech_recognition_repository_impl.dart';
 import 'package:sheet_scanner/features/sheet_music/data/services/file_picker_service.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/repositories/sheet_music_repository.dart';
+import 'package:sheet_scanner/features/sheet_music/domain/repositories/speech_recognition_repository.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/usecases/add_sheet_music_use_case.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/usecases/delete_sheet_music_use_case.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/usecases/get_all_sheet_music_use_case.dart';
@@ -35,12 +38,14 @@ import 'package:sheet_scanner/features/sheet_music/domain/usecases/update_sheet_
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/add_sheet_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/browse_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/bulk_operations_cubit.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/cubit/dictation_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/edit_sheet_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/home_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/ocr_review_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/sheet_detail_cubit.dart';
 import 'package:sheet_scanner/features/ocr/domain/usecases/recognize_text_use_case.dart';
 import 'package:sheet_scanner/features/ocr/presentation/cubit/ocr_scan_cubit.dart';
+import 'package:sheet_scanner/features/sheet_music/domain/usecases/transcribe_voice_use_case.dart';
 
 final getIt = GetIt.instance;
 
@@ -57,6 +62,11 @@ void setupInjection() {
   // Database - LazyDatabase will initialize on first use
   getIt.registerSingleton<AppDatabase>(AppDatabase());
 
+  // Speech Recognition Service
+  getIt.registerSingleton<SpeechRecognitionService>(
+    SpeechRecognitionServiceImpl(),
+  );
+
   // ==================== SHEET MUSIC FEATURE ====================
   // Services
   getIt.registerSingleton<FilePickerService>(
@@ -72,6 +82,13 @@ void setupInjection() {
   getIt.registerSingleton<SheetMusicRepository>(
     SheetMusicRepositoryImpl(
       localDataSource: getIt<SheetMusicLocalDataSource>(),
+    ),
+  );
+
+  // Speech Recognition Repository
+  getIt.registerSingleton<SpeechRecognitionRepository>(
+    SpeechRecognitionRepositoryImpl(
+      speechService: getIt<SpeechRecognitionService>(),
     ),
   );
 
@@ -194,6 +211,13 @@ void setupInjection() {
     ),
   );
 
+  // Dictation Use Cases
+  getIt.registerSingleton<TranscribeVoiceUseCase>(
+    TranscribeVoiceUseCase(
+      repository: getIt<SpeechRecognitionRepository>(),
+    ),
+  );
+
   // Search Use Cases
   getIt.registerSingleton<FullTextSearchUseCase>(
     FullTextSearchUseCase(
@@ -288,6 +312,12 @@ void setupInjection() {
   getIt.registerFactory<OCRReviewCubit>(
     () => OCRReviewCubit(
       getIt<AddSheetMusicUseCase>(),
+    ),
+  );
+
+  getIt.registerFactory<DictationCubit>(
+    () => DictationCubit(
+      transcribeVoiceUseCase: getIt<TranscribeVoiceUseCase>(),
     ),
   );
 
