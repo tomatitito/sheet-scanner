@@ -13,6 +13,10 @@ void main() {
     late MockSheetMusicRepository mockRepository;
     late DeleteSheetMusicUseCase useCase;
 
+    setUpAll(() {
+      registerFallbackValue(0);
+    });
+
     setUp(() {
       mockRepository = MockSheetMusicRepository();
       useCase = DeleteSheetMusicUseCase(repository: mockRepository);

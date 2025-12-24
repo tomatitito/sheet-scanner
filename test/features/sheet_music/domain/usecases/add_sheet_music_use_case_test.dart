@@ -14,6 +14,18 @@ void main() {
     late MockSheetMusicRepository mockRepository;
     late AddSheetMusicUseCase useCase;
 
+    setUpAll(() {
+      registerFallbackValue(
+        SheetMusic(
+          id: 0,
+          title: '',
+          composer: '',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+      );
+    });
+
     setUp(() {
       mockRepository = MockSheetMusicRepository();
       useCase = AddSheetMusicUseCase(repository: mockRepository);

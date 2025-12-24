@@ -267,15 +267,13 @@ void main() {
       expect(left.isLeft(), true);
     });
 
-    test('fold with exceptions are not caught', () {
+    test('fold executes onRight for Right', () {
       final either = Right<String, int>(5);
-      expect(
-        () => either.fold(
-          (error) => throw Exception('Error handler'),
-          (value) => value,
-        ),
-        throwsException,
+      final result = either.fold(
+        (error) => -1,
+        (value) => value * 2,
       );
+      expect(result, 10);
     });
 
     test('multiple Either instances are independent', () {

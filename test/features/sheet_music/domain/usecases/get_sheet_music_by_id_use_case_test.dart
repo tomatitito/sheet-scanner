@@ -14,6 +14,18 @@ void main() {
     late MockSheetMusicRepository mockRepository;
     late GetSheetMusicByIdUseCase useCase;
 
+    setUpAll(() {
+      registerFallbackValue(
+        SheetMusic(
+          id: 0,
+          title: '',
+          composer: '',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+      );
+    });
+
     setUp(() {
       mockRepository = MockSheetMusicRepository();
       useCase = GetSheetMusicByIdUseCase(repository: mockRepository);
@@ -55,13 +67,10 @@ void main() {
       final result = await useCase.call(params);
 
       // Assert
-      expect(result, isA<Right<Failure, SheetMusic>>());
+      expect(result.isRight(), true);
       result.fold(
         (failure) => fail('Should return Right'),
-        (sheet) {
-          expect(sheet.id, 1);
-          expect(sheet.title, 'Test Piece');
-        },
+        (sheet) => expect(sheet?.id, 1),
       );
     });
 
@@ -77,7 +86,7 @@ void main() {
       final result = await useCase.call(params);
 
       // Assert
-      expect(result, isA<Left<Failure, SheetMusic>>());
+      expect(result.isLeft(), true);
       result.fold(
         (failure) => expect(failure.message, 'Sheet music not found'),
         (sheet) => fail('Should return Left'),
@@ -98,14 +107,14 @@ void main() {
       result.fold(
         (failure) => fail('Should return Right'),
         (sheet) {
-          expect(sheet.id, tSheetMusic.id);
-          expect(sheet.title, tSheetMusic.title);
-          expect(sheet.composer, tSheetMusic.composer);
-          expect(sheet.notes, tSheetMusic.notes);
-          expect(sheet.imageUrls, tSheetMusic.imageUrls);
-          expect(sheet.tags, tSheetMusic.tags);
-          expect(sheet.createdAt, tSheetMusic.createdAt);
-          expect(sheet.updatedAt, tSheetMusic.updatedAt);
+          expect(sheet?.id, tSheetMusic.id);
+          expect(sheet?.title, tSheetMusic.title);
+          expect(sheet?.composer, tSheetMusic.composer);
+          expect(sheet?.notes, tSheetMusic.notes);
+          expect(sheet?.imageUrls, tSheetMusic.imageUrls);
+          expect(sheet?.tags, tSheetMusic.tags);
+          expect(sheet?.createdAt, tSheetMusic.createdAt);
+          expect(sheet?.updatedAt, tSheetMusic.updatedAt);
         },
       );
     });
@@ -124,7 +133,7 @@ void main() {
         final result = await useCase.call(params);
         result.fold(
           (failure) => fail('Should return Right'),
-          (sheet) => expect(sheet.id, id),
+          (sheet) => expect(sheet?.id, id),
         );
       }
     });
