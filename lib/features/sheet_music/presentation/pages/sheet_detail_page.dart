@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/sheet_detail_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/sheet_detail_state.dart';
@@ -50,7 +51,7 @@ class _SheetDetailView extends StatelessWidget {
             ),
           );
           // Return to previous screen after deletion
-          Navigator.pop(context, true);
+          context.pop(true);
         } else if (state is SheetDetailError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -68,7 +69,7 @@ class _SheetDetailView extends StatelessWidget {
                   ? AppBar(
                       leading: IconButton(
                         icon: const Icon(Icons.close),
-                        onPressed: onClose ?? () => Navigator.pop(context),
+                        onPressed: onClose ?? () => context.pop(),
                       ),
                       title: const Text('Loading...'),
                     )
@@ -81,7 +82,7 @@ class _SheetDetailView extends StatelessWidget {
                   ? AppBar(
                       leading: IconButton(
                         icon: const Icon(Icons.close),
-                        onPressed: onClose ?? () => Navigator.pop(context),
+                        onPressed: onClose ?? () => context.pop(),
                       ),
                       title: const Text('Error'),
                     )
@@ -132,7 +133,7 @@ class _SheetDetailView extends StatelessWidget {
                   ? AppBar(
                       leading: IconButton(
                         icon: const Icon(Icons.close),
-                        onPressed: onClose ?? () => Navigator.pop(context),
+                        onPressed: onClose ?? () => context.pop(),
                       ),
                       title: Text(
                         sheetMusic.title,
@@ -306,7 +307,7 @@ class _SheetDetailView extends StatelessWidget {
                                           .read<SheetDetailCubit>()
                                           .refresh(sheetMusic.id);
                                     },
-                                    onClose: () => Navigator.pop(context),
+                                    onClose: () => context.pop(),
                                   ),
                                 ),
                               );

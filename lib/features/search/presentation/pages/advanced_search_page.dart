@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sheet_scanner/features/search/presentation/cubit/search_cubit.dart';
 import 'package:sheet_scanner/features/search/presentation/cubit/search_state.dart';
 import 'package:sheet_scanner/features/search/presentation/cubit/tag_suggestion_cubit.dart';
@@ -37,7 +38,7 @@ class AdvancedSearchPage extends StatelessWidget {
                     // Filters are already applied via SearchCubit in the widget
                   },
                   onClose: () {
-                    Navigator.pop(context);
+                    context.pop();
                   },
                 );
               },
@@ -60,7 +61,7 @@ class AdvancedSearchPage extends StatelessWidget {
                     query: query,
                     onSheetTap: (sheet) {
                       // Navigate to sheet detail
-                      Navigator.pop(context, sheet);
+                      context.pop(sheet);
                     },
                   ),
                   empty: (query) => const Center(

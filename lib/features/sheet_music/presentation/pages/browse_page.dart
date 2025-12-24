@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/browse_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/browse_state.dart';
@@ -137,9 +138,9 @@ class _BrowseViewState extends State<_BrowseView> {
                           builder: (context) => AddSheetPage(
                             onSuccess: () {
                               _browseCubit.refresh();
-                              Navigator.pop(context);
+                              context.pop();
                             },
-                            onClose: () => Navigator.pop(context),
+                            onClose: () => context.pop(),
                           ),
                         );
                       },
@@ -352,9 +353,9 @@ class _BrowseViewState extends State<_BrowseView> {
             builder: (context) => AddSheetPage(
               onSuccess: () {
                 _browseCubit.refresh();
-                Navigator.pop(context);
+                context.pop();
               },
-              onClose: () => Navigator.pop(context),
+              onClose: () => context.pop(),
             ),
           );
         },
@@ -401,7 +402,7 @@ class _BrowseViewState extends State<_BrowseView> {
               isScrollControlled: true,
               builder: (context) => SheetDetailPage(
                 sheetMusicId: sheetMusic.id,
-                onClose: () => Navigator.pop(context),
+                onClose: () => context.pop(),
               ),
             );
           },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/edit_sheet_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/edit_sheet_state.dart';
@@ -125,7 +126,7 @@ class _EditSheetPageState extends State<EditSheetPage> {
             );
             widget.onSuccess?.call();
             if (mounted && context.mounted) {
-              Navigator.pop(context);
+              context.pop();
             }
           } else if (state is EditSheetError) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -201,7 +202,7 @@ class _EditSheetFormState extends State<_EditSheetForm> {
             appBar: AppBar(
               leading: IconButton(
                 icon: const Icon(Icons.close),
-                onPressed: widget.onClose ?? () => Navigator.pop(context),
+                onPressed: widget.onClose ?? () => context.pop(),
               ),
               title: const Text('Loading...'),
             ),
@@ -212,7 +213,7 @@ class _EditSheetFormState extends State<_EditSheetForm> {
             appBar: AppBar(
               leading: IconButton(
                 icon: const Icon(Icons.close),
-                onPressed: widget.onClose ?? () => Navigator.pop(context),
+                onPressed: widget.onClose ?? () => context.pop(),
               ),
               title: const Text('Error'),
             ),
@@ -288,7 +289,7 @@ class _EditSheetFormState extends State<_EditSheetForm> {
             appBar: AppBar(
               leading: IconButton(
                 icon: const Icon(Icons.close),
-                onPressed: widget.onClose ?? () => Navigator.pop(context),
+                onPressed: widget.onClose ?? () => context.pop(),
               ),
               title: const Text('Edit Sheet Music'),
               elevation: 0,
