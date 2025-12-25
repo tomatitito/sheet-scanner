@@ -24,14 +24,16 @@ class HomeLoading extends HomeState {
 class HomeLoaded extends HomeState {
   final List<SheetMusic> sheetMusicList;
   final int totalCount;
+  final bool isRefreshing;
 
   const HomeLoaded({
     required this.sheetMusicList,
     this.totalCount = 0,
+    this.isRefreshing = false,
   });
 
   @override
-  List<Object?> get props => [sheetMusicList, totalCount];
+  List<Object?> get props => [sheetMusicList, totalCount, isRefreshing];
 }
 
 /// Error state with failure details

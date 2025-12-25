@@ -54,7 +54,6 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
 
       // Create a completer for this listening session
       _listenCompleter = Completer<DictationResult>();
-      String errorMessage = '';
 
       // Clear previous result
       _finalText = '';
@@ -79,7 +78,6 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
           }
         },
         onError: (String error) {
-          errorMessage = error;
           if (_listenCompleter != null && !_listenCompleter!.isCompleted) {
             _listenCompleter!.completeError(
               Exception('Speech recognition error: $error'),

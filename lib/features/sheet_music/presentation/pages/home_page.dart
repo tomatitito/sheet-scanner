@@ -117,28 +117,47 @@ class _HomeView extends StatelessWidget {
               );
             }
 
-            return RefreshIndicator(
-              onRefresh: () => context.read<HomeCubit>().refresh(),
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                itemCount: state.sheetMusicList.length,
-                itemBuilder: (context, index) {
-                  final sheetMusic = state.sheetMusicList[index];
-                  return SheetMusicListItem(
-                    sheetMusic: sheetMusic,
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (context) => SheetDetailPage(
-                          sheetMusicId: sheetMusic.id,
-                          onClose: () => context.pop(),
-                        ),
+            return Stack(
+              children: [
+                RefreshIndicator(
+                  onRefresh: () => context.read<HomeCubit>().refresh(),
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: state.sheetMusicList.length,
+                    itemBuilder: (context, index) {
+                      final sheetMusic = state.sheetMusicList[index];
+                      return SheetMusicListItem(
+                        sheetMusic: sheetMusic,
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => SheetDetailPage(
+                              sheetMusicId: sheetMusic.id,
+                              onClose: () => context.pop(),
+                            ),
+                          );
+                        },
                       );
                     },
-                  );
-                },
-              ),
+                  ),
+                ),
+                // Show non-intrusive loading indicator during refresh
+                if (state.isRefreshing)
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      color: Colors.transparent,
+                      padding: const EdgeInsets.all(8.0),
+                      child: const SizedBox(
+                        height: 3,
+                        child: LinearProgressIndicator(),
+                      ),
+                    ),
+                  ),
+              ],
             );
           }
 

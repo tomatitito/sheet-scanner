@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sheet_scanner/core/accessibility/semantic_widgets.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/sheet_music/data/services/file_picker_service.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/add_sheet_cubit.dart';
@@ -212,9 +213,12 @@ class _AddSheetFormState extends State<_AddSheetForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.close),
+        leading: SemanticIconButton(
+          icon: Icons.close,
+          label: 'Close',
+          tooltip: 'Close add sheet music page',
           onPressed: widget.onClose ?? () => context.pop(),
+          isDarkBackground: false,
         ),
         title: const Text('Add Sheet Music'),
         elevation: 0,
@@ -379,19 +383,12 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                   Row(
                     children: [
                       Expanded(
-                        child: TextField(
+                        child: SemanticTextField(
+                          label: 'Tag Name',
+                          hint: 'Enter tag name',
                           onChanged: (value) {
                             _newTag = value;
                           },
-                          enabled: !isSubmitting,
-                          decoration: const InputDecoration(
-                            hintText: 'Enter tag name',
-                            border: OutlineInputBorder(),
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 12,
-                            ),
-                          ),
                         ),
                       ),
                       const SizedBox(width: 8),

@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sheet_scanner/core/accessibility/semantic_widgets.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/ocr/presentation/cubit/ocr_scan_cubit.dart';
 import 'package:sheet_scanner/features/ocr/presentation/cubit/ocr_scan_state.dart';
@@ -332,25 +333,21 @@ class _ScanCameraPageState extends State<ScanCameraPage>
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            color: Colors.white,
+                          SemanticIconButton(
+                            icon: Icons.close,
+                            label: 'Close',
+                            tooltip: 'Close camera scanner',
                             onPressed: _close,
-                            style: IconButton.styleFrom(
-                              backgroundColor:
-                                  Colors.black.withValues(alpha: 0.5),
-                            ),
+                            isDarkBackground: true,
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.settings),
-                            color: Colors.white,
+                          SemanticIconButton(
+                            icon: Icons.settings,
+                            label: 'Settings',
+                            tooltip: 'Camera settings',
                             onPressed: () {
                               // Open settings modal
                             },
-                            style: IconButton.styleFrom(
-                              backgroundColor:
-                                  Colors.black.withValues(alpha: 0.5),
-                            ),
+                            isDarkBackground: true,
                           ),
                         ],
                       ),
@@ -522,14 +519,13 @@ class _ScanCameraPageState extends State<ScanCameraPage>
   }) {
     return Column(
       children: [
-        IconButton(
-          icon: Icon(icon),
-          color: Colors.white,
+        SemanticIconButton(
+          icon: icon,
+          label: label,
+          tooltip: label,
           onPressed: onPressed,
-          iconSize: 24,
-          style: IconButton.styleFrom(
-            backgroundColor: Colors.black.withValues(alpha: 0.5),
-          ),
+          isDarkBackground: true,
+          size: 24,
         ),
         Text(
           label,
@@ -537,6 +533,7 @@ class _ScanCameraPageState extends State<ScanCameraPage>
             color: Colors.white,
             fontSize: 12,
           ),
+          semanticsLabel: label,
         ),
       ],
     );

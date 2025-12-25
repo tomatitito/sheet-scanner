@@ -16,6 +16,7 @@ class BrowseState with _$BrowseState {
     required String searchQuery,
     required List<String> selectedTags,
     required String sortBy,
+    @Default(false) bool isRefreshing,
   }) = BrowseLoaded;
 
   const factory BrowseState.error(Failure failure) = BrowseError;

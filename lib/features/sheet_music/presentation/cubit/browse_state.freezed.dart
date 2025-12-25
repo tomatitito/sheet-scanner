@@ -25,7 +25,8 @@ mixin _$BrowseState {
             List<SheetMusic> filteredSheets,
             String searchQuery,
             List<String> selectedTags,
-            String sortBy)
+            String sortBy,
+            bool isRefreshing)
         loaded,
     required TResult Function(Failure failure) error,
   }) =>
@@ -34,8 +35,13 @@ mixin _$BrowseState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<SheetMusic> sheets, List<SheetMusic> filteredSheets,
-            String searchQuery, List<String> selectedTags, String sortBy)?
+    TResult? Function(
+            List<SheetMusic> sheets,
+            List<SheetMusic> filteredSheets,
+            String searchQuery,
+            List<String> selectedTags,
+            String sortBy,
+            bool isRefreshing)?
         loaded,
     TResult? Function(Failure failure)? error,
   }) =>
@@ -44,8 +50,13 @@ mixin _$BrowseState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<SheetMusic> sheets, List<SheetMusic> filteredSheets,
-            String searchQuery, List<String> selectedTags, String sortBy)?
+    TResult Function(
+            List<SheetMusic> sheets,
+            List<SheetMusic> filteredSheets,
+            String searchQuery,
+            List<String> selectedTags,
+            String sortBy,
+            bool isRefreshing)?
         loaded,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
@@ -147,7 +158,8 @@ class _$BrowseInitialImpl implements BrowseInitial {
             List<SheetMusic> filteredSheets,
             String searchQuery,
             List<String> selectedTags,
-            String sortBy)
+            String sortBy,
+            bool isRefreshing)
         loaded,
     required TResult Function(Failure failure) error,
   }) {
@@ -159,8 +171,13 @@ class _$BrowseInitialImpl implements BrowseInitial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<SheetMusic> sheets, List<SheetMusic> filteredSheets,
-            String searchQuery, List<String> selectedTags, String sortBy)?
+    TResult? Function(
+            List<SheetMusic> sheets,
+            List<SheetMusic> filteredSheets,
+            String searchQuery,
+            List<String> selectedTags,
+            String sortBy,
+            bool isRefreshing)?
         loaded,
     TResult? Function(Failure failure)? error,
   }) {
@@ -172,8 +189,13 @@ class _$BrowseInitialImpl implements BrowseInitial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<SheetMusic> sheets, List<SheetMusic> filteredSheets,
-            String searchQuery, List<String> selectedTags, String sortBy)?
+    TResult Function(
+            List<SheetMusic> sheets,
+            List<SheetMusic> filteredSheets,
+            String searchQuery,
+            List<String> selectedTags,
+            String sortBy,
+            bool isRefreshing)?
         loaded,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
@@ -274,7 +296,8 @@ class _$BrowseLoadingImpl implements BrowseLoading {
             List<SheetMusic> filteredSheets,
             String searchQuery,
             List<String> selectedTags,
-            String sortBy)
+            String sortBy,
+            bool isRefreshing)
         loaded,
     required TResult Function(Failure failure) error,
   }) {
@@ -286,8 +309,13 @@ class _$BrowseLoadingImpl implements BrowseLoading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<SheetMusic> sheets, List<SheetMusic> filteredSheets,
-            String searchQuery, List<String> selectedTags, String sortBy)?
+    TResult? Function(
+            List<SheetMusic> sheets,
+            List<SheetMusic> filteredSheets,
+            String searchQuery,
+            List<String> selectedTags,
+            String sortBy,
+            bool isRefreshing)?
         loaded,
     TResult? Function(Failure failure)? error,
   }) {
@@ -299,8 +327,13 @@ class _$BrowseLoadingImpl implements BrowseLoading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<SheetMusic> sheets, List<SheetMusic> filteredSheets,
-            String searchQuery, List<String> selectedTags, String sortBy)?
+    TResult Function(
+            List<SheetMusic> sheets,
+            List<SheetMusic> filteredSheets,
+            String searchQuery,
+            List<String> selectedTags,
+            String sortBy,
+            bool isRefreshing)?
         loaded,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
@@ -364,7 +397,8 @@ abstract class _$$BrowseLoadedImplCopyWith<$Res> {
       List<SheetMusic> filteredSheets,
       String searchQuery,
       List<String> selectedTags,
-      String sortBy});
+      String sortBy,
+      bool isRefreshing});
 }
 
 /// @nodoc
@@ -385,6 +419,7 @@ class __$$BrowseLoadedImplCopyWithImpl<$Res>
     Object? searchQuery = null,
     Object? selectedTags = null,
     Object? sortBy = null,
+    Object? isRefreshing = null,
   }) {
     return _then(_$BrowseLoadedImpl(
       sheets: null == sheets
@@ -407,6 +442,10 @@ class __$$BrowseLoadedImplCopyWithImpl<$Res>
           ? _value.sortBy
           : sortBy // ignore: cast_nullable_to_non_nullable
               as String,
+      isRefreshing: null == isRefreshing
+          ? _value.isRefreshing
+          : isRefreshing // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -419,7 +458,8 @@ class _$BrowseLoadedImpl implements BrowseLoaded {
       required final List<SheetMusic> filteredSheets,
       required this.searchQuery,
       required final List<String> selectedTags,
-      required this.sortBy})
+      required this.sortBy,
+      this.isRefreshing = false})
       : _sheets = sheets,
         _filteredSheets = filteredSheets,
         _selectedTags = selectedTags;
@@ -452,10 +492,13 @@ class _$BrowseLoadedImpl implements BrowseLoaded {
 
   @override
   final String sortBy;
+  @override
+  @JsonKey()
+  final bool isRefreshing;
 
   @override
   String toString() {
-    return 'BrowseState.loaded(sheets: $sheets, filteredSheets: $filteredSheets, searchQuery: $searchQuery, selectedTags: $selectedTags, sortBy: $sortBy)';
+    return 'BrowseState.loaded(sheets: $sheets, filteredSheets: $filteredSheets, searchQuery: $searchQuery, selectedTags: $selectedTags, sortBy: $sortBy, isRefreshing: $isRefreshing)';
   }
 
   @override
@@ -470,7 +513,9 @@ class _$BrowseLoadedImpl implements BrowseLoaded {
                 other.searchQuery == searchQuery) &&
             const DeepCollectionEquality()
                 .equals(other._selectedTags, _selectedTags) &&
-            (identical(other.sortBy, sortBy) || other.sortBy == sortBy));
+            (identical(other.sortBy, sortBy) || other.sortBy == sortBy) &&
+            (identical(other.isRefreshing, isRefreshing) ||
+                other.isRefreshing == isRefreshing));
   }
 
   @override
@@ -480,7 +525,8 @@ class _$BrowseLoadedImpl implements BrowseLoaded {
       const DeepCollectionEquality().hash(_filteredSheets),
       searchQuery,
       const DeepCollectionEquality().hash(_selectedTags),
-      sortBy);
+      sortBy,
+      isRefreshing);
 
   /// Create a copy of BrowseState
   /// with the given fields replaced by the non-null parameter values.
@@ -500,11 +546,13 @@ class _$BrowseLoadedImpl implements BrowseLoaded {
             List<SheetMusic> filteredSheets,
             String searchQuery,
             List<String> selectedTags,
-            String sortBy)
+            String sortBy,
+            bool isRefreshing)
         loaded,
     required TResult Function(Failure failure) error,
   }) {
-    return loaded(sheets, filteredSheets, searchQuery, selectedTags, sortBy);
+    return loaded(sheets, filteredSheets, searchQuery, selectedTags, sortBy,
+        isRefreshing);
   }
 
   @override
@@ -512,13 +560,18 @@ class _$BrowseLoadedImpl implements BrowseLoaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<SheetMusic> sheets, List<SheetMusic> filteredSheets,
-            String searchQuery, List<String> selectedTags, String sortBy)?
+    TResult? Function(
+            List<SheetMusic> sheets,
+            List<SheetMusic> filteredSheets,
+            String searchQuery,
+            List<String> selectedTags,
+            String sortBy,
+            bool isRefreshing)?
         loaded,
     TResult? Function(Failure failure)? error,
   }) {
-    return loaded?.call(
-        sheets, filteredSheets, searchQuery, selectedTags, sortBy);
+    return loaded?.call(sheets, filteredSheets, searchQuery, selectedTags,
+        sortBy, isRefreshing);
   }
 
   @override
@@ -526,14 +579,20 @@ class _$BrowseLoadedImpl implements BrowseLoaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<SheetMusic> sheets, List<SheetMusic> filteredSheets,
-            String searchQuery, List<String> selectedTags, String sortBy)?
+    TResult Function(
+            List<SheetMusic> sheets,
+            List<SheetMusic> filteredSheets,
+            String searchQuery,
+            List<String> selectedTags,
+            String sortBy,
+            bool isRefreshing)?
         loaded,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(sheets, filteredSheets, searchQuery, selectedTags, sortBy);
+      return loaded(sheets, filteredSheets, searchQuery, selectedTags, sortBy,
+          isRefreshing);
     }
     return orElse();
   }
@@ -582,13 +641,15 @@ abstract class BrowseLoaded implements BrowseState {
       required final List<SheetMusic> filteredSheets,
       required final String searchQuery,
       required final List<String> selectedTags,
-      required final String sortBy}) = _$BrowseLoadedImpl;
+      required final String sortBy,
+      final bool isRefreshing}) = _$BrowseLoadedImpl;
 
   List<SheetMusic> get sheets;
   List<SheetMusic> get filteredSheets;
   String get searchQuery;
   List<String> get selectedTags;
   String get sortBy;
+  bool get isRefreshing;
 
   /// Create a copy of BrowseState
   /// with the given fields replaced by the non-null parameter values.
@@ -672,7 +733,8 @@ class _$BrowseErrorImpl implements BrowseError {
             List<SheetMusic> filteredSheets,
             String searchQuery,
             List<String> selectedTags,
-            String sortBy)
+            String sortBy,
+            bool isRefreshing)
         loaded,
     required TResult Function(Failure failure) error,
   }) {
@@ -684,8 +746,13 @@ class _$BrowseErrorImpl implements BrowseError {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<SheetMusic> sheets, List<SheetMusic> filteredSheets,
-            String searchQuery, List<String> selectedTags, String sortBy)?
+    TResult? Function(
+            List<SheetMusic> sheets,
+            List<SheetMusic> filteredSheets,
+            String searchQuery,
+            List<String> selectedTags,
+            String sortBy,
+            bool isRefreshing)?
         loaded,
     TResult? Function(Failure failure)? error,
   }) {
@@ -697,8 +764,13 @@ class _$BrowseErrorImpl implements BrowseError {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<SheetMusic> sheets, List<SheetMusic> filteredSheets,
-            String searchQuery, List<String> selectedTags, String sortBy)?
+    TResult Function(
+            List<SheetMusic> sheets,
+            List<SheetMusic> filteredSheets,
+            String searchQuery,
+            List<String> selectedTags,
+            String sortBy,
+            bool isRefreshing)?
         loaded,
     TResult Function(Failure failure)? error,
     required TResult orElse(),

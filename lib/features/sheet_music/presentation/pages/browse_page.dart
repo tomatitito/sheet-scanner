@@ -44,7 +44,7 @@ class _BrowseViewState extends State<_BrowseView> {
   void _onSearchChanged(String query) {
     // Cancel previous timer
     _debounceTimer?.cancel();
-    
+
     // Set new debounced search
     _debounceTimer = Timer(const Duration(milliseconds: 400), () {
       _browseCubit.search(query);
@@ -167,189 +167,213 @@ class _BrowseViewState extends State<_BrowseView> {
               );
             }
 
-            return RefreshIndicator(
-              onRefresh: () => _browseCubit.refresh(),
-              child: Column(
-                children: [
-                  // Search and filter section
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        // Search bar
-                        TextField(
-                          controller: _searchController,
-                          onChanged: _onSearchChanged,
-                          decoration: InputDecoration(
-                            hintText: 'Search titles, composers...',
-                            prefixIcon: const Icon(Icons.search),
-                            suffixIcon: _searchController.text.isNotEmpty
-                                ? IconButton(
-                                    icon: const Icon(Icons.clear),
-                                    onPressed: () {
-                                      _searchController.clear();
-                                      _browseCubit.search('');
-                                    },
-                                  )
-                                : null,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        // Filter chips and sort dropdown
-                        Row(
+            return Stack(
+              children: [
+                RefreshIndicator(
+                  onRefresh: () => _browseCubit.refresh(),
+                  child: Column(
+                    children: [
+                      // Search and filter section
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
                           children: [
-                            Expanded(
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    // All chip
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 8.0,
-                                      ),
-                                      child: FilterChip(
-                                        label: const Text('All'),
-                                        selected: state.selectedTags.isEmpty,
-                                        onSelected: (_) {
-                                          _browseCubit.filterByTags([]);
+                            // Search bar
+                            TextField(
+                              controller: _searchController,
+                              onChanged: _onSearchChanged,
+                              decoration: InputDecoration(
+                                hintText: 'Search titles, composers...',
+                                prefixIcon: const Icon(Icons.search),
+                                suffixIcon: _searchController.text.isNotEmpty
+                                    ? IconButton(
+                                        icon: const Icon(Icons.clear),
+                                        onPressed: () {
+                                          _searchController.clear();
+                                          _browseCubit.search('');
                                         },
-                                      ),
-                                    ),
-                                    // Tag chips
-                                    ..._browseCubit.getAllTags().take(5).map(
-                                          (tag) => Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 8.0),
-                                            child: FilterChip(
-                                              label: Text(tag),
-                                              selected: state.selectedTags
-                                                  .contains(tag),
-                                              onSelected: (_) {
-                                                final newTags =
-                                                    List<String>.from(
-                                                  state.selectedTags,
-                                                );
-                                                if (newTags.contains(tag)) {
-                                                  newTags.remove(tag);
-                                                } else {
-                                                  newTags.add(tag);
-                                                }
-                                                _browseCubit.filterByTags(
-                                                  newTags,
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                  ],
+                                      )
+                                    : null,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            // Sort dropdown
-                            DropdownButton<String>(
-                              value: state.sortBy,
-                              items: const [
-                                DropdownMenuItem(
-                                  value: 'recent',
-                                  child: Text('Recent'),
+                            const SizedBox(height: 12),
+                            // Filter chips and sort dropdown
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: [
+                                        // All chip
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            right: 8.0,
+                                          ),
+                                          child: FilterChip(
+                                            label: const Text('All'),
+                                            selected:
+                                                state.selectedTags.isEmpty,
+                                            onSelected: (_) {
+                                              _browseCubit.filterByTags([]);
+                                            },
+                                          ),
+                                        ),
+                                        // Tag chips
+                                        ..._browseCubit
+                                            .getAllTags()
+                                            .take(5)
+                                            .map(
+                                              (tag) => Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 8.0),
+                                                child: FilterChip(
+                                                  label: Text(tag),
+                                                  selected: state.selectedTags
+                                                      .contains(tag),
+                                                  onSelected: (_) {
+                                                    final newTags =
+                                                        List<String>.from(
+                                                      state.selectedTags,
+                                                    );
+                                                    if (newTags.contains(tag)) {
+                                                      newTags.remove(tag);
+                                                    } else {
+                                                      newTags.add(tag);
+                                                    }
+                                                    _browseCubit.filterByTags(
+                                                      newTags,
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                DropdownMenuItem(
-                                  value: 'oldest',
-                                  child: Text('Oldest'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'title',
-                                  child: Text('Title'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'composer',
-                                  child: Text('Composer'),
+                                const SizedBox(width: 8),
+                                // Sort dropdown
+                                DropdownButton<String>(
+                                  value: state.sortBy,
+                                  items: const [
+                                    DropdownMenuItem(
+                                      value: 'recent',
+                                      child: Text('Recent'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'oldest',
+                                      child: Text('Oldest'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'title',
+                                      child: Text('Title'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'composer',
+                                      child: Text('Composer'),
+                                    ),
+                                  ],
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      _browseCubit.sortBy(value);
+                                    }
+                                  },
                                 ),
                               ],
-                              onChanged: (value) {
-                                if (value != null) {
-                                  _browseCubit.sortBy(value);
-                                }
-                              },
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                  // Results info
-                  if (state.searchQuery.isNotEmpty ||
-                      state.selectedTags.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            '${state.filteredSheets.length} results',
-                            style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      // Results info
+                      if (state.searchQuery.isNotEmpty ||
+                          state.selectedTags.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                '${state.filteredSheets.length} results',
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                              const Spacer(),
+                              if (state.searchQuery.isNotEmpty ||
+                                  state.selectedTags.isNotEmpty)
+                                TextButton.icon(
+                                  icon: const Icon(Icons.clear_all),
+                                  label: const Text('Clear filters'),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    _browseCubit.clearFilters();
+                                  },
+                                ),
+                            ],
                           ),
-                          const Spacer(),
-                          if (state.searchQuery.isNotEmpty ||
-                              state.selectedTags.isNotEmpty)
-                            TextButton.icon(
-                              icon: const Icon(Icons.clear_all),
-                              label: const Text('Clear filters'),
-                              onPressed: () {
-                                _searchController.clear();
-                                _browseCubit.clearFilters();
-                              },
-                            ),
-                        ],
+                        ),
+                      // Sheet list
+                      Expanded(
+                        child: state.filteredSheets.isEmpty
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.search_off,
+                                      size: 64,
+                                      color: Colors.grey[400],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      'No results found',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Try different search terms or filters',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: Colors.grey[600],
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : _buildGrid(
+                                context,
+                                state,
+                                isMobile,
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Show non-intrusive loading indicator during refresh
+                if (state.isRefreshing)
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      color: Colors.transparent,
+                      padding: const EdgeInsets.all(8.0),
+                      child: const SizedBox(
+                        height: 3,
+                        child: LinearProgressIndicator(),
                       ),
                     ),
-                  // Sheet list
-                  Expanded(
-                    child: state.filteredSheets.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.search_off,
-                                  size: 64,
-                                  color: Colors.grey[400],
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'No results found',
-                                  style:
-                                      Theme.of(context).textTheme.headlineSmall,
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Try different search terms or filters',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(
-                                        color: Colors.grey[600],
-                                      ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : _buildGrid(
-                            context,
-                            state,
-                            isMobile,
-                          ),
                   ),
-                ],
-              ),
+              ],
             );
           }
 

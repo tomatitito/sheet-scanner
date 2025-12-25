@@ -27,8 +27,34 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
-  /// Refresh the sheet music list
-  Future<void> refresh() => loadSheetMusic();
+  /// Refresh the sheet music list while preserving existing data
+  Future<void> refresh() async {
+    // If we already have data, mark as refreshing instead of loading
+    if (state is HomeLoaded) {
+      final currentState = state as HomeLoaded;
+      emit(HomeLoaded(
+        sheetMusicList: currentState.sheetMusicList,
+        totalCount: currentState.totalCount,
+        isRefreshing: true,
+      ));
+    } else {
+      // If no data yet, show normal loading
+      emit(const HomeLoading());
+    }
+
+    final result = await getAllSheetMusicUseCase();
+
+    result.fold(
+      (failure) => emit(HomeError(failure)),
+      (sheetMusicList) => emit(
+        HomeLoaded(
+          sheetMusicList: sheetMusicList,
+          totalCount: sheetMusicList.length,
+          isRefreshing: false,
+        ),
+      ),
+    );
+  }
 
   @override
   Future<void> close() async {

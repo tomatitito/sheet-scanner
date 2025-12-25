@@ -120,8 +120,33 @@ class BrowseCubit extends Cubit<BrowseState> {
     return sorted;
   }
 
-  /// Refresh the sheet music list
-  Future<void> refresh() => loadSheetMusic();
+  /// Refresh the sheet music list while preserving current state
+  Future<void> refresh() async {
+    // If we already have data, mark as refreshing instead of loading
+    final currentState = state;
+    if (currentState is BrowseLoaded) {
+      emit(currentState.copyWith(isRefreshing: true));
+    } else {
+      // If no data yet, show normal loading
+      emit(const BrowseState.loading());
+    }
+
+    final result = await getAllSheetMusicUseCase();
+
+    result.fold(
+      (failure) => emit(BrowseState.error(failure)),
+      (sheetMusicList) => emit(
+        BrowseState.loaded(
+          sheets: sheetMusicList,
+          filteredSheets: _sortSheets(sheetMusicList, 'recent'),
+          searchQuery: '',
+          selectedTags: [],
+          sortBy: 'recent',
+          isRefreshing: false,
+        ),
+      ),
+    );
+  }
 
   /// Clear all filters and search
   void clearFilters() {
