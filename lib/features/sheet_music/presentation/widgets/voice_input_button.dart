@@ -93,9 +93,10 @@ class _VoiceInputButtonState extends State<VoiceInputButton>
   @override
   Widget build(BuildContext context) {
     return Focus(
-      onKey: (node, event) {
+      onKeyEvent: (node, event) {
         // Support Space key for voice activation (standard accessibility pattern)
-        if (event.isKeyPressed(LogicalKeyboardKey.space)) {
+        if (event.logicalKey == LogicalKeyboardKey.space &&
+            event is KeyDownEvent) {
           _handleVoiceInput();
           return KeyEventResult.handled;
         }
