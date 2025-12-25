@@ -91,3 +91,11 @@ class PlatformFailure extends Failure {
     super.code,
   });
 }
+
+/// Failure for speech recognition/dictation errors.
+class SpeechRecognitionFailure extends Failure {
+  SpeechRecognitionFailure({
+    required super.message,
+    super.code,
+  });
+}

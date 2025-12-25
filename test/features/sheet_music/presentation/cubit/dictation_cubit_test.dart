@@ -11,7 +11,14 @@ import 'package:sheet_scanner/core/utils/either.dart';
 class MockTranscribeVoiceUseCase extends Mock
     implements TranscribeVoiceUseCase {}
 
+// Fake for TranscribeVoiceParams
+class FakeTranscribeVoiceParams extends Fake implements TranscribeVoiceParams {}
+
 void main() {
+  setUpAll(() {
+    registerFallbackValue(FakeTranscribeVoiceParams());
+  });
+
   group('DictationCubit', () {
     late DictationCubit dictationCubit;
     late MockTranscribeVoiceUseCase mockUseCase;
@@ -95,24 +102,35 @@ void main() {
           // WHEN: startDictation() is called again
           // THEN: Should ignore and not call use case twice
 
-          when(() => mockUseCase.call(any())).thenAnswer(
-            (_) async => Right(
-              DictationResult(
-                text: 'test',
-                confidence: 0.9,
-                isFinal: true,
-                duration: const Duration(seconds: 1),
+          var callCount = 0;
+          when(() => mockUseCase.call(any())).thenAnswer((_) {
+            callCount++;
+            return Future.delayed(
+              const Duration(milliseconds: 500),
+              () => Right(
+                DictationResult(
+                  text: 'test',
+                  confidence: 0.9,
+                  isFinal: true,
+                  duration: const Duration(seconds: 1),
+                ),
               ),
-            ),
-          );
+            );
+          });
 
-          await dictationCubit.startDictation();
+          final future1 = dictationCubit.startDictation();
 
-          // Try to start again while listening
-          await dictationCubit.startDictation();
+          // Wait a tiny bit to ensure first call starts and emits listening
+          await Future.delayed(const Duration(milliseconds: 10));
+
+          // Try to start again while listening - should be ignored
+          final future2 = dictationCubit.startDictation();
+
+          // Both should complete without error
+          await Future.wait([future1, future2]);
 
           // Use case should be called only once
-          verify(() => mockUseCase.call(any())).called(1);
+          expect(callCount, 1);
         },
       );
 
