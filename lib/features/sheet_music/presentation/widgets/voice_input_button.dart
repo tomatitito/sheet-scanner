@@ -161,11 +161,12 @@ class _VoiceInputButtonState extends State<VoiceInputButton>
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
                           'Confidence: ${(confidence * 100).toStringAsFixed(0)}%',
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: confidence > 0.7
-                                    ? Colors.green
-                                    : Colors.orange,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.labelSmall?.copyWith(
+                                    color: confidence > 0.7
+                                        ? Colors.green
+                                        : Colors.orange,
+                                  ),
                         ),
                       ),
                       orElse: () => const SizedBox.shrink(),
@@ -189,7 +190,8 @@ class _VoiceInputButtonState extends State<VoiceInputButton>
       orElse: () => false,
     );
 
-    final semanticLabel = isListening ? 'Stop recording' : 'Start voice recording';
+    final semanticLabel =
+        isListening ? 'Stop recording' : 'Start voice recording';
 
     return Semantics(
       button: true,
@@ -237,14 +239,14 @@ class _VoiceInputButtonState extends State<VoiceInputButton>
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
                               valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : Icon(
+                            isListening ? Icons.mic : Icons.mic_none,
+                            color: Colors.white,
+                            size: widget.size * 0.5,
                           ),
-                        )
-                      : Icon(
-                          isListening ? Icons.mic : Icons.mic_none,
-                          color: Colors.white,
-                          size: widget.size * 0.5,
-                        ),
                   ),
                 ),
               ),
