@@ -69,7 +69,7 @@ class _AddSheetPageState extends State<AddSheetPage> {
           } else if (state is AddSheetError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Error: ${state.failure.toString()}'),
+                content: Text(state.failure.userMessage),
                 backgroundColor: Colors.red,
               ),
             );
@@ -162,13 +162,34 @@ class _AddSheetFormState extends State<_AddSheetForm> {
       }
     } catch (e) {
       if (mounted) {
+        final errorMessage = _getFilePickerErrorMessage(e);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error selecting files: $e'),
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
           ),
         );
       }
+    }
+  }
+
+  String _getFilePickerErrorMessage(Object error) {
+    final errorString = error.toString().toLowerCase();
+
+    if (errorString.contains('permission') || errorString.contains('denied')) {
+      return 'Permission denied. Please grant file access in settings.';
+    } else if (errorString.contains('cancelled') || errorString.contains('cancel')) {
+      return 'File selection cancelled.';
+    } else if (errorString.contains('size') || errorString.contains('large')) {
+      return 'File is too large. Please choose a smaller file.';
+    } else if (errorString.contains('type') || errorString.contains('extension') || errorString.contains('supported')) {
+      return 'Unsupported file type. Please select PDF, JPG, PNG, or GIF files.';
+    } else if (errorString.contains('storage') || errorString.contains('disk')) {
+      return 'Storage error. Please check your device storage.';
+    } else if (errorString.contains('timeout')) {
+      return 'File selection took too long. Please try again.';
+    } else {
+      return 'Unable to select files. Please try again.';
     }
   }
 

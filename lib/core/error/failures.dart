@@ -15,6 +15,44 @@ abstract class Failure implements Exception {
     this.code,
   });
 
+  /// A user-friendly error message suitable for UI display.
+  /// Returns the message if it's already user-friendly,
+  /// or provides a generic friendly message for technical errors.
+  String get userMessage {
+    // If message is already friendly (doesn't start with technical keywords),
+    // return it as-is
+    if (!message.startsWith('Failed to') &&
+        !message.contains('Exception') &&
+        !message.contains('Error') &&
+        !message.contains('Cannot') &&
+        message.length > 10) {
+      return message;
+    }
+
+    // Provide friendly messages for common error types
+    if (this is DatabaseFailure) {
+      return 'Unable to access your library. Please check your data and try again.';
+    } else if (this is FileSystemFailure) {
+      return 'Unable to access files on your device. Please try again.';
+    } else if (this is OCRFailure) {
+      return 'Unable to process the image. Please try with a clearer photo.';
+    } else if (this is SearchFailure) {
+      return 'Unable to search right now. Please try again.';
+    } else if (this is BackupFailure) {
+      return 'Unable to complete backup. Please try again.';
+    } else if (this is ValidationFailure) {
+      return 'Please check your input and try again.';
+    } else if (this is PermissionFailure) {
+      return 'This app needs permission to continue. Please grant it in settings.';
+    } else if (this is PlatformFailure) {
+      return 'This feature is not available on your device.';
+    } else if (this is SpeechRecognitionFailure) {
+      return 'Unable to use voice input. Please try again.';
+    } else {
+      return 'Something went wrong. Please try again.';
+    }
+  }
+
   @override
   String toString() =>
       'Failure: $message${code != null ? ' (code: $code)' : ''}';
