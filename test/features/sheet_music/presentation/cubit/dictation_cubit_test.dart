@@ -71,12 +71,12 @@ void main() {
           // THEN: First emits listening state with empty transcription
 
           when(() => mockUseCase.call(any())).thenAnswer(
-            (_) async => Right(
+            (_) async => Right(const 
               DictationResult(
                 text: 'hello world',
                 confidence: 0.95,
                 isFinal: true,
-                duration: const Duration(seconds: 2),
+                duration: Duration(seconds: 2),
               ),
             ),
           );
@@ -108,11 +108,11 @@ void main() {
             return Future.delayed(
               const Duration(milliseconds: 500),
               () => Right(
-                DictationResult(
+                const DictationResult(
                   text: 'test',
                   confidence: 0.9,
                   isFinal: true,
-                  duration: const Duration(seconds: 1),
+                  duration: Duration(seconds: 1),
                 ),
               ),
             );
@@ -141,16 +141,16 @@ void main() {
           // WHEN: startDictation() completes
           // THEN: Should emit complete state with text and confidence
 
-          final expectedText = 'hello world';
-          final expectedConfidence = 0.95;
+          const expectedText = 'hello world';
+          const expectedConfidence = 0.95;
 
           when(() => mockUseCase.call(any())).thenAnswer(
             (_) async => Right(
-              DictationResult(
+              const DictationResult(
                 text: expectedText,
                 confidence: expectedConfidence,
                 isFinal: true,
-                duration: const Duration(seconds: 2),
+                duration: Duration(seconds: 2),
               ),
             ),
           );
@@ -197,11 +197,11 @@ void main() {
 
           when(() => mockUseCase.call(any())).thenAnswer(
             (_) async => Right(
-              DictationResult(
+              const DictationResult(
                 text: 'hola',
                 confidence: 0.9,
                 isFinal: true,
-                duration: const Duration(seconds: 1),
+                duration: Duration(seconds: 1),
               ),
             ),
           );
@@ -239,11 +239,11 @@ void main() {
 
           when(() => mockUseCase.call(any())).thenAnswer(
             (_) async => Right(
-              DictationResult(
+              const DictationResult(
                 text: 'test',
                 confidence: 0.9,
                 isFinal: true,
-                duration: const Duration(seconds: 1),
+                duration: Duration(seconds: 1),
               ),
             ),
           );
@@ -270,11 +270,11 @@ void main() {
 
           when(() => mockUseCase.call(any())).thenAnswer(
             (_) async => Right(
-              DictationResult(
+              const DictationResult(
                 text: 'test',
                 confidence: 0.9,
                 isFinal: true,
-                duration: const Duration(seconds: 1),
+                duration: Duration(seconds: 1),
               ),
             ),
           );
@@ -352,11 +352,11 @@ void main() {
             (_) => Future.delayed(
               const Duration(milliseconds: 500),
               () => Right(
-                DictationResult(
+                const DictationResult(
                   text: 'final text',
                   confidence: 0.95,
                   isFinal: true,
-                  duration: const Duration(seconds: 2),
+                  duration: Duration(seconds: 2),
                 ),
               ),
             ),
@@ -401,11 +401,11 @@ void main() {
             (_) => Future.delayed(
               const Duration(milliseconds: 500),
               () => Right(
-                DictationResult(
+                const DictationResult(
                   text: 'test',
                   confidence: 0.9,
                   isFinal: true,
-                  duration: const Duration(seconds: 1),
+                  duration: Duration(seconds: 1),
                 ),
               ),
             ),
@@ -438,11 +438,11 @@ void main() {
 
           when(() => mockUseCase.call(any())).thenAnswer(
             (_) async => Right(
-              DictationResult(
+              const DictationResult(
                 text: 'hello',
                 confidence: 0.95,
                 isFinal: true,
-                duration: const Duration(seconds: 1),
+                duration: Duration(seconds: 1),
               ),
             ),
           );

@@ -99,7 +99,7 @@ void main() {
             language: 'es_ES',
             listenFor: any(named: 'listenFor'),
           )).thenAnswer(
-            (_) async => const Right(
+            (_) async => Right(const 
               DictationResult(
                 text: 'hola',
                 confidence: 0.9,
@@ -133,7 +133,7 @@ void main() {
             language: any(named: 'language'),
             listenFor: duration,
           )).thenAnswer(
-            (_) async => const Right(
+            (_) async => Right(const 
               DictationResult(
                 text: 'test',
                 confidence: 0.85,
@@ -273,7 +273,7 @@ void main() {
             language: any(named: 'language'),
             listenFor: any(named: 'listenFor'),
           )).thenAnswer(
-            (_) async => const Right(
+            (_) async => Right(const 
               DictationResult(
                 text: 'test',
                 confidence: 0.9,
@@ -283,7 +283,7 @@ void main() {
             ),
           );
 
-          final params = const TranscribeVoiceParams();
+          final params = TranscribeVoiceParams();
 
           final result1 = await useCase.call(params);
           final result2 = await useCase.call(params);
@@ -308,8 +308,8 @@ void main() {
             language: 'en_US',
             listenFor: any(named: 'listenFor'),
           )).thenAnswer(
-            (_) async => const Right(
-              DictationResult(
+            (_) async => Right(
+              const DictationResult(
                 text: 'english',
                 confidence: 0.95,
                 isFinal: true,
@@ -322,8 +322,8 @@ void main() {
             language: 'es_ES',
             listenFor: any(named: 'listenFor'),
           )).thenAnswer(
-            (_) async => const Right(
-              DictationResult(
+            (_) async => Right(
+              const DictationResult(
                 text: 'español',
                 confidence: 0.92,
                 isFinal: true,

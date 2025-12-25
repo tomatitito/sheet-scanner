@@ -8,8 +8,6 @@ import 'package:sheet_scanner/features/sheet_music/presentation/cubit/home_cubit
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/home_state.dart';
 
 // Mock the UseCase parameter type
-import 'package:sheet_scanner/features/sheet_music/domain/usecases/get_all_sheet_music_use_case.dart'
-    as use_case;
 
 /// Mock for GetAllSheetMusicUseCase
 class MockGetAllSheetMusicUseCase extends Mock
