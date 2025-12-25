@@ -15,6 +15,13 @@ class SheetMusicTable extends Table {
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
+
+  List<Index> get indexes => [
+        Index(
+          'idx_title_composer_created_at',
+          'CREATE INDEX idx_title_composer_created_at ON sheet_music_table (title, composer, created_at)',
+        ),
+      ];
 }
 
 @DataClassName('TagModel')
@@ -34,6 +41,17 @@ class SheetMusicTagsTable extends Table {
   @override
   List<Set<Column<Object>>> get uniqueKeys => [
         {sheetMusicId, tagId},
+      ];
+
+  List<Index> get indexes => [
+        Index(
+          'idx_sheet_music_id',
+          'CREATE INDEX idx_sheet_music_id ON sheet_music_tags_table (sheet_music_id)',
+        ),
+        Index(
+          'idx_tag_id',
+          'CREATE INDEX idx_tag_id ON sheet_music_tags_table (tag_id)',
+        ),
       ];
 }
 

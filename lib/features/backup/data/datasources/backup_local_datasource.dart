@@ -113,8 +113,9 @@ class BackupLocalDataSourceImpl implements BackupLocalDataSource {
         };
 
         // Optionally include image information
+        // Note: Image paths are not yet included in the backup schema.
+        // Future enhancement: Add image file paths and optionally embed image data
         if (includeImages) {
-          // TODO: Add image paths once schema includes them
           jsonItem['images'] = [];
         }
 

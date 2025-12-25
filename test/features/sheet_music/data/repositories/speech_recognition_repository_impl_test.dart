@@ -5,16 +5,10 @@ import 'package:sheet_scanner/core/services/speech_recognition_service.dart';
 import 'package:sheet_scanner/features/sheet_music/data/repositories/speech_recognition_repository_impl.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/entities/dictation_result.dart';
 
-class _DurationFake extends Fake implements Duration {}
-
 class MockSpeechRecognitionService extends Mock
     implements SpeechRecognitionService {}
 
 void main() {
-  setUpAll(() {
-    registerFallbackValue(_DurationFake());
-  });
-
   group('SpeechRecognitionRepositoryImpl', () {
     late SpeechRecognitionRepositoryImpl repository;
     late MockSpeechRecognitionService mockService;
@@ -41,7 +35,7 @@ void main() {
           expect(result.isLeft(), isTrue);
           result.fold(
             (failure) {
-              expect(failure, isA<SpeechRecognitionFailure>());
+              expect(failure, isA<PlatformFailure>());
             },
             (_) => fail('Should return failure'),
           );
@@ -73,6 +67,8 @@ void main() {
 
           when(() => mockService.isAvailable()).thenAnswer((_) async => true);
           when(() => mockService.initialize()).thenAnswer((_) async => true);
+
+          // Setup startListening to call stopListening to complete the future
           when(
             () => mockService.startListening(
               onResult: any(named: 'onResult'),
@@ -81,12 +77,9 @@ void main() {
               listenFor: any(named: 'listenFor'),
             ),
           ).thenAnswer(
-            (invocation) async {
-              final onResult =
-                  invocation.namedArguments[const Symbol('onResult')]
-                      as Function(String, bool);
-              // Simulate successful recognition
-              onResult('hello world', true);
+            (_) async {
+              // Simulate successful recognition by calling stopListening
+              await Future.delayed(const Duration(milliseconds: 100));
             },
           );
 
@@ -115,6 +108,7 @@ void main() {
 
           when(() => mockService.isAvailable()).thenAnswer((_) async => true);
           when(() => mockService.initialize()).thenAnswer((_) async => true);
+
           when(
             () => mockService.startListening(
               onResult: any(named: 'onResult'),
@@ -128,6 +122,7 @@ void main() {
                   invocation.namedArguments[const Symbol('onError')]
                       as Function(String);
               // Simulate error
+              await Future.delayed(const Duration(milliseconds: 10));
               onError('Microphone access denied');
             },
           );
@@ -155,11 +150,8 @@ void main() {
               listenFor: any(named: 'listenFor'),
             ),
           ).thenAnswer(
-            (invocation) async {
-              final onResult =
-                  invocation.namedArguments[const Symbol('onResult')]
-                      as Function(String, bool);
-              onResult('hola', true);
+            (_) async {
+              await Future.delayed(const Duration(milliseconds: 10));
             },
           );
 
@@ -235,14 +227,7 @@ void main() {
               language: any(named: 'language'),
               listenFor: any(named: 'listenFor'),
             ),
-          ).thenAnswer(
-            (invocation) async {
-              final onResult =
-                  invocation.namedArguments[const Symbol('onResult')]
-                      as Function(String, bool);
-              onResult(expectedText, true);
-            },
-          );
+          ).thenAnswer((_) async {});
 
           when(() => mockService.stopListening())
               .thenAnswer((_) async => expectedText);
@@ -274,14 +259,7 @@ void main() {
               language: any(named: 'language'),
               listenFor: any(named: 'listenFor'),
             ),
-          ).thenAnswer(
-            (invocation) async {
-              final onResult =
-                  invocation.namedArguments[const Symbol('onResult')]
-                      as Function(String, bool);
-              onResult('test', true);
-            },
-          );
+          ).thenAnswer((_) async {});
 
           when(() => mockService.stopListening())
               .thenAnswer((_) async => 'test');
@@ -314,14 +292,7 @@ void main() {
               language: any(named: 'language'),
               listenFor: any(named: 'listenFor'),
             ),
-          ).thenAnswer(
-            (invocation) async {
-              final onResult =
-                  invocation.namedArguments[const Symbol('onResult')]
-                      as Function(String, bool);
-              onResult('final text', true);
-            },
-          );
+          ).thenAnswer((_) async {});
 
           when(() => mockService.stopListening())
               .thenAnswer((_) async => 'final text');

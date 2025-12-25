@@ -7,7 +7,6 @@ import 'package:sheet_scanner/features/sheet_music/data/models/sheet_music_model
 import 'package:sheet_scanner/features/sheet_music/domain/entities/sheet_music.dart';
 
 /// Implementation of SearchRepository using local database.
-/// TODO: Complete implementation with actual search logic.
 class SearchRepositoryImpl implements SearchRepository {
   final SearchLocalDataSource localDataSource;
 

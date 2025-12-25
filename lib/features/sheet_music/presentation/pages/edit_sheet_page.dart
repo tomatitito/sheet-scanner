@@ -301,18 +301,47 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Title field
-                    TextFormField(
-                      controller: widget.titleController,
-                      enabled: !isSubmitting,
-                      onChanged: widget.onTitleChanged,
-                      decoration: InputDecoration(
-                        labelText: 'Title *',
-                        hintText: 'Enter sheet music title',
-                        errorText: errors['title'],
-                        border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.title),
-                      ),
+                    // Title field with voice input
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: widget.titleController,
+                            enabled: !isSubmitting,
+                            onChanged: widget.onTitleChanged,
+                            decoration: InputDecoration(
+                              labelText: 'Title *',
+                              hintText: 'Enter sheet music title',
+                              errorText: errors['title'],
+                              border: const OutlineInputBorder(),
+                              prefixIcon: const Icon(Icons.title),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: VoiceInputButton(
+                            onDictationComplete: (text) {
+                              widget.titleController.text = text;
+                              widget.onTitleChanged(text);
+                            },
+                            onError: (error) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Voice input error: $error'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            },
+                            tooltip: 'Voice input for title',
+                            size: 48.0,
+                            idleColor: Colors.blue,
+                            listeningColor: Colors.red,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
 
