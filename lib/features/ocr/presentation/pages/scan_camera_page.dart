@@ -64,7 +64,7 @@ class _ScanCameraPageState extends State<ScanCameraPage>
 
       _cameraController = CameraController(
         firstCamera,
-        ResolutionPreset.veryHigh,
+        ResolutionPreset.high,
         enableAudio: false,
       );
 

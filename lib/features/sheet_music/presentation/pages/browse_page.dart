@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -31,11 +32,23 @@ class _BrowseView extends StatefulWidget {
 class _BrowseViewState extends State<_BrowseView> {
   final _searchController = TextEditingController();
   late final _browseCubit = context.read<BrowseCubit>();
+  Timer? _debounceTimer;
 
   @override
   void dispose() {
     _searchController.dispose();
+    _debounceTimer?.cancel();
     super.dispose();
+  }
+
+  void _onSearchChanged(String query) {
+    // Cancel previous timer
+    _debounceTimer?.cancel();
+    
+    // Set new debounced search
+    _debounceTimer = Timer(const Duration(milliseconds: 400), () {
+      _browseCubit.search(query);
+    });
   }
 
   @override
@@ -166,9 +179,7 @@ class _BrowseViewState extends State<_BrowseView> {
                         // Search bar
                         TextField(
                           controller: _searchController,
-                          onChanged: (query) {
-                            _browseCubit.search(query);
-                          },
+                          onChanged: _onSearchChanged,
                           decoration: InputDecoration(
                             hintText: 'Search titles, composers...',
                             prefixIcon: const Icon(Icons.search),
