@@ -27,11 +27,11 @@ void main() {
           // WHEN: useCase is called with params
           // THEN: Should return Right with DictationResult
 
-          final expectedResult = DictationResult(
+          const expectedResult = DictationResult(
             text: 'hello world',
             confidence: 0.95,
             isFinal: true,
-            duration: const Duration(seconds: 2),
+            duration: Duration(seconds: 2),
           );
 
           when(() => mockRepository.startVoiceInput(
@@ -99,12 +99,12 @@ void main() {
             language: 'es_ES',
             listenFor: any(named: 'listenFor'),
           )).thenAnswer(
-            (_) async => Right(
+            (_) async => const Right(
               DictationResult(
                 text: 'hola',
                 confidence: 0.9,
                 isFinal: true,
-                duration: const Duration(seconds: 1),
+                duration: Duration(seconds: 1),
               ),
             ),
           );
@@ -133,12 +133,12 @@ void main() {
             language: any(named: 'language'),
             listenFor: duration,
           )).thenAnswer(
-            (_) async => Right(
+            (_) async => const Right(
               DictationResult(
                 text: 'test',
                 confidence: 0.85,
                 isFinal: true,
-                duration: const Duration(seconds: 2),
+                duration: Duration(seconds: 2),
               ),
             ),
           );
@@ -273,17 +273,17 @@ void main() {
             language: any(named: 'language'),
             listenFor: any(named: 'listenFor'),
           )).thenAnswer(
-            (_) async => Right(
+            (_) async => const Right(
               DictationResult(
                 text: 'test',
                 confidence: 0.9,
                 isFinal: true,
-                duration: const Duration(seconds: 1),
+                duration: Duration(seconds: 1),
               ),
             ),
           );
 
-          final params = TranscribeVoiceParams();
+          final params = const TranscribeVoiceParams();
 
           final result1 = await useCase.call(params);
           final result2 = await useCase.call(params);
@@ -308,12 +308,12 @@ void main() {
             language: 'en_US',
             listenFor: any(named: 'listenFor'),
           )).thenAnswer(
-            (_) async => Right(
+            (_) async => const Right(
               DictationResult(
                 text: 'english',
                 confidence: 0.95,
                 isFinal: true,
-                duration: const Duration(seconds: 1),
+                duration: Duration(seconds: 1),
               ),
             ),
           );
@@ -322,12 +322,12 @@ void main() {
             language: 'es_ES',
             listenFor: any(named: 'listenFor'),
           )).thenAnswer(
-            (_) async => Right(
+            (_) async => const Right(
               DictationResult(
                 text: 'español',
                 confidence: 0.92,
                 isFinal: true,
-                duration: const Duration(seconds: 1),
+                duration: Duration(seconds: 1),
               ),
             ),
           );
