@@ -57,10 +57,19 @@ final getIt = GetIt.instance;
 /// - Feature repositories (data layer contracts)
 /// - Feature implementations (business logic)
 /// - Feature data sources (local data access)
+///
+/// Throws an exception if database initialization fails during setup.
 void setupInjection() {
   // ==================== CORE ====================
   // Database - LazyDatabase will initialize on first use
-  getIt.registerSingleton<AppDatabase>(AppDatabase());
+  // Register the database instance
+  late final AppDatabase database;
+  try {
+    database = AppDatabase();
+    getIt.registerSingleton<AppDatabase>(database);
+  } catch (e) {
+    throw Exception('Failed to initialize database: $e');
+  }
 
   // Speech Recognition Service
   getIt.registerSingleton<SpeechRecognitionService>(
