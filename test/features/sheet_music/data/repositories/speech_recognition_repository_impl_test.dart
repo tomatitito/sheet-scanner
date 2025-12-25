@@ -5,10 +5,16 @@ import 'package:sheet_scanner/core/services/speech_recognition_service.dart';
 import 'package:sheet_scanner/features/sheet_music/data/repositories/speech_recognition_repository_impl.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/entities/dictation_result.dart';
 
+class _DurationFake extends Fake implements Duration {}
+
 class MockSpeechRecognitionService extends Mock
     implements SpeechRecognitionService {}
 
 void main() {
+  setUpAll(() {
+    registerFallbackValue(_DurationFake());
+  });
+
   group('SpeechRecognitionRepositoryImpl', () {
     late SpeechRecognitionRepositoryImpl repository;
     late MockSpeechRecognitionService mockService;
@@ -18,19 +24,6 @@ void main() {
       repository = SpeechRecognitionRepositoryImpl(
         speechService: mockService,
       );
-      
-      // Set default behavior for all tests
-      when(() => mockService.isAvailable()).thenAnswer((_) async => true);
-      when(() => mockService.initialize()).thenAnswer((_) async => true);
-      when(
-        () => mockService.startListening(
-          onResult: any(named: 'onResult'),
-          onError: any(named: 'onError'),
-          language: any(named: 'language'),
-          listenFor: any(named: 'listenFor'),
-        ),
-      ).thenAnswer((_) async {});
-      when(() => mockService.stopListening()).thenAnswer((_) async => null);
     });
 
     group('startVoiceInput()', () {
@@ -38,17 +31,17 @@ void main() {
         'returns failure when service is not available',
         () async {
           // GIVEN: Speech recognition service is not available
-          // WHEN: startVoiceInput() is called
-          // THEN: Should return PlatformFailure
-
           when(() => mockService.isAvailable()).thenAnswer((_) async => false);
 
+          // WHEN: startVoiceInput() is called
           final result = await repository.startVoiceInput();
 
+          // THEN: Should return PlatformFailure with speech_unavailable code
           expect(result.isLeft(), isTrue);
           result.fold(
             (failure) {
               expect(failure, isA<PlatformFailure>());
+              expect(failure.code, equals('speech_unavailable'));
             },
             (_) => fail('Should return failure'),
           );
@@ -58,47 +51,188 @@ void main() {
       test(
         'returns failure when initialization fails',
         () async {
-          // GIVEN: Speech service initialization fails
-          // WHEN: startVoiceInput() is called
-          // THEN: Should return PlatformFailure
-
+          // GIVEN: Speech service is available but initialization fails
+          when(() => mockService.isAvailable()).thenAnswer((_) async => true);
           when(() => mockService.initialize()).thenAnswer((_) async => false);
 
+          // WHEN: startVoiceInput() is called
           final result = await repository.startVoiceInput();
 
+          // THEN: Should return PlatformFailure with init_failed code
           expect(result.isLeft(), isTrue);
+          result.fold(
+            (failure) {
+              expect(failure, isA<PlatformFailure>());
+              expect(failure.code, equals('init_failed'));
+            },
+            (_) => fail('Should return failure'),
+          );
         },
       );
 
       test(
-        'returns DictationResult on successful voice input',
+        'returns DictationResult when voice input completes with final result',
         () async {
           // GIVEN: Service is available and initialized
-          // WHEN: startVoiceInput() completes successfully
+          when(() => mockService.isAvailable()).thenAnswer((_) async => true);
+          when(() => mockService.initialize()).thenAnswer((_) async => true);
+
+          // Mock startListening to immediately call onResult with isFinal=true
+          when(
+            () => mockService.startListening(
+              onResult: any(named: 'onResult'),
+              onError: any(named: 'onError'),
+              language: any(named: 'language'),
+              listenFor: any(named: 'listenFor'),
+            ),
+          ).thenAnswer((invocation) async {
+            final onResult =
+                invocation.namedArguments[const Symbol('onResult')]
+                    as Function(String, bool);
+            // Simulate successful recognition with final result
+            Future.microtask(() => onResult('hello world', true));
+          });
+
+          // WHEN: startVoiceInput() is called
+          final result = await repository.startVoiceInput(
+            listenFor: const Duration(seconds: 5),
+          );
+
           // THEN: Should return DictationResult with recognized text
-
-          when(() => mockService.stopListening())
-              .thenAnswer((_) async => 'hello world');
-
-          final result = await repository.startVoiceInput();
-
           expect(result.isRight(), isTrue);
           result.fold(
-            (_) => fail('Should return result'),
+            (_) => fail('Should return success'),
             (dictationResult) {
               expect(dictationResult, isA<DictationResult>());
-              expect(dictationResult.text, isNotEmpty);
+              expect(dictationResult.text, equals('hello world'));
+              expect(dictationResult.isFinal, isTrue);
+              expect(dictationResult.confidence, greaterThan(0.0));
             },
           );
         },
       );
 
       test(
-        'handles error during voice input',
+        'returns failure when error occurs during voice input',
         () async {
-          // GIVEN: Service is available but error occurs during listening
-          // WHEN: startVoiceInput() encounters an error
-          // THEN: Should return failure with error message
+          // GIVEN: Service is available and initialized
+          when(() => mockService.isAvailable()).thenAnswer((_) async => true);
+          when(() => mockService.initialize()).thenAnswer((_) async => true);
+
+          // Mock startListening to call onError
+          when(
+            () => mockService.startListening(
+              onResult: any(named: 'onResult'),
+              onError: any(named: 'onError'),
+              language: any(named: 'language'),
+              listenFor: any(named: 'listenFor'),
+            ),
+          ).thenAnswer((invocation) async {
+            final onError =
+                invocation.namedArguments[const Symbol('onError')]
+                    as Function(String);
+            // Simulate error
+            Future.microtask(() => onError('Microphone access denied'));
+          });
+
+          // WHEN: startVoiceInput() is called
+          final result = await repository.startVoiceInput(
+            listenFor: const Duration(seconds: 5),
+          );
+
+          // THEN: Should return failure
+          expect(result.isLeft(), isTrue);
+          result.fold(
+            (failure) => expect(failure, isA<GenericFailure>()),
+            (_) => fail('Should return failure'),
+          );
+        },
+      );
+
+      test(
+        'passes correct language to service',
+        () async {
+          // GIVEN: Language parameter 'es_ES'
+          when(() => mockService.isAvailable()).thenAnswer((_) async => true);
+          when(() => mockService.initialize()).thenAnswer((_) async => true);
+
+          when(
+            () => mockService.startListening(
+              onResult: any(named: 'onResult'),
+              onError: any(named: 'onError'),
+              language: 'es_ES',
+              listenFor: any(named: 'listenFor'),
+            ),
+          ).thenAnswer((invocation) async {
+            final onResult =
+                invocation.namedArguments[const Symbol('onResult')]
+                    as Function(String, bool);
+            Future.microtask(() => onResult('hola', true));
+          });
+
+          // WHEN: startVoiceInput(language: 'es_ES') is called
+          await repository.startVoiceInput(language: 'es_ES');
+
+          // THEN: Should pass 'es_ES' to the service
+          verify(
+            () => mockService.startListening(
+              onResult: any(named: 'onResult'),
+              onError: any(named: 'onError'),
+              language: 'es_ES',
+              listenFor: any(named: 'listenFor'),
+            ),
+          ).called(1);
+        },
+      );
+
+      test(
+        'respects listenFor duration parameter',
+        () async {
+          // GIVEN: listenFor duration of 30 seconds
+          const listenDuration = Duration(seconds: 30);
+
+          when(() => mockService.isAvailable()).thenAnswer((_) async => true);
+          when(() => mockService.initialize()).thenAnswer((_) async => true);
+
+          when(
+            () => mockService.startListening(
+              onResult: any(named: 'onResult'),
+              onError: any(named: 'onError'),
+              language: any(named: 'language'),
+              listenFor: listenDuration,
+            ),
+          ).thenAnswer((invocation) async {
+            final onResult =
+                invocation.namedArguments[const Symbol('onResult')]
+                    as Function(String, bool);
+            Future.microtask(() => onResult('test result', true));
+          });
+
+          // WHEN: startVoiceInput(listenFor: Duration(seconds: 30)) is called
+          await repository.startVoiceInput(listenFor: listenDuration);
+
+          // THEN: Should pass duration to the service
+          verify(
+            () => mockService.startListening(
+              onResult: any(named: 'onResult'),
+              onError: any(named: 'onError'),
+              language: any(named: 'language'),
+              listenFor: listenDuration,
+            ),
+          ).called(1);
+        },
+      );
+    });
+
+    group('DictationResult properties', () {
+      test(
+        'DictationResult contains text from speech recognition',
+        () async {
+          // GIVEN: Speech service returns recognized text
+          const expectedText = 'hello world';
+
+          when(() => mockService.isAvailable()).thenAnswer((_) async => true);
+          when(() => mockService.initialize()).thenAnswer((_) async => true);
 
           when(
             () => mockService.startListening(
@@ -107,76 +241,17 @@ void main() {
               language: any(named: 'language'),
               listenFor: any(named: 'listenFor'),
             ),
-          ).thenAnswer(
-            (invocation) async {
-              final onError =
-                  invocation.namedArguments[const Symbol('onError')]
-                      as Function(String);
-              // Simulate error in a future
-              Future<void>(() {
-                onError('Microphone access denied');
-              });
-            },
-          );
+          ).thenAnswer((invocation) async {
+            final onResult =
+                invocation.namedArguments[const Symbol('onResult')]
+                    as Function(String, bool);
+            Future.microtask(() => onResult(expectedText, true));
+          });
 
-          final result = await repository.startVoiceInput();
-
-          expect(result.isLeft(), isTrue);
-        },
-      );
-
-      test(
-        'with language parameter',
-        () async {
-          // GIVEN: Language parameter 'es_ES'
-          // WHEN: startVoiceInput(language: 'es_ES') is called
-          // THEN: Should work successfully with custom language
-
-          when(() => mockService.stopListening())
-              .thenAnswer((_) async => 'hola');
-
-          final result = await repository.startVoiceInput(language: 'es_ES');
-
-          expect(result.isRight(), isTrue);
-        },
-      );
-
-      test(
-        'with custom listenFor duration',
-        () async {
-          // GIVEN: listenFor duration of 30 seconds
-          // WHEN: startVoiceInput(listenFor: Duration(seconds: 30)) is called
-          // THEN: Should work successfully with custom duration
-
-          const listenDuration = Duration(seconds: 30);
-
-          when(() => mockService.stopListening())
-              .thenAnswer((_) async => 'test');
-
-          final result = await repository.startVoiceInput(
-            listenFor: listenDuration,
-          );
-
-          expect(result.isRight(), isTrue);
-        },
-      );
-    });
-
-    group('DictationResult properties', () {
-      test(
-        'contains text from speech recognition',
-        () async {
-          // GIVEN: Speech service returns recognized text
           // WHEN: startVoiceInput() completes
-          // THEN: Result should contain the recognized text
-
-          const expectedText = 'hello world';
-
-          when(() => mockService.stopListening())
-              .thenAnswer((_) async => expectedText);
-
           final result = await repository.startVoiceInput();
 
+          // THEN: Result should contain the recognized text
           result.fold(
             (_) => fail('Should return success'),
             (dictationResult) {
@@ -187,21 +262,35 @@ void main() {
       );
 
       test(
-        'has reasonable confidence value',
+        'DictationResult has reasonable confidence value',
         () async {
           // GIVEN: Speech recognition completes
+          when(() => mockService.isAvailable()).thenAnswer((_) async => true);
+          when(() => mockService.initialize()).thenAnswer((_) async => true);
+
+          when(
+            () => mockService.startListening(
+              onResult: any(named: 'onResult'),
+              onError: any(named: 'onError'),
+              language: any(named: 'language'),
+              listenFor: any(named: 'listenFor'),
+            ),
+          ).thenAnswer((invocation) async {
+            final onResult =
+                invocation.namedArguments[const Symbol('onResult')]
+                    as Function(String, bool);
+            Future.microtask(() => onResult('test', true));
+          });
+
           // WHEN: startVoiceInput() returns
-          // THEN: Confidence should be between 0.0 and 1.0
-
-          when(() => mockService.stopListening())
-              .thenAnswer((_) async => 'test');
-
           final result = await repository.startVoiceInput();
 
+          // THEN: Confidence should be between 0.0 and 1.0
           result.fold(
             (_) => fail('Should return success'),
             (dictationResult) {
-              expect(dictationResult.confidence, greaterThanOrEqualTo(0.0));
+              expect(dictationResult.confidence,
+                  greaterThanOrEqualTo(0.0));
               expect(dictationResult.confidence, lessThanOrEqualTo(1.0));
             },
           );
@@ -209,17 +298,30 @@ void main() {
       );
 
       test(
-        'marks final result correctly',
+        'DictationResult marks final result correctly',
         () async {
           // GIVEN: Speech recognition completes
+          when(() => mockService.isAvailable()).thenAnswer((_) async => true);
+          when(() => mockService.initialize()).thenAnswer((_) async => true);
+
+          when(
+            () => mockService.startListening(
+              onResult: any(named: 'onResult'),
+              onError: any(named: 'onError'),
+              language: any(named: 'language'),
+              listenFor: any(named: 'listenFor'),
+            ),
+          ).thenAnswer((invocation) async {
+            final onResult =
+                invocation.namedArguments[const Symbol('onResult')]
+                    as Function(String, bool);
+            Future.microtask(() => onResult('final text', true));
+          });
+
           // WHEN: startVoiceInput() returns
-          // THEN: isFinal should be true for completed recognition
-
-          when(() => mockService.stopListening())
-              .thenAnswer((_) async => 'final text');
-
           final result = await repository.startVoiceInput();
 
+          // THEN: isFinal should be true for completed recognition
           result.fold(
             (_) => fail('Should return success'),
             (dictationResult) {
@@ -235,36 +337,122 @@ void main() {
         'handles service unavailable gracefully',
         () async {
           // GIVEN: Speech service throws exception
-          // WHEN: startVoiceInput() is called
-          // THEN: Should catch and return failure
-
           when(() => mockService.isAvailable())
               .thenThrow(Exception('Service error'));
 
+          // WHEN: startVoiceInput() is called
           final result = await repository.startVoiceInput();
 
-          // Repository catches exceptions and returns Left
+          // THEN: Should catch and return failure
           expect(result.isLeft(), isTrue);
+          result.fold(
+            (failure) => expect(failure, isA<GenericFailure>()),
+            (_) => fail('Should return failure'),
+          );
         },
       );
 
       test(
         'provides meaningful error messages',
         () async {
-          // GIVEN: Error occurs during voice input
-          // WHEN: startVoiceInput() completes with error
-          // THEN: Failure should contain descriptive message
-
+          // GIVEN: Service is not available
           when(() => mockService.isAvailable()).thenAnswer((_) async => false);
 
+          // WHEN: startVoiceInput() is called
           final result = await repository.startVoiceInput();
 
+          // THEN: Failure should contain descriptive message
           result.fold(
             (failure) {
               expect(failure.message, isNotEmpty);
             },
             (_) => fail('Should return failure'),
           );
+        },
+      );
+    });
+
+    group('stopVoiceInput()', () {
+      test(
+        'completes the listening session',
+        () async {
+          // GIVEN: A listening session is in progress
+          when(() => mockService.isAvailable()).thenAnswer((_) async => true);
+          when(() => mockService.initialize()).thenAnswer((_) async => true);
+
+          when(
+            () => mockService.startListening(
+              onResult: any(named: 'onResult'),
+              onError: any(named: 'onError'),
+              language: any(named: 'language'),
+              listenFor: any(named: 'listenFor'),
+            ),
+          ).thenAnswer((_) async {
+            // Don't call onResult immediately, so we can call stopVoiceInput
+          });
+
+          when(() => mockService.stopListening())
+              .thenAnswer((_) async => 'stopped text');
+
+          // Start listening (won't complete immediately)
+          final future = repository.startVoiceInput(
+            listenFor: const Duration(minutes: 1),
+          );
+
+          // Give the startListening time to complete
+          await Future.delayed(const Duration(milliseconds: 100));
+
+          // WHEN: stopVoiceInput() is called
+          final stopResult = await repository.stopVoiceInput();
+
+          // THEN: Should complete successfully
+          expect(stopResult.isRight(), isTrue);
+
+          // And the startVoiceInput should now complete
+          final result = await future;
+          expect(result.isRight(), isTrue);
+        },
+      );
+    });
+
+    group('cancelVoiceInput()', () {
+      test(
+        'cancels the listening session',
+        () async {
+          // GIVEN: A listening session is in progress
+          when(() => mockService.isAvailable()).thenAnswer((_) async => true);
+          when(() => mockService.initialize()).thenAnswer((_) async => true);
+
+          when(
+            () => mockService.startListening(
+              onResult: any(named: 'onResult'),
+              onError: any(named: 'onError'),
+              language: any(named: 'language'),
+              listenFor: any(named: 'listenFor'),
+            ),
+          ).thenAnswer((_) async {
+            // Don't call callbacks immediately
+          });
+
+          when(() => mockService.cancelListening()).thenAnswer((_) async {});
+
+          // Start listening (won't complete immediately)
+          final future = repository.startVoiceInput(
+            listenFor: const Duration(minutes: 1),
+          );
+
+          // Give the startListening time to complete
+          await Future.delayed(const Duration(milliseconds: 100));
+
+          // WHEN: cancelVoiceInput() is called
+          final cancelResult = await repository.cancelVoiceInput();
+
+          // THEN: Should complete successfully
+          expect(cancelResult.isRight(), isTrue);
+
+          // And the startVoiceInput should fail
+          final result = await future;
+          expect(result.isLeft(), isTrue);
         },
       );
     });

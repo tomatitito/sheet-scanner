@@ -410,6 +410,78 @@ class _SemanticCheckboxState extends State<SemanticCheckbox> {
   }
 }
 
+/// Semantic icon button with proper accessibility labels and hints
+class SemanticIconButton extends StatefulWidget {
+  const SemanticIconButton({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+    this.tooltip,
+    this.hint,
+    this.enabled = true,
+    this.isDarkBackground = true,
+    this.size = 48.0,
+    this.focusNode,
+    super.key,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
+  final String? tooltip;
+  final String? hint;
+  final bool enabled;
+  final bool isDarkBackground;
+  final double size;
+  final FocusNode? focusNode;
+
+  @override
+  State<SemanticIconButton> createState() => _SemanticIconButtonState();
+}
+
+class _SemanticIconButtonState extends State<SemanticIconButton> {
+  late FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = widget.focusNode ?? FocusNode();
+  }
+
+  @override
+  void dispose() {
+    if (widget.focusNode == null) {
+      _focusNode.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      enabled: widget.enabled,
+      label: widget.label,
+      hint: widget.hint,
+      tooltip: widget.tooltip ?? widget.label,
+      onTap: widget.enabled ? widget.onPressed : null,
+      child: Tooltip(
+        message: widget.tooltip ?? widget.label,
+        child: IconButton(
+          icon: Icon(widget.icon),
+          onPressed: widget.enabled ? widget.onPressed : null,
+          color: widget.isDarkBackground ? Colors.white : Colors.black,
+          style: IconButton.styleFrom(
+            backgroundColor:
+                Colors.black.withValues(alpha: widget.isDarkBackground ? 0.5 : 0),
+          ),
+          focusNode: _focusNode,
+        ),
+      ),
+    );
+  }
+}
+
 /// Creates an accessible card with keyboard navigation support
 class SemanticCard extends StatefulWidget {
   const SemanticCard({

@@ -35,16 +35,10 @@ class SettingsPage extends StatelessWidget {
               children: [
                 ListTile(
                   title: const Text('Theme Mode'),
-                  subtitle: const Text('Light mode'),
+                  subtitle: const Text('Light mode (Coming soon)'),
                   trailing: const Icon(Icons.brightness_7),
-                  onTap: () {
-                    // TODO: Implement theme selection
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Theme switching coming soon'),
-                      ),
-                    );
-                  },
+                  enabled: false,
+                  onTap: () {},
                 ),
               ],
             ),
@@ -74,13 +68,11 @@ class SettingsPage extends StatelessWidget {
             _SettingsSection(
               title: 'Search & Tags',
               children: [
-                SwitchListTile(
-                  title: const Text('Full-Text Search'),
-                  subtitle: const Text('Enable FTS5 for faster searches'),
+                const SwitchListTile(
+                  title: Text('Full-Text Search'),
+                  subtitle: Text('Enable FTS5 for faster searches (Coming soon)'),
                   value: true,
-                  onChanged: (value) {
-                    // TODO: Implement FTS5 toggle
-                  },
+                  onChanged: null,
                 ),
                 ListTile(
                   title: const Text('Manage Tags'),
@@ -105,11 +97,10 @@ class SettingsPage extends StatelessWidget {
                 ),
                 ListTile(
                   title: const Text('License'),
-                  subtitle: const Text('View license information'),
+                  subtitle: const Text('View license information (Coming soon)'),
                   trailing: const Icon(Icons.article),
-                  onTap: () {
-                    // TODO: Implement license viewer
-                  },
+                  enabled: false,
+                  onTap: () {},
                 ),
               ],
             ),
