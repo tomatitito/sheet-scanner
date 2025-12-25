@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:sheet_scanner/core/error/failures.dart';
 import 'package:sheet_scanner/core/services/speech_recognition_service.dart';
 import 'package:sheet_scanner/core/utils/either.dart';
@@ -53,6 +54,7 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
 
       // Create a completer for this listening session
       _listenCompleter = Completer<DictationResult>();
+      String errorMessage = '';
 
       // Clear previous result
       _finalText = '';
@@ -63,10 +65,22 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
         onResult: (String text, bool isFinal) {
           if (isFinal) {
             _finalText = text;
+            // Complete the completer when final result is received
+            if (_listenCompleter != null && !_listenCompleter!.isCompleted) {
+              _listenCompleter!.complete(
+                DictationResult(
+                  text: text,
+                  confidence: text.isNotEmpty ? 0.95 : 0.0,
+                  isFinal: true,
+                  duration: DateTime.now().difference(startTime),
+                ),
+              );
+            }
           }
         },
         onError: (String error) {
-          if (!_listenCompleter!.isCompleted) {
+          errorMessage = error;
+          if (_listenCompleter != null && !_listenCompleter!.isCompleted) {
             _listenCompleter!.completeError(
               Exception('Speech recognition error: $error'),
             );
@@ -83,7 +97,7 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
         timeoutDuration,
         onTimeout: () {
           // Stop listening on timeout
-          _speechService.stopListening();
+          unawaited(_speechService.stopListening());
           return DictationResult(
             text: _finalText,
             confidence: _finalText.isNotEmpty ? 0.9 : 0.0,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -434,9 +436,18 @@ class _SheetGridCard extends StatelessWidget {
               child: Container(
                 color: Colors.grey[200],
                 child: sheetMusic.imageUrls?.isNotEmpty ?? false
-                    ? Image.asset(
-                        sheetMusic.imageUrls.first,
+                    ? Image.file(
+                        File(sheetMusic.imageUrls.first),
                         fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Center(
+                            child: Icon(
+                              Icons.broken_image,
+                              size: 48,
+                              color: Colors.grey[400],
+                            ),
+                          );
+                        },
                       )
                     : Center(
                         child: Icon(

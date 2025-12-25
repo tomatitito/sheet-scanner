@@ -35,6 +35,14 @@ abstract class SheetMusicLocalDataSource {
   /// Deletes all sheet music records.
   Future<void> deleteAllSheetMusic();
 
+  /// Deletes multiple sheet music records in a single transaction.
+  /// More efficient than calling deleteSheetMusic() multiple times.
+  Future<int> deleteBatch(List<int> ids);
+
+  /// Updates multiple sheet music records in a single transaction.
+  /// More efficient than calling updateSheetMusic() multiple times.
+  Future<int> updateBatch(List<SheetMusicModel> models);
+
   /// Adds a tag to a sheet music entry.
   Future<void> addTagToSheetMusic(int sheetMusicId, String tagName);
 
@@ -46,8 +54,6 @@ abstract class SheetMusicLocalDataSource {
 }
 
 /// Implementation of SheetMusicLocalDataSource using Drift.
-/// TODO: Complete implementation with proper Drift queries.
-/// Current stub ensures architecture compiles and DTOs function correctly.
 class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
   final AppDatabase database;
 
@@ -152,6 +158,40 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
   Future<void> deleteAllSheetMusic() async {
     // FTS index is automatically maintained by database triggers
     await database.delete(database.sheetMusicTable).go();
+  }
+
+  @override
+  Future<int> deleteBatch(List<int> ids) async {
+    if (ids.isEmpty) return 0;
+    // Use a transaction to ensure atomic deletion
+    return database.transaction(() async {
+      return await (database.delete(database.sheetMusicTable)
+            ..where((s) => s.id.isIn(ids)))
+          .go();
+    });
+  }
+
+  @override
+  Future<int> updateBatch(List<SheetMusicModel> models) async {
+    if (models.isEmpty) return 0;
+    // Use a transaction to ensure atomic updates
+    return database.transaction(() async {
+      int updateCount = 0;
+      for (final model in models) {
+        final updated = await database.update(database.sheetMusicTable).replace(
+              SheetMusicTableCompanion(
+                id: Value(model.id),
+                title: Value(model.title),
+                composer: Value(model.composer),
+                notes: Value(model.notes),
+                createdAt: Value(model.createdAt),
+                updatedAt: Value(model.updatedAt),
+              ),
+            );
+        if (updated) updateCount++;
+      }
+      return updateCount;
+    });
   }
 
   @override
