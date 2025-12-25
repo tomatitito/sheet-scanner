@@ -1,6 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:sheet_scanner/core/services/speech_recognition_service.dart';
 
 void main() {
@@ -77,12 +75,9 @@ void main() {
           // THEN: onError callback should be invoked
 
           String? errorMessage;
-          bool? finalResult;
 
           await service.startListening(
-            onResult: (text, isFinal) {
-              finalResult = isFinal;
-            },
+            onResult: (text, isFinal) {},
             onError: (error) {
               errorMessage = error;
             },
@@ -91,7 +86,10 @@ void main() {
 
           // If service not available, onError might be called
           // This test verifies the error handling mechanism exists
-          expect(errorMessage, isNull.or(isA<String>()));
+          expect(
+            errorMessage == null || errorMessage is String,
+            isTrue,
+          );
         },
       );
 
@@ -125,7 +123,10 @@ void main() {
 
           final result = await service.stopListening();
 
-          expect(result, isNull.or(isEmpty));
+          expect(
+            result == null || result == '',
+            isTrue,
+          );
         },
       );
 

@@ -5,10 +5,16 @@ import 'package:sheet_scanner/core/services/speech_recognition_service.dart';
 import 'package:sheet_scanner/features/sheet_music/data/repositories/speech_recognition_repository_impl.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/entities/dictation_result.dart';
 
+class _DurationFake extends Fake implements Duration {}
+
 class MockSpeechRecognitionService extends Mock
     implements SpeechRecognitionService {}
 
 void main() {
+  setUpAll(() {
+    registerFallbackValue(_DurationFake());
+  });
+
   group('SpeechRecognitionRepositoryImpl', () {
     late SpeechRecognitionRepositoryImpl repository;
     late MockSpeechRecognitionService mockService;
@@ -16,7 +22,7 @@ void main() {
     setUp(() {
       mockService = MockSpeechRecognitionService();
       repository = SpeechRecognitionRepositoryImpl(
-        speechRecognitionService: mockService,
+        speechService: mockService,
       );
     });
 

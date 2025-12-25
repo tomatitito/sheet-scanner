@@ -1,60 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:sheet_scanner/core/di/injection.dart';
-import 'package:sheet_scanner/features/sheet_music/domain/usecases/transcribe_voice_use_case.dart';
-import 'package:sheet_scanner/features/sheet_music/presentation/cubit/dictation_cubit.dart';
-import 'package:sheet_scanner/features/sheet_music/presentation/cubit/dictation_state.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/voice_input_button.dart';
-
-class MockTranscribeVoiceUseCase extends Mock
-    implements TranscribeVoiceUseCase {}
-
-class MockDictationCubit extends Mock implements DictationCubit {
-  @override
-  Stream<DictationState> get stream => Stream.value(const DictationState.idle());
-
-  @override
-  DictationState get state => const DictationState.idle();
-
-  @override
-  Future<void> startDictation({
-    String language = 'en_US',
-    Duration listenFor = const Duration(minutes: 1),
-  }) async {}
-
-  @override
-  Future<void> stopDictation() async {}
-
-  @override
-  Future<void> cancelDictation() async {}
-
-  @override
-  void clearTranscription() {}
-
-  @override
-  void updatePartialResult(String text) {}
-
-  @override
-  void setLanguage(String language) {}
-
-  @override
-  String get currentLanguage => 'en_US';
-
-  @override
-  Future<void> close() async {}
-
-  @override
-  bool get isClosed => false;
-}
 
 void main() {
   group('VoiceInputButton Widget Tests', () {
-    late MockDictationCubit mockCubit;
-
     setUp(() {
-      mockCubit = MockDictationCubit();
+      // No unused mockCubit needed for these tests
     });
 
     Widget createWidget({
@@ -205,12 +156,10 @@ void main() {
           // WHEN: Dictation completes with text
           // THEN: Callback should be invoked with the text
 
-          String? completedText;
-
           await tester.pumpWidget(
             createWidget(
               onDictationComplete: (text) {
-                completedText = text;
+                // Text will be received here on completion
               },
             ),
           );
@@ -229,12 +178,10 @@ void main() {
           // WHEN: Dictation is cancelled
           // THEN: Callback should be invoked
 
-          bool wasCancelled = false;
-
           await tester.pumpWidget(
             createWidget(
               onDictationCancelled: () {
-                wasCancelled = true;
+                // Called when dictation is cancelled
               },
             ),
           );
@@ -252,12 +199,10 @@ void main() {
           // WHEN: An error occurs during dictation
           // THEN: Callback should be invoked with error message
 
-          String? errorMessage;
-
           await tester.pumpWidget(
             createWidget(
               onError: (error) {
-                errorMessage = error;
+                // Error message received here
               },
             ),
           );
