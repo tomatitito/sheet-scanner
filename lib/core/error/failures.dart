@@ -48,6 +48,8 @@ abstract class Failure implements Exception {
       return 'This feature is not available on your device.';
     } else if (this is SpeechRecognitionFailure) {
       return 'Unable to use voice input. Please try again.';
+    } else if (this is NetworkFailure) {
+      return 'Unable to connect. Please check your internet connection.';
     } else {
       return 'Something went wrong. Please try again.';
     }
@@ -133,6 +135,14 @@ class PlatformFailure extends Failure {
 /// Failure for speech recognition/dictation errors.
 class SpeechRecognitionFailure extends Failure {
   SpeechRecognitionFailure({
+    required super.message,
+    super.code,
+  });
+}
+
+/// Failure for network-related errors (connectivity, timeouts, etc.).
+class NetworkFailure extends Failure {
+  NetworkFailure({
     required super.message,
     super.code,
   });
