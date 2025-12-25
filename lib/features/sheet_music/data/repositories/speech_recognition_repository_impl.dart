@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:sheet_scanner/core/error/failures.dart';
 import 'package:sheet_scanner/core/services/speech_recognition_service.dart';
 import 'package:sheet_scanner/core/utils/either.dart';
