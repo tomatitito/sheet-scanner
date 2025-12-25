@@ -119,7 +119,7 @@ void main() {
       test('loadSheetMusic returns error on not found', () async {
         // Arrange
         when(() => mockGetSheetMusicByIdUseCase(any()))
-            .thenAnswer((_) async => const Right(null));
+            .thenAnswer((_) async => Right<Failure, SheetMusic?>(null));
 
         // Act
         await editSheetCubit.loadSheetMusic(999);
