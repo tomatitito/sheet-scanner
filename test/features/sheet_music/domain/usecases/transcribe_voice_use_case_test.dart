@@ -17,6 +17,9 @@ void main() {
     setUp(() {
       mockRepository = MockSpeechRecognitionRepository();
       useCase = TranscribeVoiceUseCase(repository: mockRepository);
+      
+      // Register fallback values for mocktail
+      registerFallbackValue(const Duration(minutes: 1));
     });
 
     group('call()', () {

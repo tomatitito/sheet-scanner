@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/dictation_cubit.dart';
@@ -91,78 +92,88 @@ class _VoiceInputButtonState extends State<VoiceInputButton>
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<DictationCubit, DictationState>(
-      bloc: _cubit,
-      listener: (context, state) {
-        state.when(
-          idle: () {
-            setState(() => _isListening = false);
-            widget.onDictationCancelled?.call();
-          },
-          listening: (_, __) {
-            setState(() => _isListening = true);
-          },
-          partialResult: (text) {
-            // Optional: Show partial results in real-time
-          },
-          processing: (transcription) {
-            // Processing state
-          },
-          complete: (finalText, confidence) {
-            setState(() => _isListening = false);
-            widget.onDictationComplete(finalText);
-          },
-          error: (failure) {
-            setState(() => _isListening = false);
-            widget.onError?.call(failure.message);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Dictation error: ${failure.message}'),
-                backgroundColor: Colors.red,
+    return Focus(
+      onKey: (node, event) {
+        // Support Space key for voice activation (standard accessibility pattern)
+        if (event.isKeyPressed(LogicalKeyboardKey.space)) {
+          _handleVoiceInput();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: BlocListener<DictationCubit, DictationState>(
+        bloc: _cubit,
+        listener: (context, state) {
+          state.when(
+            idle: () {
+              setState(() => _isListening = false);
+              widget.onDictationCancelled?.call();
+            },
+            listening: (_, __) {
+              setState(() => _isListening = true);
+            },
+            partialResult: (text) {
+              // Optional: Show partial results in real-time
+            },
+            processing: (transcription) {
+              // Processing state
+            },
+            complete: (finalText, confidence) {
+              setState(() => _isListening = false);
+              widget.onDictationComplete(finalText);
+            },
+            error: (failure) {
+              setState(() => _isListening = false);
+              widget.onError?.call(failure.message);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Dictation error: ${failure.message}'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            },
+          );
+        },
+        child: BlocBuilder<DictationCubit, DictationState>(
+          bloc: _cubit,
+          builder: (context, state) {
+            return Tooltip(
+              message: widget.tooltip,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildButton(context, state),
+                  // Show real-time transcription and timer during listening
+                  if (_isListening)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: _buildListeningIndicator(state),
+                    ),
+                  // Show confidence after completion
+                  if (state.maybeWhen(
+                        complete: (_, __) => true,
+                        orElse: () => false,
+                      ) &&
+                      widget.showConfidence)
+                    state.maybeWhen(
+                      complete: (finalText, confidence) => Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          'Confidence: ${(confidence * 100).toStringAsFixed(0)}%',
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                color: confidence > 0.7
+                                    ? Colors.green
+                                    : Colors.orange,
+                              ),
+                        ),
+                      ),
+                      orElse: () => const SizedBox.shrink(),
+                    ),
+                ],
               ),
             );
           },
-        );
-      },
-      child: BlocBuilder<DictationCubit, DictationState>(
-        bloc: _cubit,
-        builder: (context, state) {
-          return Tooltip(
-            message: widget.tooltip,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildButton(context, state),
-                // Show real-time transcription and timer during listening
-                if (_isListening)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: _buildListeningIndicator(state),
-                  ),
-                // Show confidence after completion
-                if (state.maybeWhen(
-                      complete: (_, __) => true,
-                      orElse: () => false,
-                    ) &&
-                    widget.showConfidence)
-                  state.maybeWhen(
-                    complete: (finalText, confidence) => Padding(
-                      padding: const EdgeInsets.only(top: 4.0),
-                      child: Text(
-                        'Confidence: ${(confidence * 100).toStringAsFixed(0)}%',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: confidence > 0.7
-                                  ? Colors.green
-                                  : Colors.orange,
-                            ),
-                      ),
-                    ),
-                    orElse: () => const SizedBox.shrink(),
-                  ),
-              ],
-            ),
-          );
-        },
+        ),
       ),
     );
   }
@@ -177,47 +188,54 @@ class _VoiceInputButtonState extends State<VoiceInputButton>
       orElse: () => false,
     );
 
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          if (isListening)
-            BoxShadow(
-              color: widget.listeningColor.withValues(alpha: 0.5),
-              blurRadius: 8,
-              spreadRadius: 2,
-            ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _handleVoiceInput,
-          customBorder: const CircleBorder(),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ScaleTransition(
-              scale: isListening
-                  ? Tween<double>(begin: 1.0, end: 1.2)
-                      .animate(_animationController)
-                  : const AlwaysStoppedAnimation(1.0),
-              child: Container(
-                width: widget.size,
-                height: widget.size,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isListening || isProcessing
-                      ? widget.listeningColor
-                      : widget.idleColor,
-                ),
-                child: Center(
-                  child: isProcessing
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor:
+    final semanticLabel = isListening ? 'Stop recording' : 'Start voice recording';
+
+    return Semantics(
+      button: true,
+      enabled: true,
+      label: semanticLabel,
+      onTap: _handleVoiceInput,
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            if (isListening)
+              BoxShadow(
+                color: widget.listeningColor.withValues(alpha: 0.5),
+                blurRadius: 8,
+                spreadRadius: 2,
+              ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: _handleVoiceInput,
+            customBorder: const CircleBorder(),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ScaleTransition(
+                scale: isListening
+                    ? Tween<double>(begin: 1.0, end: 1.2)
+                        .animate(_animationController)
+                    : const AlwaysStoppedAnimation(1.0),
+                child: Container(
+                  width: widget.size,
+                  height: widget.size,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isListening || isProcessing
+                        ? widget.listeningColor
+                        : widget.idleColor,
+                  ),
+                  child: Center(
+                    child: isProcessing
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
                                 AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
@@ -226,6 +244,7 @@ class _VoiceInputButtonState extends State<VoiceInputButton>
                           color: Colors.white,
                           size: widget.size * 0.5,
                         ),
+                  ),
                 ),
               ),
             ),

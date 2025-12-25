@@ -124,7 +124,7 @@ void main() {
           const customTooltip = 'Start recording your voice';
           await tester.pumpWidget(createWidget(tooltip: customTooltip));
 
-          await tester.pumpAndSettle();
+          await tester.pump();
 
           expect(find.byType(Tooltip), findsWidgets);
         },
@@ -154,7 +154,7 @@ void main() {
 
           await tester.pumpWidget(createWidget(showConfidence: false));
 
-          await tester.pumpAndSettle();
+          await tester.pump();
 
           expect(find.byType(VoiceInputButton), findsOneWidget);
         },
@@ -190,7 +190,7 @@ void main() {
           await tester.tap(find.byType(InkWell));
           await tester.tap(find.byType(InkWell));
 
-          await tester.pumpAndSettle();
+          await tester.pump();
 
           expect(find.byType(VoiceInputButton), findsOneWidget);
         },
@@ -211,7 +211,7 @@ void main() {
             ),
           );
 
-          await tester.pumpAndSettle();
+          await tester.pump();
 
           // Callback would be called by cubit state changes
           expect(find.byType(VoiceInputButton), findsOneWidget);
@@ -231,7 +231,7 @@ void main() {
             ),
           );
 
-          await tester.pumpAndSettle();
+          await tester.pump();
 
           expect(find.byType(VoiceInputButton), findsOneWidget);
         },
@@ -250,7 +250,7 @@ void main() {
             ),
           );
 
-          await tester.pumpAndSettle();
+          await tester.pump();
 
           expect(find.byType(VoiceInputButton), findsOneWidget);
         },
@@ -284,7 +284,7 @@ void main() {
             ),
           );
 
-          await tester.pumpAndSettle();
+          await tester.pump();
 
           expect(find.byType(VoiceInputButton), findsOneWidget);
         },
@@ -317,7 +317,7 @@ void main() {
 
           await tester.pumpWidget(createWidget());
 
-          await tester.pumpAndSettle();
+          await tester.pump();
 
           expect(find.byType(VoiceInputButton), findsOneWidget);
         },
@@ -332,7 +332,7 @@ void main() {
 
           await tester.pumpWidget(createWidget());
 
-          await tester.pumpAndSettle();
+          await tester.pump();
 
           expect(find.byType(VoiceInputButton), findsOneWidget);
         },
@@ -349,7 +349,7 @@ void main() {
 
           await tester.pumpWidget(createWidget());
 
-          await tester.pumpAndSettle();
+          await tester.pump();
 
           expect(find.byType(VoiceInputButton), findsOneWidget);
         },
@@ -364,7 +364,7 @@ void main() {
 
           await tester.pumpWidget(createWidget());
 
-          await tester.pumpAndSettle();
+          await tester.pump();
 
           expect(find.byType(VoiceInputButton), findsOneWidget);
         },

@@ -22,7 +22,7 @@ class BrowseCubit extends Cubit<BrowseState> {
       (sheetMusicList) => emit(
         BrowseState.loaded(
           sheets: sheetMusicList,
-          filteredSheets: sheetMusicList,
+          filteredSheets: _sortSheets(sheetMusicList, 'recent'),
           searchQuery: '',
           selectedTags: [],
           sortBy: 'recent',
