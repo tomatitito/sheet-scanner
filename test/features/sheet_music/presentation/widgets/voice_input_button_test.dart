@@ -4,9 +4,7 @@ import 'package:sheet_scanner/features/sheet_music/presentation/widgets/voice_in
 
 void main() {
   group('VoiceInputButton Widget Tests', () {
-    setUp(() {
-      // No unused mockCubit needed for these tests
-    });
+    setUp(() {});
 
     Widget createWidget({
       ValueChanged<String>? onDictationComplete,
@@ -158,9 +156,7 @@ void main() {
 
           await tester.pumpWidget(
             createWidget(
-              onDictationComplete: (text) {
-                // Text will be received here on completion
-              },
+              onDictationComplete: (_) {},
             ),
           );
 
@@ -180,9 +176,7 @@ void main() {
 
           await tester.pumpWidget(
             createWidget(
-              onDictationCancelled: () {
-                // Called when dictation is cancelled
-              },
+              onDictationCancelled: () {},
             ),
           );
 
@@ -201,9 +195,7 @@ void main() {
 
           await tester.pumpWidget(
             createWidget(
-              onError: (error) {
-                // Error message received here
-              },
+              onError: (_) {},
             ),
           );
 

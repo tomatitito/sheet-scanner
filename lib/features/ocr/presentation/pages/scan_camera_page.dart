@@ -34,6 +34,7 @@ class _ScanCameraPageState extends State<ScanCameraPage>
   bool _isCameraInitialized = false;
   bool _showGrid = false;
   bool _flashEnabled = false;
+  bool _cameraError = false;
 
   @override
   void initState() {
@@ -52,6 +53,9 @@ class _ScanCameraPageState extends State<ScanCameraPage>
       if (_cameras.isEmpty) {
         _logger.warning('No cameras available');
         if (!mounted) return;
+        setState(() {
+          _cameraError = true;
+        });
         _showError('No camera available on this device');
         return;
       }
@@ -78,6 +82,9 @@ class _ScanCameraPageState extends State<ScanCameraPage>
     } catch (e) {
       _logger.severe('Failed to initialize camera: $e');
       if (!mounted) return;
+      setState(() {
+        _cameraError = true;
+      });
       _showError('Failed to initialize camera: $e');
     }
   }
@@ -138,6 +145,7 @@ class _ScanCameraPageState extends State<ScanCameraPage>
     try {
       final newFlashMode = _flashEnabled ? FlashMode.off : FlashMode.always;
       await _cameraController!.setFlashMode(newFlashMode);
+      if (!mounted) return;
       setState(() {
         _flashEnabled = !_flashEnabled;
       });
@@ -260,9 +268,54 @@ class _ScanCameraPageState extends State<ScanCameraPage>
           builder: (context, state) {
             return Stack(
               children: [
-                // Camera preview
+                // Camera preview or error state
                 if (_isCameraInitialized)
                   CameraPreview(_cameraController!)
+                else if (_cameraError)
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.videocam_off,
+                          size: 64,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(height: 24),
+                        const Text(
+                          'Camera Not Available',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: Text(
+                            'Your device does not have a camera or access is denied.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        ElevatedButton.icon(
+                          onPressed: _pickFromGallery,
+                          icon: const Icon(Icons.image),
+                          label: const Text('Pick from Gallery'),
+                        ),
+                        const SizedBox(height: 16),
+                        TextButton.icon(
+                          onPressed: _close,
+                          icon: const Icon(Icons.arrow_back),
+                          label: const Text('Go Back'),
+                        ),
+                      ],
+                    ),
+                  )
                 else
                   const Center(
                     child: CircularProgressIndicator(),

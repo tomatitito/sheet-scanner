@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sheet_scanner/features/search/presentation/cubit/search_cubit.dart';
@@ -19,7 +21,7 @@ class SearchBarWidget extends StatefulWidget {
 
 class _SearchBarWidgetState extends State<SearchBarWidget> {
   late TextEditingController _controller;
-  Future<void>? _debounceTimer;
+  Timer? _debounceTimer;
 
   @override
   void initState() {
@@ -30,19 +32,19 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   @override
   void dispose() {
     _controller.dispose();
-    _debounceTimer?.ignore();
+    _debounceTimer?.cancel();
     super.dispose();
   }
 
   void _onSearchChanged(String query) {
-    _debounceTimer?.ignore();
+    _debounceTimer?.cancel();
 
     if (query.isEmpty) {
       context.read<SearchCubit>().clearSearch();
       return;
     }
 
-    _debounceTimer = Future.delayed(widget.debounceDelay, () {
+    _debounceTimer = Timer(widget.debounceDelay, () {
       if (mounted) {
         context.read<SearchCubit>().search(query);
       }
