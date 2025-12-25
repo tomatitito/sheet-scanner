@@ -22,6 +22,10 @@ void main() {
     late MockDeleteSheetMusicUseCase mockDeleteSheetMusicUseCase;
     late SheetDetailCubit sheetDetailCubit;
 
+    setUpAll(() {
+      registerFallbackValue(GetSheetMusicByIdParams(id: 0));
+    });
+
     setUp(() {
       mockGetSheetMusicByIdUseCase = MockGetSheetMusicByIdUseCase();
       mockDeleteSheetMusicUseCase = MockDeleteSheetMusicUseCase();

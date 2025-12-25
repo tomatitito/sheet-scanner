@@ -4,7 +4,6 @@ import 'package:sheet_scanner/core/error/failures.dart';
 import 'package:sheet_scanner/core/utils/either.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/usecases/delete_sheet_music_use_case.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/bulk_operations_cubit.dart';
-import 'package:sheet_scanner/features/sheet_music/presentation/cubit/bulk_operations_state.dart';
 
 /// Mock for DeleteSheetMusicUseCase
 class MockDeleteSheetMusicUseCase extends Mock
