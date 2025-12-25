@@ -12,6 +12,7 @@ import 'package:sheet_scanner/core/accessibility/semantic_widgets.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/ocr/presentation/cubit/ocr_scan_cubit.dart';
 import 'package:sheet_scanner/features/ocr/presentation/cubit/ocr_scan_state.dart';
+import 'package:sheet_scanner/features/ocr/presentation/utils/ocr_text_parser.dart';
 import 'package:sheet_scanner/features/ocr/presentation/widgets/adjustable_scan_frame.dart';
 
 /// Mobile camera scanning page for sheet music covers
@@ -214,14 +215,13 @@ class _ScanCameraPageState extends State<ScanCameraPage>
             ocrComplete: (imagePath, extractedText, confidence) async {
               // Navigate to review page with OCR results
               _logger.info('OCR complete, navigating to review');
-              // Parse the extracted text to extract title and composer
-              // Format: "Title\nComposer" or just look for lines
-              final lines = extractedText
-                  .split('\n')
-                  .where((line) => line.trim().isNotEmpty)
-                  .toList();
-              final detectedTitle = lines.isNotEmpty ? lines.first : '';
-              final detectedComposer = lines.length > 1 ? lines[1] : '';
+
+              // Parse the extracted text using smart heuristics
+              final cleanedText = OCRTextParser.cleanOCRText(extractedText);
+              final (:title, :composer) =
+                  OCRTextParser.parseSheetMusicMetadata(cleanedText);
+              final detectedTitle = title;
+              final detectedComposer = composer;
 
               if (!mounted) {
                 _logger.warning(

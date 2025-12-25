@@ -179,13 +179,17 @@ class _AddSheetFormState extends State<_AddSheetForm> {
 
     if (errorString.contains('permission') || errorString.contains('denied')) {
       return 'Permission denied. Please grant file access in settings.';
-    } else if (errorString.contains('cancelled') || errorString.contains('cancel')) {
+    } else if (errorString.contains('cancelled') ||
+        errorString.contains('cancel')) {
       return 'File selection cancelled.';
     } else if (errorString.contains('size') || errorString.contains('large')) {
       return 'File is too large. Please choose a smaller file.';
-    } else if (errorString.contains('type') || errorString.contains('extension') || errorString.contains('supported')) {
+    } else if (errorString.contains('type') ||
+        errorString.contains('extension') ||
+        errorString.contains('supported')) {
       return 'Unsupported file type. Please select PDF, JPG, PNG, or GIF files.';
-    } else if (errorString.contains('storage') || errorString.contains('disk')) {
+    } else if (errorString.contains('storage') ||
+        errorString.contains('disk')) {
       return 'Storage error. Please check your device storage.';
     } else if (errorString.contains('timeout')) {
       return 'File selection took too long. Please try again.';
