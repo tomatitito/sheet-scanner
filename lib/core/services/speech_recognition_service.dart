@@ -116,11 +116,23 @@ class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
     try {
       // Check if service is available on this device
       if (!_speechToText.isAvailable) {
+        debugPrint(
+          'Speech recognition service not available on this device',
+        );
         return false;
       }
 
       // Check microphone permission
       final micStatus = await Permission.microphone.request();
+      if (micStatus.isDenied) {
+        debugPrint('Microphone permission denied by user');
+        return false;
+      } else if (micStatus.isPermanentlyDenied) {
+        debugPrint(
+          'Microphone permission permanently denied. User must enable in settings.',
+        );
+        return false;
+      }
       return micStatus.isGranted;
     } catch (e) {
       debugPrint('Error checking speech availability: $e');
@@ -139,6 +151,20 @@ class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
       // Ensure service is initialized
       if (!_speechToText.isAvailable) {
         onError('Speech recognition is not available on this device');
+        return;
+      }
+
+      // Check microphone permission before listening
+      final micStatus = await Permission.microphone.status;
+      if (micStatus.isDenied) {
+        onError(
+          'Microphone permission is required for voice input. Please grant permission in settings.',
+        );
+        return;
+      } else if (micStatus.isPermanentlyDenied) {
+        onError(
+          'Microphone permission is permanently denied. Please enable it in app settings.',
+        );
         return;
       }
 
