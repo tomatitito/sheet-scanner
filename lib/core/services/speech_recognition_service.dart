@@ -153,16 +153,7 @@ class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
   @override
   Future<bool> isAvailable() async {
     try {
-      // Check if service is available on this device
-      if (!_speechToText.isAvailable) {
-        debugPrint(
-          'Speech recognition service not available on this device',
-        );
-        _lastUnavailableReason = SpeechUnavailableReason.serviceNotAvailable;
-        return false;
-      }
-
-      // Check microphone permission
+      // Check microphone permission first - this is the critical check
       final micStatus = await Permission.microphone.request();
       if (micStatus.isDenied) {
         debugPrint('Microphone permission denied by user');
@@ -177,8 +168,12 @@ class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
             SpeechUnavailableReason.microphonePermissionPermanentlyDenied;
         return false;
       }
+
+      // If microphone permission is granted, assume speech service is available
+      // The speech_to_text plugin will provide more detailed error reporting
+      // if there are actual issues during the startListening() call
       _lastUnavailableReason = null;
-      return micStatus.isGranted;
+      return true;
     } catch (e) {
       debugPrint('Error checking speech availability: $e');
       _lastUnavailableReason = SpeechUnavailableReason.unknown;
