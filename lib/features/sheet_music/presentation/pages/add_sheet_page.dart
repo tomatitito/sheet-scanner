@@ -250,13 +250,10 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                           style: TextStyle(fontWeight: FontWeight.w500),
                         ),
                         SizedBox(width: 12),
+                        LanguageSelector(
+                          initialLanguage: 'en_US',
+                        ),
                       ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: LanguageSelector(
-                      initialLanguage: 'en_US',
                     ),
                   ),
                   // Title field with voice input

@@ -164,12 +164,12 @@ void main() {
         () {
           // GIVEN: TranscribeVoiceParams created with no arguments
           // WHEN: Params are created
-          // THEN: Should have default language 'en_US' and 1 minute listen duration
+          // THEN: Should have default language 'en_US' and 30 second listen duration
 
           final params = TranscribeVoiceParams();
 
           expect(params.language, equals('en_US'));
-          expect(params.listenFor, equals(const Duration(minutes: 1)));
+          expect(params.listenFor, equals(const Duration(seconds: 30)));
         },
       );
 

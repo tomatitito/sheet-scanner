@@ -303,15 +303,15 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Language selector for voice recognition
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 16.0),
                       child: Row(
                         children: [
-                          const Text(
+                          Text(
                             'Voice Language:',
                             style: TextStyle(fontWeight: FontWeight.w500),
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: 12),
                           LanguageSelector(
                             initialLanguage: 'en_US',
                           ),
