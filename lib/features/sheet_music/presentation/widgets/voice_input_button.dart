@@ -47,7 +47,7 @@ class VoiceInputButton extends StatefulWidget {
     this.onDictationCancelled,
     this.onError,
     this.language = 'en_US',
-    this.tooltip = 'Tap to start voice input',
+    this.tooltip = 'Tap to start voice input, tap again to stop',
     this.size = 48.0,
     this.idleColor = Colors.blue,
     this.listeningColor = Colors.red,
@@ -86,11 +86,9 @@ class _VoiceInputButtonState extends State<VoiceInputButton>
     if (_isListening) {
       _cubit.stopDictation();
     } else {
-      // Use the current language from the cubit (set via LanguageSelector)
-      // Fall back to widget language only if cubit doesn't have a language set
-      final languageToUse = _cubit.currentLanguage.isNotEmpty
-          ? _cubit.currentLanguage
-          : widget.language;
+      // Always use the current language from the cubit, which is the properly mapped
+      // device locale from LanguageSelector
+      final languageToUse = _cubit.currentLanguage;
       _cubit.startDictation(language: languageToUse);
     }
   }
@@ -149,7 +147,7 @@ class _VoiceInputButtonState extends State<VoiceInputButton>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildButton(context, state),
-                  // Show real-time transcription and timer during listening
+                  // Show real-time transcription, timer, and cancel button during listening
                   if (_isListening)
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
@@ -158,7 +156,7 @@ class _VoiceInputButtonState extends State<VoiceInputButton>
                         children: [
                           _buildListeningIndicator(state),
                           const SizedBox(height: 12),
-                          _buildDoneButton(),
+                          _buildCancelButton(),
                         ],
                       ),
                     ),
@@ -202,8 +200,9 @@ class _VoiceInputButtonState extends State<VoiceInputButton>
       orElse: () => false,
     );
 
-    final semanticLabel =
-        isListening ? 'Stop recording' : 'Start voice recording';
+    final semanticLabel = isListening
+        ? 'Stop recording by tapping the microphone button again'
+        : 'Start voice recording by tapping the microphone button';
 
     return Semantics(
       button: true,
@@ -269,6 +268,23 @@ class _VoiceInputButtonState extends State<VoiceInputButton>
     );
   }
 
+  Widget _buildCancelButton() {
+    return SizedBox(
+      height: 40,
+      child: ElevatedButton.icon(
+        onPressed: _cubit.cancelDictation,
+        icon: const Icon(Icons.close, size: 18),
+        label: const Text('Cancel'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.orange,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          textStyle: Theme.of(context).textTheme.labelSmall,
+        ),
+      ),
+    );
+  }
+
   Widget _buildListeningIndicator(DictationState state) {
     return state.maybeWhen(
       listening: (transcription, elapsedTime) {
@@ -323,19 +339,6 @@ class _VoiceInputButtonState extends State<VoiceInputButton>
         );
       },
       orElse: () => const SizedBox.shrink(),
-    );
-  }
-
-  Widget _buildDoneButton() {
-    return ElevatedButton.icon(
-      onPressed: _cubit.stopDictation,
-      icon: const Icon(Icons.check),
-      label: const Text('Done'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      ),
     );
   }
 }

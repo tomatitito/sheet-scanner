@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:sheet_scanner/core/error/failures.dart';
 import 'package:sheet_scanner/core/services/speech_recognition_service.dart';
 import 'package:sheet_scanner/core/utils/either.dart';
@@ -51,6 +52,19 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
         );
       }
 
+      // Validate that the requested language is available on the device
+      final availableLanguages = await _speechService.availableLanguages;
+      final effectiveLanguage = availableLanguages.contains(language)
+          ? language
+          : 'en_US'; // Fallback to English if language not available
+
+      if (effectiveLanguage != language) {
+        debugPrint(
+          'Requested language "$language" not available on device. '
+          'Available languages: $availableLanguages. Using "$effectiveLanguage" instead.',
+        );
+      }
+
       // Create a completer for this listening session
       _listenCompleter = Completer<DictationResult>();
 
@@ -83,7 +97,7 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
             );
           }
         },
-        language: language,
+        language: effectiveLanguage,
         listenFor: listenFor,
       );
 

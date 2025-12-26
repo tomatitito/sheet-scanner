@@ -249,7 +249,9 @@ class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
   Future<List<String>> get availableLanguages async {
     try {
       final locales = await _speechToText.locales();
-      return locales.map((locale) => locale.localeId).toList();
+      final availableIds = locales.map((locale) => locale.localeId).toList();
+      debugPrint('Available language locales: $availableIds');
+      return availableIds.isNotEmpty ? availableIds : ['en_US'];
     } catch (e) {
       debugPrint('Error getting available languages: $e');
       return ['en_US']; // Default fallback
