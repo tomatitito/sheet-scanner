@@ -86,7 +86,12 @@ class _VoiceInputButtonState extends State<VoiceInputButton>
     if (_isListening) {
       _cubit.stopDictation();
     } else {
-      _cubit.startDictation(language: widget.language);
+      // Use the current language from the cubit (set via LanguageSelector)
+      // Fall back to widget language only if cubit doesn't have a language set
+      final languageToUse = _cubit.currentLanguage.isNotEmpty
+          ? _cubit.currentLanguage
+          : widget.language;
+      _cubit.startDictation(language: languageToUse);
     }
   }
 
