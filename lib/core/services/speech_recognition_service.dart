@@ -80,10 +80,29 @@ abstract class SpeechRecognitionService {
   Future<List<String>> get availableLanguages;
 }
 
+/// Detailed error reason for speech recognition unavailability.
+enum SpeechUnavailableReason {
+  /// Service/Google Play Services not available on device
+  serviceNotAvailable,
+
+  /// Microphone permission not granted by user
+  microphonePermissionDenied,
+
+  /// Microphone permission permanently denied - requires app settings
+  microphonePermissionPermanentlyDenied,
+
+  /// Manifest permissions missing (AndroidManifest.xml not updated)
+  manifestPermissionsMissing,
+
+  /// Unknown error
+  unknown,
+}
+
 /// Implementation of speech recognition service.
 class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
   final _speechToText = SpeechToText();
   String _lastResult = '';
+  SpeechUnavailableReason? _lastUnavailableReason;
 
   @override
   Future<bool> initialize() async {
@@ -111,6 +130,26 @@ class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
     }
   }
 
+  /// Get a user-friendly error message for why speech recognition is unavailable.
+  String getUnavailabilityMessage() {
+    return switch (_lastUnavailableReason) {
+      SpeechUnavailableReason.serviceNotAvailable =>
+        'Google Speech Recognition service is not available on this device. '
+        'Please ensure Google Play Services is installed and up to date.',
+      SpeechUnavailableReason.microphonePermissionDenied =>
+        'Microphone permission is required for voice input. '
+        'Please grant the permission when prompted.',
+      SpeechUnavailableReason.microphonePermissionPermanentlyDenied =>
+        'Microphone permission has been permanently denied. '
+        'Please enable it in Settings → Apps → Sheet Scanner → Permissions.',
+      SpeechUnavailableReason.manifestPermissionsMissing =>
+        'The app requires microphone permissions to be configured. '
+        'Please reinstall the app.',
+      SpeechUnavailableReason.unknown || null =>
+        'Speech recognition is not available. Please check your device settings.',
+    };
+  }
+
   @override
   Future<bool> isAvailable() async {
     try {
@@ -119,6 +158,7 @@ class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
         debugPrint(
           'Speech recognition service not available on this device',
         );
+        _lastUnavailableReason = SpeechUnavailableReason.serviceNotAvailable;
         return false;
       }
 
@@ -126,16 +166,22 @@ class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
       final micStatus = await Permission.microphone.request();
       if (micStatus.isDenied) {
         debugPrint('Microphone permission denied by user');
+        _lastUnavailableReason =
+            SpeechUnavailableReason.microphonePermissionDenied;
         return false;
       } else if (micStatus.isPermanentlyDenied) {
         debugPrint(
           'Microphone permission permanently denied. User must enable in settings.',
         );
+        _lastUnavailableReason =
+            SpeechUnavailableReason.microphonePermissionPermanentlyDenied;
         return false;
       }
+      _lastUnavailableReason = null;
       return micStatus.isGranted;
     } catch (e) {
       debugPrint('Error checking speech availability: $e');
+      _lastUnavailableReason = SpeechUnavailableReason.unknown;
       return false;
     }
   }
@@ -148,23 +194,11 @@ class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
     Duration listenFor = const Duration(minutes: 1),
   }) async {
     try {
-      // Ensure service is initialized
-      if (!_speechToText.isAvailable) {
-        onError('Speech recognition is not available on this device');
-        return;
-      }
-
-      // Check microphone permission before listening
-      final micStatus = await Permission.microphone.status;
-      if (micStatus.isDenied) {
-        onError(
-          'Microphone permission is required for voice input. Please grant permission in settings.',
-        );
-        return;
-      } else if (micStatus.isPermanentlyDenied) {
-        onError(
-          'Microphone permission is permanently denied. Please enable it in app settings.',
-        );
+      // Verify availability before attempting to listen
+      if (!await isAvailable()) {
+        final errorMsg = getUnavailabilityMessage();
+        debugPrint('Cannot start listening: $errorMsg');
+        onError(errorMsg);
         return;
       }
 
@@ -186,7 +220,8 @@ class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
       );
     } catch (e) {
       debugPrint('Error starting speech recognition: $e');
-      onError('Failed to start listening: $e');
+      final errorMsg = 'Voice input failed: ${e.toString()}';
+      onError(errorMsg);
     }
   }
 
