@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/edit_sheet_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/edit_sheet_state.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/language_selector.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/voice_input_button.dart';
 
 /// Page for editing an existing sheet music entry
@@ -301,6 +302,22 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Language selector for voice recognition
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Row(
+                        children: [
+                          const Text(
+                            'Voice Language:',
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          const SizedBox(width: 12),
+                          LanguageSelector(
+                            initialLanguage: 'en_US',
+                          ),
+                        ],
+                      ),
+                    ),
                     // Title field with voice input
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,

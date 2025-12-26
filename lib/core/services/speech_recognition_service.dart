@@ -62,7 +62,7 @@ abstract class SpeechRecognitionService {
     required Function(String text, bool isFinal) onResult,
     required Function(String error) onError,
     String language = 'en_US',
-    Duration listenFor = const Duration(minutes: 1),
+    Duration listenFor = const Duration(seconds: 30),
   });
 
   /// Stop listening without canceling the current session.
@@ -135,17 +135,18 @@ class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
     return switch (_lastUnavailableReason) {
       SpeechUnavailableReason.serviceNotAvailable =>
         'Google Speech Recognition service is not available on this device. '
-        'Please ensure Google Play Services is installed and up to date.',
+            'Please ensure Google Play Services is installed and up to date.',
       SpeechUnavailableReason.microphonePermissionDenied =>
         'Microphone permission is required for voice input. '
-        'Please grant the permission when prompted.',
+            'Please grant the permission when prompted.',
       SpeechUnavailableReason.microphonePermissionPermanentlyDenied =>
         'Microphone permission has been permanently denied. '
-        'Please enable it in Settings → Apps → Sheet Scanner → Permissions.',
+            'Please enable it in Settings → Apps → Sheet Scanner → Permissions.',
       SpeechUnavailableReason.manifestPermissionsMissing =>
         'The app requires microphone permissions to be configured. '
-        'Please reinstall the app.',
-      SpeechUnavailableReason.unknown || null =>
+            'Please reinstall the app.',
+      SpeechUnavailableReason.unknown ||
+      null =>
         'Speech recognition is not available. Please check your device settings.',
     };
   }
@@ -186,7 +187,7 @@ class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
     required Function(String text, bool isFinal) onResult,
     required Function(String error) onError,
     String language = 'en_US',
-    Duration listenFor = const Duration(minutes: 1),
+    Duration listenFor = const Duration(seconds: 30),
   }) async {
     try {
       // Verify availability before attempting to listen

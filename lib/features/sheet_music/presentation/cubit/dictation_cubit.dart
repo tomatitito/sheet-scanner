@@ -33,7 +33,7 @@ class DictationCubit extends Cubit<DictationState> {
   /// or an error state if something goes wrong.
   Future<void> startDictation({
     String language = 'en_US',
-    Duration listenFor = const Duration(minutes: 1),
+    Duration listenFor = const Duration(seconds: 30),
   }) async {
     // If already listening, ignore
     final isListening = state.whenOrNull(

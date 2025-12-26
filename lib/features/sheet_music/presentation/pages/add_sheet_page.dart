@@ -7,6 +7,7 @@ import 'package:sheet_scanner/features/sheet_music/data/services/file_picker_ser
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/add_sheet_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/add_sheet_state.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/file_picker_drop_zone.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/language_selector.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/voice_input_button.dart';
 
 /// Page for adding a new sheet music entry to the library
@@ -239,6 +240,25 @@ class _AddSheetFormState extends State<_AddSheetForm> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Language selector for voice recognition
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 16.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Voice Language:',
+                          style: TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                        SizedBox(width: 12),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: LanguageSelector(
+                      initialLanguage: 'en_US',
+                    ),
+                  ),
                   // Title field with voice input
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,

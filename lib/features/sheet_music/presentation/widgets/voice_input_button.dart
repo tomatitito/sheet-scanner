@@ -148,7 +148,14 @@ class _VoiceInputButtonState extends State<VoiceInputButton>
                   if (_isListening)
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
-                      child: _buildListeningIndicator(state),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildListeningIndicator(state),
+                          const SizedBox(height: 12),
+                          _buildDoneButton(),
+                        ],
+                      ),
                     ),
                   // Show confidence after completion
                   if (state.maybeWhen(
@@ -311,6 +318,19 @@ class _VoiceInputButtonState extends State<VoiceInputButton>
         );
       },
       orElse: () => const SizedBox.shrink(),
+    );
+  }
+
+  Widget _buildDoneButton() {
+    return ElevatedButton.icon(
+      onPressed: _cubit.stopDictation,
+      icon: const Icon(Icons.check),
+      label: const Text('Done'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      ),
     );
   }
 }

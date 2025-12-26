@@ -13,7 +13,7 @@ class TranscribeVoiceParams {
 
   TranscribeVoiceParams({
     this.language = 'en_US',
-    this.listenFor = const Duration(minutes: 1),
+    this.listenFor = const Duration(seconds: 30),
   });
 }
 
