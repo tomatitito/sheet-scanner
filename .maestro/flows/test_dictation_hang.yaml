@@ -1,0 +1,20 @@
+appId: com.example.sheet_scanner
+---
+- launchApp
+- assertVisible: "Add Sheet Music"
+- takeScreenshot: 01_HomeScreen
+- tapOn: "Add Sheet Music"
+- assertVisible: "Composer"
+- tapOn: "Title"
+- tapOn:
+    text: "Title"
+    type: "TextField"
+- inputText: "Test Sheet"
+- takeScreenshot: 02_BeforeDictation
+# Now tap the dictation button for the Title field
+- tapOn:
+    id: "title_dictation_button"
+- sleep: 2
+- takeScreenshot: 03_DictationActive
+- sleep: 35
+- takeScreenshot: 04_DictationAfterWait

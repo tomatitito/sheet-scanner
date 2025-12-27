@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -70,34 +71,42 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
     Duration listenFor = const Duration(seconds: 30),
   }) async {
     try {
+      debugPrint('[TRACE] startListening called with listenFor=${listenFor.inSeconds}s');
+      
       // Verify availability before attempting to listen
+      debugPrint('[TRACE] Checking microphone availability...');
       if (!await isAvailable()) {
+        debugPrint('ERROR: Microphone not available');
         onError('Microphone permission not granted');
         return;
       }
+      debugPrint('[TRACE] Microphone available');
 
       _isListening = true;
 
       // Emit listening started event
+      debugPrint('[TRACE] Emitting listening started event');
       onResult('', false);
 
       // Start recording audio to a temporary file
+      debugPrint('[TRACE] Starting audio recording...');
       final audioPath = await _startAudioRecording();
       if (audioPath == null) {
         _isListening = false;
+        debugPrint('ERROR: _startAudioRecording returned null');
         onError('Failed to start audio recording');
         return;
       }
 
       _currentAudioPath = audioPath;
-      debugPrint(
-          'Audio recording started, will auto-stop after ${listenFor.inSeconds}s');
+      debugPrint('[TRACE] Audio recording started, will auto-stop after ${listenFor.inSeconds}s');
 
       // Auto-stop and transcribe after the listen duration
       // Use unawaited to avoid blocking, but handle errors properly
       _autoStopAndTranscribeAsync(listenFor, onResult, onError);
     } catch (e) {
-      debugPrint('Error during Whisper listening: $e');
+      debugPrint('ERROR: Exception during startListening: $e');
+      debugPrint('[STACK] Stack trace: ${StackTrace.current}');
       onError('Whisper error: ${e.toString()}');
       _isListening = false;
       await _cleanupAudioFile();
@@ -107,24 +116,31 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
   /// Schedule auto-stop and transcription without blocking.
   /// This method uses a background task to ensure errors are properly handled.
   void _autoStopAndTranscribeAsync(
-    Duration listenFor,
-    Function(String text, bool isFinal) onResult,
-    Function(String error) onError,
+   Duration listenFor,
+   Function(String text, bool isFinal) onResult,
+   Function(String error) onError,
   ) {
-    Future.delayed(listenFor).then((_) async {
-      try {
-        if (_isListening) {
-          await _autoStopAndTranscribe(onResult, onError);
-        } else {
-          debugPrint('Listening already stopped, skipping auto-transcribe');
-        }
-      } catch (e) {
-        debugPrint('Error in async auto-stop/transcribe: $e');
-        onError('Auto-transcribe error: ${e.toString()}');
-        _isListening = false;
-        await _cleanupAudioFile();
-      }
-    });
+   debugPrint('[TRACE] _autoStopAndTranscribeAsync scheduled: will fire in ${listenFor.inSeconds}s');
+   final delayStartTime = DateTime.now();
+   Future.delayed(listenFor).then((_) async {
+     final delayDuration = DateTime.now().difference(delayStartTime);
+     debugPrint('[TRACE] _autoStopAndTranscribeAsync firing after ${delayDuration.inMilliseconds}ms');
+     try {
+       if (_isListening) {
+         debugPrint('[TRACE] _isListening=true, calling _autoStopAndTranscribe');
+         await _autoStopAndTranscribe(onResult, onError);
+         debugPrint('[TRACE] _autoStopAndTranscribe completed');
+       } else {
+         debugPrint('[TRACE] Listening already stopped, skipping auto-transcribe');
+       }
+     } catch (e) {
+       debugPrint('ERROR: Exception in async auto-stop/transcribe: $e');
+       debugPrint('[STACK] Stack trace: ${StackTrace.current}');
+       onError('Auto-transcribe error: ${e.toString()}');
+       _isListening = false;
+       await _cleanupAudioFile();
+     }
+   });
   }
 
   /// Auto-stop recording and transcribe (called after listen duration).
@@ -179,18 +195,37 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
         bitRate: 16000, // Bitrate matches sample rate for 16-bit PCM
       );
 
-      debugPrint('Starting audio recording to: $audioPath');
-      debugPrint('Config: encoder=WAV, sampleRate=16000Hz, channels=1');
+      debugPrint('[TRACE] Starting audio recording to: $audioPath');
+      debugPrint('[TRACE] Config: encoder=WAV, sampleRate=16000Hz, channels=1');
 
       // Start recording to file (returns void, path is handled by the recorder)
-      await _audioRecorder.start(config, path: audioPath);
+      debugPrint('[TRACE] Calling _audioRecorder.start()...');
+      final recordingStartTime = DateTime.now();
+      try {
+        // Add a timeout to catch potential hangs in the record package
+        await _audioRecorder.start(config, path: audioPath).timeout(
+          const Duration(seconds: 8),
+          onTimeout: () {
+            throw TimeoutException('Audio recorder start() timed out after 8 seconds');
+          },
+        );
+      } catch (e) {
+        if (e is TimeoutException) {
+          debugPrint('ERROR: ${e.toString()}');
+          throw e; // Re-throw to be caught by outer try/catch
+        }
+        rethrow;
+      }
+      final recordingStartDuration = DateTime.now().difference(recordingStartTime);
+      debugPrint('[TRACE] _audioRecorder.start() completed in ${recordingStartDuration.inMilliseconds}ms');
 
       // Check if recording actually started by verifying the recorder is active
       // The record package will write to the specified audioPath
-      debugPrint('Audio recording initiated at: $audioPath');
+      debugPrint('[TRACE] Audio recording initiated at: $audioPath');
       return audioPath;
     } catch (e) {
       debugPrint('ERROR: Exception starting audio recording: $e');
+      debugPrint('[STACK] Stack trace: ${StackTrace.current}');
       return null;
     }
   }
@@ -372,21 +407,36 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
   /// (e.g., from native recording or other sources).
   Future<String> transcribeAudioFile(String audioPath) async {
     try {
-      debugPrint('Calling Whisper transcribe on: $audioPath');
-
+      debugPrint('[TRACE] Calling Whisper transcribe on: $audioPath');
+      debugPrint('[TRACE] File exists: ${await File(audioPath).exists()}');
+      
+      final transcribeStartTime = DateTime.now();
+      debugPrint('[TRACE] Calling _whisper.transcribe()...');
+      
+      // Add timeout to catch Whisper hanging during model loading or processing
       final result = await _whisper.transcribe(
         transcribeRequest: TranscribeRequest(
           audio: audioPath,
           isTranslate: false,
           isNoTimestamps: true,
         ),
+      ).timeout(
+        const Duration(minutes: 2),
+        onTimeout: () {
+          throw TimeoutException('Whisper transcription timed out after 2 minutes');
+        },
       );
+      
+      final transcribeDuration = DateTime.now().difference(transcribeStartTime);
+      debugPrint('[TRACE] _whisper.transcribe() completed in ${transcribeDuration.inSeconds}s');
 
       final transcribedText = result.text.trim();
+      debugPrint('[TRACE] Transcription result length: ${transcribedText.length} chars');
       debugPrint('✓ Whisper transcription complete: "$transcribedText"');
       return transcribedText;
     } catch (e) {
       debugPrint('ERROR: Whisper transcription failed: $e');
+      debugPrint('[STACK] Stack trace: ${StackTrace.current}');
       rethrow;
     }
   }

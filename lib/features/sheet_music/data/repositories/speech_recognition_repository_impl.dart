@@ -30,9 +30,13 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
     Duration listenFor = const Duration(minutes: 1),
   }) async {
     try {
+      debugPrint('[REPO-TRACE] startVoiceInput called with listenFor=${listenFor.inSeconds}s');
+      
       // Check if service is available
+      debugPrint('[REPO-TRACE] Checking if service is available...');
       final available = await _speechService.isAvailable();
       if (!available) {
+        debugPrint('[REPO-ERROR] Speech recognition not available');
         return Left(
           PlatformFailure(
             message: 'Speech recognition is not available on this device',
@@ -40,10 +44,13 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
           ),
         );
       }
+      debugPrint('[REPO-TRACE] Service is available');
 
       // Initialize the service
+      debugPrint('[REPO-TRACE] Initializing service...');
       final initialized = await _speechService.initialize();
       if (!initialized) {
+        debugPrint('[REPO-ERROR] Failed to initialize service');
         return Left(
           PlatformFailure(
             message: 'Failed to initialize speech recognition',
@@ -51,6 +58,7 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
           ),
         );
       }
+      debugPrint('[REPO-TRACE] Service initialized');
 
       // Validate that the requested language is available on the device
       final availableLanguages = await _speechService.availableLanguages;
@@ -66,6 +74,7 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
       }
 
       // Create a completer for this listening session
+      debugPrint('[REPO-TRACE] Creating new completer for listening session');
       _listenCompleter = Completer<DictationResult>();
 
       // Clear previous result
@@ -73,10 +82,14 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
       final startTime = DateTime.now();
 
       // Start listening
+      debugPrint('[REPO-TRACE] Calling _speechService.startListening()...');
+      final listenStartTime = DateTime.now();
       await _speechService.startListening(
         onResult: (String text, bool isFinal) {
+          debugPrint('[REPO-TRACE] onResult callback: text="$text", isFinal=$isFinal');
           if (isFinal) {
             _finalText = text;
+            debugPrint('[REPO-TRACE] isFinal=true, completing completer with text="$text"');
             // Complete the completer when final result is received
             if (_listenCompleter != null && !_listenCompleter!.isCompleted) {
               _listenCompleter!.complete(
@@ -91,6 +104,7 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
           }
         },
         onError: (String error) {
+          debugPrint('[REPO-ERROR] onError callback: error="$error"');
           if (_listenCompleter != null && !_listenCompleter!.isCompleted) {
             _listenCompleter!.completeError(
               Exception('Speech recognition error: $error'),
@@ -100,13 +114,18 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
         language: effectiveLanguage,
         listenFor: listenFor,
       );
+      final listenStartDuration = DateTime.now().difference(listenStartTime);
+      debugPrint('[REPO-TRACE] _speechService.startListening() returned after ${listenStartDuration.inMilliseconds}ms');
 
       // Wait for the listening session to complete or timeout
+      debugPrint('[REPO-TRACE] Awaiting completer future with timeout ${listenFor.inSeconds}s + 1s...');
       final timeoutDuration =
           Duration(milliseconds: listenFor.inMilliseconds + 1000);
+      final awaitStartTime = DateTime.now();
       final result = await _listenCompleter!.future.timeout(
         timeoutDuration,
         onTimeout: () {
+          debugPrint('[REPO-TRACE] Timeout fired after waiting for completer');
           // Stop listening on timeout
           unawaited(_speechService.stopListening());
           return DictationResult(
@@ -117,9 +136,13 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
           );
         },
       );
+      final awaitDuration = DateTime.now().difference(awaitStartTime);
+      debugPrint('[REPO-TRACE] Completer future resolved after ${awaitDuration.inSeconds}s, text="${result.text}"');
 
       return Right(result);
     } on Exception catch (e) {
+      debugPrint('[REPO-ERROR] Exception during voice input: $e');
+      debugPrint('[REPO-STACK] Stack trace: ${StackTrace.current}');
       return Left(
         GenericFailure(
           message: 'Error during voice input: ${e.toString()}',

@@ -1,0 +1,7 @@
+appId: com.example.sheet_scanner
+---
+- launchApp
+- assertVisible: "Add Sheet Music"
+- tapOn: "Add Sheet Music"
+- assertVisible: "Title"
+- takeScreenshot: add_sheet_form
