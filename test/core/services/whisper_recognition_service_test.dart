@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sheet_scanner/core/services/whisper_service.dart';
@@ -8,8 +9,75 @@ void main() {
   group('WhisperRecognitionServiceImpl', () {
     late WhisperRecognitionServiceImpl service;
 
-    setUp(() {
+    setUpAll(() {
       TestWidgetsFlutterBinding.ensureInitialized();
+
+      // Mock the record plugin's platform channel
+      const recordChannel = MethodChannel('com.llfbandit.record/messages');
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(recordChannel, (MethodCall methodCall) async {
+        switch (methodCall.method) {
+          case 'create':
+            return <String, dynamic>{};
+          case 'start':
+            return null;
+          case 'stop':
+            return '/path/to/recording.wav';
+          case 'cancel':
+            return null;
+          case 'isRecording':
+            return false;
+          case 'hasPermission':
+            return true;
+          case 'getAmplitude':
+            return <String, dynamic>{'current': 0.0, 'max': 0.0};
+          default:
+            return null;
+        }
+      });
+
+      // Mock the permission handler plugin's platform channel
+      const permissionChannel =
+          MethodChannel('flutter.baseflow.com/permissions/methods');
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(permissionChannel, (MethodCall methodCall) async {
+        switch (methodCall.method) {
+          case 'requestPermissions':
+            return <int, int>{6: 1}; // Microphone (6) -> granted (1)
+          case 'checkPermissionStatus':
+            return 1; // Granted
+          case 'shouldShowRequestPermissionRationale':
+            return false;
+          case 'openAppSettings':
+            return true;
+          default:
+            return null;
+        }
+      });
+
+      // Mock the path_provider plugin's platform channel
+      const pathProviderChannel =
+          MethodChannel('plugins.flutter.io/path_provider');
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(pathProviderChannel, (MethodCall methodCall) async {
+        switch (methodCall.method) {
+          case 'getTemporaryDirectory':
+            return '/tmp';
+          case 'getApplicationDocumentsDirectory':
+            return '/Documents';
+          case 'getApplicationSupportDirectory':
+            return '/AppSupport';
+          case 'getLibraryDirectory':
+            return '/Library';
+          case 'getDownloadsDirectory':
+            return '/Downloads';
+          default:
+            return null;
+        }
+      });
+    });
+
+    setUp(() {
       service = WhisperRecognitionServiceImpl();
     });
 
