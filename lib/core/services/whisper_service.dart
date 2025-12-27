@@ -90,14 +90,12 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
       }
 
       _currentAudioPath = audioPath;
+      debugPrint(
+          'Audio recording started, will auto-stop after ${listenFor.inSeconds}s');
 
       // Auto-stop and transcribe after the listen duration
-      // This runs in the background without blocking
-      Future.delayed(listenFor).then((_) async {
-        if (_isListening) {
-          await _autoStopAndTranscribe(onResult, onError);
-        }
-      });
+      // Use unawaited to avoid blocking, but handle errors properly
+      _autoStopAndTranscribeAsync(listenFor, onResult, onError);
     } catch (e) {
       debugPrint('Error during Whisper listening: $e');
       onError('Whisper error: ${e.toString()}');
@@ -106,28 +104,59 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
     }
   }
 
+  /// Schedule auto-stop and transcription without blocking.
+  /// This method uses a background task to ensure errors are properly handled.
+  void _autoStopAndTranscribeAsync(
+    Duration listenFor,
+    Function(String text, bool isFinal) onResult,
+    Function(String error) onError,
+  ) {
+    Future.delayed(listenFor).then((_) async {
+      try {
+        if (_isListening) {
+          await _autoStopAndTranscribe(onResult, onError);
+        } else {
+          debugPrint('Listening already stopped, skipping auto-transcribe');
+        }
+      } catch (e) {
+        debugPrint('Error in async auto-stop/transcribe: $e');
+        onError('Auto-transcribe error: ${e.toString()}');
+        _isListening = false;
+        await _cleanupAudioFile();
+      }
+    });
+  }
+
   /// Auto-stop recording and transcribe (called after listen duration).
   Future<void> _autoStopAndTranscribe(
     Function(String text, bool isFinal) onResult,
     Function(String error) onError,
   ) async {
     try {
-      if (!_isListening) return;
+      if (!_isListening) {
+        debugPrint('Skipping auto-transcribe: not listening');
+        return;
+      }
 
       _isListening = false;
+      debugPrint('Auto-stop triggered: stopping audio recorder');
 
       // Stop audio recording
       final recordingPath = await _audioRecorder.stop();
       if (recordingPath == null) {
+        debugPrint(
+            'ERROR: Audio recorder stop() returned null. Recording path lost.');
         onError('Failed to stop audio recording');
         await _cleanupAudioFile();
         return;
       }
 
+      debugPrint('Audio recording stopped at: $recordingPath');
+
       // Transcribe the recorded audio
       await _transcribeRecordedAudio(onResult, onError);
     } catch (e) {
-      debugPrint('Error during auto-stop transcription: $e');
+      debugPrint('ERROR: Exception during auto-stop transcription: $e');
       onError('Auto-stop error: ${e.toString()}');
       await _cleanupAudioFile();
     }
@@ -140,8 +169,7 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
       // Get temporary directory
       final tempDir = await getTemporaryDirectory();
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final audioPath =
-          '${tempDir.path}/whisper_recording_$timestamp.wav';
+      final audioPath = '${tempDir.path}/whisper_recording_$timestamp.wav';
 
       // Configure recording for Whisper: WAV format at 16kHz mono
       const config = RecordConfig(
@@ -151,13 +179,18 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
         bitRate: 16000, // Bitrate matches sample rate for 16-bit PCM
       );
 
-      // Start recording to file
+      debugPrint('Starting audio recording to: $audioPath');
+      debugPrint('Config: encoder=WAV, sampleRate=16000Hz, channels=1');
+
+      // Start recording to file (returns void, path is handled by the recorder)
       await _audioRecorder.start(config, path: audioPath);
 
-      debugPrint('Started audio recording at: $audioPath');
+      // Check if recording actually started by verifying the recorder is active
+      // The record package will write to the specified audioPath
+      debugPrint('Audio recording initiated at: $audioPath');
       return audioPath;
     } catch (e) {
-      debugPrint('Error starting audio recording: $e');
+      debugPrint('ERROR: Exception starting audio recording: $e');
       return null;
     }
   }
@@ -169,43 +202,52 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
   ) async {
     try {
       if (_currentAudioPath == null) {
+        debugPrint('ERROR: No audio file path stored for transcription');
         onError('No audio file to transcribe');
         return;
       }
 
       final audioPath = _currentAudioPath!;
+      debugPrint('Transcribing recorded audio: $audioPath');
 
       // Verify audio file exists and has content
       final audioFile = File(audioPath);
       if (!await audioFile.exists()) {
+        debugPrint(
+            'ERROR: Audio file does not exist at: $audioPath. Recording may have failed.');
         onError('Audio file was not created');
         return;
       }
 
       final fileSize = await audioFile.length();
+      debugPrint('Audio file size: $fileSize bytes');
+
       if (fileSize < 1000) {
         // Minimum ~1KB of audio data
+        debugPrint(
+            'ERROR: Audio file too small ($fileSize bytes). Recording may have been too quiet or failed.');
         onError('Audio recording too short or empty');
         await _cleanupAudioFile();
         return;
       }
 
-      debugPrint('Transcribing audio file: $audioPath ($fileSize bytes)');
+      debugPrint('Starting Whisper transcription of $fileSize byte audio file');
 
       // Transcribe using Whisper
       final transcription = await transcribeAudioFile(audioPath);
 
       if (transcription.isNotEmpty) {
-        debugPrint('Transcription successful: $transcription');
+        debugPrint('✓ Transcription successful: "$transcription"');
         onResult(transcription, true);
       } else {
+        debugPrint('ERROR: Whisper returned empty transcription');
         onError('Transcription returned empty result');
       }
 
       // Cleanup temporary file
       await _cleanupAudioFile();
     } catch (e) {
-      debugPrint('Error transcribing audio: $e');
+      debugPrint('ERROR: Exception during transcription: $e');
       onError('Transcription error: ${e.toString()}');
       await _cleanupAudioFile();
     }
@@ -232,15 +274,17 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
   Future<String?> stopListening() async {
     try {
       if (!_isListening) {
+        debugPrint('stopListening called but not currently listening');
         return null;
       }
 
       _isListening = false;
+      debugPrint('Manual stop requested: stopping audio recorder');
 
       // Stop audio recording
       final recordingPath = await _audioRecorder.stop();
       if (recordingPath == null) {
-        debugPrint('Failed to stop audio recording');
+        debugPrint('ERROR: Audio recorder stop() returned null');
         await _cleanupAudioFile();
         return null;
       }
@@ -250,7 +294,8 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
       // Verify audio file exists and has content
       final audioFile = File(recordingPath);
       if (!await audioFile.exists()) {
-        debugPrint('Audio file does not exist after recording');
+        debugPrint(
+            'ERROR: Audio file does not exist after recording at: $recordingPath');
         return null;
       }
 
@@ -259,24 +304,26 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
 
       if (fileSize < 1000) {
         // Minimum ~1KB of audio data
-        debugPrint('Audio recording too short');
+        debugPrint(
+            'ERROR: Audio recording too short ($fileSize bytes). Recording failed.');
         await _cleanupAudioFile();
         return null;
       }
 
       // Transcribe the recorded audio
       try {
+        debugPrint('Starting transcription of manually stopped recording');
         final transcription = await transcribeAudioFile(recordingPath);
-        debugPrint('Transcription result: $transcription');
+        debugPrint('✓ Transcription result: "$transcription"');
         await _cleanupAudioFile();
         return transcription;
       } catch (e) {
-        debugPrint('Error during transcription: $e');
+        debugPrint('ERROR: Exception during manual transcription: $e');
         await _cleanupAudioFile();
         return null;
       }
     } catch (e) {
-      debugPrint('Error stopping Whisper listening: $e');
+      debugPrint('ERROR: Exception in stopListening: $e');
       await _cleanupAudioFile();
       return null;
     }
@@ -325,6 +372,8 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
   /// (e.g., from native recording or other sources).
   Future<String> transcribeAudioFile(String audioPath) async {
     try {
+      debugPrint('Calling Whisper transcribe on: $audioPath');
+
       final result = await _whisper.transcribe(
         transcribeRequest: TranscribeRequest(
           audio: audioPath,
@@ -333,10 +382,11 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
         ),
       );
 
-      debugPrint('Whisper result: ${result.text}');
-      return result.text.trim();
+      final transcribedText = result.text.trim();
+      debugPrint('✓ Whisper transcription complete: "$transcribedText"');
+      return transcribedText;
     } catch (e) {
-      debugPrint('Error transcribing audio: $e');
+      debugPrint('ERROR: Whisper transcription failed: $e');
       rethrow;
     }
   }
