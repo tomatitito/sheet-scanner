@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:sheet_scanner/core/database/database.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/entities/sheet_music.dart';
 
@@ -5,12 +6,22 @@ import 'package:sheet_scanner/features/sheet_music/domain/entities/sheet_music.d
 extension SheetMusicModelExt on SheetMusicModel {
   /// Converts database model to domain entity.
   SheetMusic toDomain({List<String> tags = const []}) {
+    List<String> imageUrls = [];
+    try {
+      if (this.imageUrls.isNotEmpty && this.imageUrls != '[]') {
+        imageUrls = List<String>.from(jsonDecode(this.imageUrls) as List);
+      }
+    } catch (e) {
+      // If JSON decoding fails, fall back to empty list
+      imageUrls = [];
+    }
+
     return SheetMusic(
       id: id,
       title: title,
       composer: composer,
       notes: notes,
-      imageUrls: const [], // Image URLs stored separately if needed
+      imageUrls: imageUrls,
       tags: tags,
       createdAt: createdAt,
       updatedAt: updatedAt,
@@ -27,6 +38,7 @@ extension SheetMusicToDatabaseExt on SheetMusic {
       title: title,
       composer: composer,
       notes: notes,
+      imageUrls: imageUrls.isEmpty ? '[]' : jsonEncode(imageUrls),
       createdAt: createdAt,
       updatedAt: updatedAt,
     );

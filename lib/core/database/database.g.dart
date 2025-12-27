@@ -34,6 +34,14 @@ class $SheetMusicTableTable extends SheetMusicTable
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
       'notes', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _imageUrlsMeta =
+      const VerificationMeta('imageUrls');
+  @override
+  late final GeneratedColumn<String> imageUrls = GeneratedColumn<String>(
+      'image_urls', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('[]'));
   static const VerificationMeta _createdAtMeta =
       const VerificationMeta('createdAt');
   @override
@@ -48,7 +56,7 @@ class $SheetMusicTableTable extends SheetMusicTable
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, title, composer, notes, createdAt, updatedAt];
+      [id, title, composer, notes, imageUrls, createdAt, updatedAt];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -77,6 +85,10 @@ class $SheetMusicTableTable extends SheetMusicTable
     if (data.containsKey('notes')) {
       context.handle(
           _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
+    }
+    if (data.containsKey('image_urls')) {
+      context.handle(_imageUrlsMeta,
+          imageUrls.isAcceptableOrUnknown(data['image_urls']!, _imageUrlsMeta));
     }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
@@ -107,6 +119,8 @@ class $SheetMusicTableTable extends SheetMusicTable
           .read(DriftSqlType.string, data['${effectivePrefix}composer'])!,
       notes: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}notes']),
+      imageUrls: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}image_urls'])!,
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
@@ -125,6 +139,7 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
   final String title;
   final String composer;
   final String? notes;
+  final String imageUrls;
   final DateTime createdAt;
   final DateTime updatedAt;
   const SheetMusicModel(
@@ -132,6 +147,7 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
       required this.title,
       required this.composer,
       this.notes,
+      required this.imageUrls,
       required this.createdAt,
       required this.updatedAt});
   @override
@@ -143,6 +159,7 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
+    map['image_urls'] = Variable<String>(imageUrls);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
@@ -155,6 +172,7 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
       composer: Value(composer),
       notes:
           notes == null && nullToAbsent ? const Value.absent() : Value(notes),
+      imageUrls: Value(imageUrls),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -168,6 +186,7 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
       title: serializer.fromJson<String>(json['title']),
       composer: serializer.fromJson<String>(json['composer']),
       notes: serializer.fromJson<String?>(json['notes']),
+      imageUrls: serializer.fromJson<String>(json['imageUrls']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -180,6 +199,7 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
       'title': serializer.toJson<String>(title),
       'composer': serializer.toJson<String>(composer),
       'notes': serializer.toJson<String?>(notes),
+      'imageUrls': serializer.toJson<String>(imageUrls),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -190,6 +210,7 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
           String? title,
           String? composer,
           Value<String?> notes = const Value.absent(),
+          String? imageUrls,
           DateTime? createdAt,
           DateTime? updatedAt}) =>
       SheetMusicModel(
@@ -197,6 +218,7 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
         title: title ?? this.title,
         composer: composer ?? this.composer,
         notes: notes.present ? notes.value : this.notes,
+        imageUrls: imageUrls ?? this.imageUrls,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
@@ -206,6 +228,7 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
       title: data.title.present ? data.title.value : this.title,
       composer: data.composer.present ? data.composer.value : this.composer,
       notes: data.notes.present ? data.notes.value : this.notes,
+      imageUrls: data.imageUrls.present ? data.imageUrls.value : this.imageUrls,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -218,6 +241,7 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
           ..write('title: $title, ')
           ..write('composer: $composer, ')
           ..write('notes: $notes, ')
+          ..write('imageUrls: $imageUrls, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -226,7 +250,7 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
 
   @override
   int get hashCode =>
-      Object.hash(id, title, composer, notes, createdAt, updatedAt);
+      Object.hash(id, title, composer, notes, imageUrls, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -235,6 +259,7 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
           other.title == this.title &&
           other.composer == this.composer &&
           other.notes == this.notes &&
+          other.imageUrls == this.imageUrls &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -244,6 +269,7 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
   final Value<String> title;
   final Value<String> composer;
   final Value<String?> notes;
+  final Value<String> imageUrls;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   const SheetMusicTableCompanion({
@@ -251,6 +277,7 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
     this.title = const Value.absent(),
     this.composer = const Value.absent(),
     this.notes = const Value.absent(),
+    this.imageUrls = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
@@ -259,6 +286,7 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
     required String title,
     required String composer,
     this.notes = const Value.absent(),
+    this.imageUrls = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
   })  : title = Value(title),
@@ -270,6 +298,7 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
     Expression<String>? title,
     Expression<String>? composer,
     Expression<String>? notes,
+    Expression<String>? imageUrls,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
   }) {
@@ -278,6 +307,7 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
       if (title != null) 'title': title,
       if (composer != null) 'composer': composer,
       if (notes != null) 'notes': notes,
+      if (imageUrls != null) 'image_urls': imageUrls,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
     });
@@ -288,6 +318,7 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
       Value<String>? title,
       Value<String>? composer,
       Value<String?>? notes,
+      Value<String>? imageUrls,
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt}) {
     return SheetMusicTableCompanion(
@@ -295,6 +326,7 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
       title: title ?? this.title,
       composer: composer ?? this.composer,
       notes: notes ?? this.notes,
+      imageUrls: imageUrls ?? this.imageUrls,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -315,6 +347,9 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
+    if (imageUrls.present) {
+      map['image_urls'] = Variable<String>(imageUrls.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -331,6 +366,7 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
           ..write('title: $title, ')
           ..write('composer: $composer, ')
           ..write('notes: $notes, ')
+          ..write('imageUrls: $imageUrls, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -740,6 +776,7 @@ typedef $$SheetMusicTableTableCreateCompanionBuilder = SheetMusicTableCompanion
   required String title,
   required String composer,
   Value<String?> notes,
+  Value<String> imageUrls,
   required DateTime createdAt,
   required DateTime updatedAt,
 });
@@ -749,6 +786,7 @@ typedef $$SheetMusicTableTableUpdateCompanionBuilder = SheetMusicTableCompanion
   Value<String> title,
   Value<String> composer,
   Value<String?> notes,
+  Value<String> imageUrls,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
 });
@@ -773,6 +811,9 @@ class $$SheetMusicTableTableFilterComposer
 
   ColumnFilters<String> get notes => $composableBuilder(
       column: $table.notes, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get imageUrls => $composableBuilder(
+      column: $table.imageUrls, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnFilters(column));
@@ -802,6 +843,9 @@ class $$SheetMusicTableTableOrderingComposer
   ColumnOrderings<String> get notes => $composableBuilder(
       column: $table.notes, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get imageUrls => $composableBuilder(
+      column: $table.imageUrls, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
 
@@ -829,6 +873,9 @@ class $$SheetMusicTableTableAnnotationComposer
 
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<String> get imageUrls =>
+      $composableBuilder(column: $table.imageUrls, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -868,6 +915,7 @@ class $$SheetMusicTableTableTableManager extends RootTableManager<
             Value<String> title = const Value.absent(),
             Value<String> composer = const Value.absent(),
             Value<String?> notes = const Value.absent(),
+            Value<String> imageUrls = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
           }) =>
@@ -876,6 +924,7 @@ class $$SheetMusicTableTableTableManager extends RootTableManager<
             title: title,
             composer: composer,
             notes: notes,
+            imageUrls: imageUrls,
             createdAt: createdAt,
             updatedAt: updatedAt,
           ),
@@ -884,6 +933,7 @@ class $$SheetMusicTableTableTableManager extends RootTableManager<
             required String title,
             required String composer,
             Value<String?> notes = const Value.absent(),
+            Value<String> imageUrls = const Value.absent(),
             required DateTime createdAt,
             required DateTime updatedAt,
           }) =>
@@ -892,6 +942,7 @@ class $$SheetMusicTableTableTableManager extends RootTableManager<
             title: title,
             composer: composer,
             notes: notes,
+            imageUrls: imageUrls,
             createdAt: createdAt,
             updatedAt: updatedAt,
           ),

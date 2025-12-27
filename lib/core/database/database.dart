@@ -13,6 +13,7 @@ class SheetMusicTable extends Table {
   TextColumn get title => text()();
   TextColumn get composer => text()();
   TextColumn get notes => text().nullable()();
+  TextColumn get imageUrls => text().withDefault(const Constant('[]'))();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
 
@@ -64,7 +65,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -153,6 +154,12 @@ class AppDatabase extends _$AppDatabase {
               'END',
             );
           }
+          if (from < 3) {
+            // Migration from v2 to v3: Add imageUrls column
+            await customStatement(
+              'ALTER TABLE sheet_music_table ADD COLUMN image_urls TEXT NOT NULL DEFAULT \'[]\'',
+            );
+          }
         },
       );
 
@@ -163,7 +170,7 @@ class AppDatabase extends _$AppDatabase {
     }
     final escapedQuery = query.replaceAll('"', '""');
     final results = await customSelect(
-      'SELECT sm.id, sm.title, sm.composer, sm.notes, sm.created_at, sm.updated_at '
+      'SELECT sm.id, sm.title, sm.composer, sm.notes, sm.image_urls, sm.created_at, sm.updated_at '
       'FROM sheet_music sm '
       'WHERE sm.id IN ('
       '  SELECT id FROM sheet_music_fts WHERE sheet_music_fts MATCH ?'
@@ -178,6 +185,7 @@ class AppDatabase extends _$AppDatabase {
         title: row.read<String>('title'),
         composer: row.read<String>('composer'),
         notes: row.read<String?>('notes'),
+        imageUrls: row.read<String>('image_urls'),
         createdAt: row.read<DateTime>('created_at'),
         updatedAt: row.read<DateTime>('updated_at'),
       );
