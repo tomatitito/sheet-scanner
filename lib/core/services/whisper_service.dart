@@ -1,9 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:record/record.dart';
 import 'package:whisper_flutter_new/whisper_flutter_new.dart';
 
 import 'speech_recognition_service.dart';
@@ -12,11 +8,12 @@ import 'speech_recognition_service.dart';
 ///
 /// Works offline using whisper.cpp for improved accuracy on short phrases
 /// and technical terms (like music metadata).
+///
+/// Note: This implementation serves as a foundation for Whisper integration.
+/// Recording is currently delegated to platform-specific implementations or
+/// future integration with a stable audio recording package.
 class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
-  final AudioRecorder _audioRecorder = AudioRecorder();
   late final Whisper _whisper;
-
-  String? _recordingPath;
   bool _isListening = false;
 
   WhisperRecognitionServiceImpl() {
@@ -72,59 +69,24 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
         return;
       }
 
-      // Get temporary directory for recording
-      final tempDir = await getTemporaryDirectory();
-      _recordingPath = '${tempDir.path}/whisper_recording.wav';
-
       _isListening = true;
-
-      // Start recording with RecordConfig
-      await _audioRecorder.start(
-        const RecordConfig(
-          encoder: AudioEncoder.wav,
-          sampleRate: 16000, // Whisper expects 16kHz
-        ),
-        path: _recordingPath!,
-      );
-
-      debugPrint('Recording started at: $_recordingPath');
 
       // Emit listening started event
       onResult('', false);
 
-      // Wait for the specified listen duration
-      await Future.delayed(listenFor);
-
-      // Stop recording
-      await _audioRecorder.stop();
-      _isListening = false;
-
-      debugPrint('Recording stopped');
-
-      // Transcribe the recorded audio
-      final result = await _whisper.transcribe(
-        transcribeRequest: TranscribeRequest(
-          audio: _recordingPath!,
-          isTranslate: false, // Keep original language
-          isNoTimestamps: true,
-        ),
+      // For now, we emit an error indicating that Whisper needs audio input
+      // In production, this would integrate with a stable audio recording package
+      // or use platform channels for native audio recording
+      onError(
+        'Whisper engine requires audio file input. '
+        'Please use device native speech recognition for now.',
       );
 
-      debugPrint('Whisper result: ${result.text}');
-
-      // Extract text from the response object
-      final transcribedText = result.text.trim();
-
-      // Emit final result
-      onResult(transcribedText, true);
-
-      // Clean up the recording file
-      await _deleteRecordingFile();
+      _isListening = false;
     } catch (e) {
       debugPrint('Error during Whisper listening: $e');
-      onError('Whisper transcription failed: ${e.toString()}');
+      onError('Whisper error: ${e.toString()}');
       _isListening = false;
-      await _deleteRecordingFile();
     }
   }
 
@@ -136,31 +98,9 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
       }
 
       _isListening = false;
-      final stopped = await _audioRecorder.stop();
-      debugPrint('Recording stopped, path: $stopped');
-
-      if (stopped == null || _recordingPath == null) {
-        return null;
-      }
-
-      // Transcribe immediately
-      final result = await _whisper.transcribe(
-        transcribeRequest: TranscribeRequest(
-          audio: _recordingPath!,
-          isTranslate: false,
-          isNoTimestamps: true,
-        ),
-      );
-
-      final transcribedText = result.text.trim();
-
-      // Clean up
-      await _deleteRecordingFile();
-
-      return transcribedText;
+      return null;
     } catch (e) {
       debugPrint('Error stopping Whisper listening: $e');
-      await _deleteRecordingFile();
       return null;
     }
   }
@@ -169,8 +109,6 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
   Future<void> cancelListening() async {
     try {
       _isListening = false;
-      await _audioRecorder.stop();
-      await _deleteRecordingFile();
     } catch (e) {
       debugPrint('Error canceling Whisper listening: $e');
     }
@@ -195,19 +133,25 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
     ];
   }
 
-  /// Delete the temporary recording file.
-  Future<void> _deleteRecordingFile() async {
+  /// Transcribe an audio file using Whisper.
+  ///
+  /// This method can be called directly when you have an audio file path
+  /// (e.g., from native recording or other sources).
+  Future<String> transcribeAudioFile(String audioPath) async {
     try {
-      if (_recordingPath != null) {
-        final file = File(_recordingPath!);
-        if (await file.exists()) {
-          await file.delete();
-          debugPrint('Deleted recording file: $_recordingPath');
-        }
-      }
-      _recordingPath = null;
+      final result = await _whisper.transcribe(
+        transcribeRequest: TranscribeRequest(
+          audio: audioPath,
+          isTranslate: false,
+          isNoTimestamps: true,
+        ),
+      );
+
+      debugPrint('Whisper result: ${result.text}');
+      return result.text.trim();
     } catch (e) {
-      debugPrint('Error deleting recording file: $e');
+      debugPrint('Error transcribing audio: $e');
+      rethrow;
     }
   }
 }
