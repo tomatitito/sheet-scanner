@@ -21,6 +21,12 @@ void main() {
 
     setUp(() {
       mockService = MockSpeechRecognitionService();
+      
+      // Set up default fallback for availableLanguages to return a Future
+      // This prevents "type 'Null' is not a subtype of type 'Future<List<String>>'" errors
+      when(() => mockService.availableLanguages)
+          .thenAnswer((_) async => ['en_US', 'es_ES', 'fr_FR', 'de_DE']);
+      
       repository = SpeechRecognitionRepositoryImpl(
         speechService: mockService,
       );
