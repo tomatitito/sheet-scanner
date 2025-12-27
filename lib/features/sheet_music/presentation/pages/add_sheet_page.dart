@@ -448,7 +448,9 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                       // Library button
                       Expanded(
                         child: OutlinedButton.icon(
-                          onPressed: isSubmitting ? null : () => context.push('/browse'),
+                          onPressed: isSubmitting
+                              ? null
+                              : () => context.push('/browse'),
                           icon: const Icon(Icons.library_music),
                           label: const Text('Library'),
                           style: OutlinedButton.styleFrom(
@@ -505,8 +507,9 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                                       if (result['tags'] != null &&
                                           result['tags'] is List) {
                                         widget.tags.clear();
-                                        widget.tags.addAll((result['tags'] as List)
-                                            .cast<String>());
+                                        widget.tags.addAll(
+                                            (result['tags'] as List)
+                                                .cast<String>());
                                         debugPrint(
                                             '[AddSheetPage] Set tags: ${widget.tags.join(", ")}');
                                       }
@@ -518,7 +521,8 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                                     // Show success message
                                     if (mounted) {
                                       // ignore: use_build_context_synchronously
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         const SnackBar(
                                           content: Text(
                                               'Form populated with scanned data'),

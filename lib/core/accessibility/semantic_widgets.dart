@@ -472,8 +472,8 @@ class _SemanticIconButtonState extends State<SemanticIconButton> {
           onPressed: widget.enabled ? widget.onPressed : null,
           color: widget.isDarkBackground ? Colors.white : Colors.black,
           style: IconButton.styleFrom(
-            backgroundColor:
-                Colors.black.withValues(alpha: widget.isDarkBackground ? 0.5 : 0),
+            backgroundColor: Colors.black
+                .withValues(alpha: widget.isDarkBackground ? 0.5 : 0),
           ),
           focusNode: _focusNode,
         ),

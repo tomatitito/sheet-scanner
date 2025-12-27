@@ -85,7 +85,8 @@ void main() {
 
     test('should handle database constraint errors', () async {
       // Arrange
-      final tFailure = DatabaseFailure(message: 'Foreign key constraint failed');
+      final tFailure =
+          DatabaseFailure(message: 'Foreign key constraint failed');
       when(() => mockRepository.delete(any()))
           .thenAnswer((_) async => Left(tFailure));
 
@@ -96,8 +97,7 @@ void main() {
 
       // Assert
       result.fold(
-        (failure) =>
-            expect(failure.message, 'Foreign key constraint failed'),
+        (failure) => expect(failure.message, 'Foreign key constraint failed'),
         (_) => fail('Should return Left'),
       );
     });

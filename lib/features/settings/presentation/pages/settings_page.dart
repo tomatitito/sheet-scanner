@@ -70,7 +70,8 @@ class SettingsPage extends StatelessWidget {
               children: [
                 const SwitchListTile(
                   title: Text('Full-Text Search'),
-                  subtitle: Text('Enable FTS5 for faster searches (Coming soon)'),
+                  subtitle:
+                      Text('Enable FTS5 for faster searches (Coming soon)'),
                   value: true,
                   onChanged: null,
                 ),
@@ -97,7 +98,8 @@ class SettingsPage extends StatelessWidget {
                 ),
                 ListTile(
                   title: const Text('License'),
-                  subtitle: const Text('View license information (Coming soon)'),
+                  subtitle:
+                      const Text('View license information (Coming soon)'),
                   trailing: const Icon(Icons.article),
                   enabled: false,
                   onTap: () {},

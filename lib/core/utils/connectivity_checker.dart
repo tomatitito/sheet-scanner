@@ -41,7 +41,8 @@ class ConnectivityChecker {
       try {
         final fallbackResult = await InternetAddress.lookup('1.1.1.1')
             .timeout(const Duration(seconds: 5));
-        if (fallbackResult.isNotEmpty && fallbackResult[0].rawAddress.isNotEmpty) {
+        if (fallbackResult.isNotEmpty &&
+            fallbackResult[0].rawAddress.isNotEmpty) {
           return true;
         }
       } catch (_) {

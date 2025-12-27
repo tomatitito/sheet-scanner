@@ -86,9 +86,8 @@ void main() {
               listenFor: any(named: 'listenFor'),
             ),
           ).thenAnswer((invocation) async {
-            final onResult =
-                invocation.namedArguments[const Symbol('onResult')]
-                    as Function(String, bool);
+            final onResult = invocation.namedArguments[const Symbol('onResult')]
+                as Function(String, bool);
             // Simulate successful recognition with final result
             Future.microtask(() => onResult('hello world', true));
           });
@@ -128,9 +127,8 @@ void main() {
               listenFor: any(named: 'listenFor'),
             ),
           ).thenAnswer((invocation) async {
-            final onError =
-                invocation.namedArguments[const Symbol('onError')]
-                    as Function(String);
+            final onError = invocation.namedArguments[const Symbol('onError')]
+                as Function(String);
             // Simulate error
             Future.microtask(() => onError('Microphone access denied'));
           });
@@ -164,9 +162,8 @@ void main() {
               listenFor: any(named: 'listenFor'),
             ),
           ).thenAnswer((invocation) async {
-            final onResult =
-                invocation.namedArguments[const Symbol('onResult')]
-                    as Function(String, bool);
+            final onResult = invocation.namedArguments[const Symbol('onResult')]
+                as Function(String, bool);
             Future.microtask(() => onResult('hola', true));
           });
 
@@ -202,9 +199,8 @@ void main() {
               listenFor: listenDuration,
             ),
           ).thenAnswer((invocation) async {
-            final onResult =
-                invocation.namedArguments[const Symbol('onResult')]
-                    as Function(String, bool);
+            final onResult = invocation.namedArguments[const Symbol('onResult')]
+                as Function(String, bool);
             Future.microtask(() => onResult('test result', true));
           });
 
@@ -242,9 +238,8 @@ void main() {
               listenFor: any(named: 'listenFor'),
             ),
           ).thenAnswer((invocation) async {
-            final onResult =
-                invocation.namedArguments[const Symbol('onResult')]
-                    as Function(String, bool);
+            final onResult = invocation.namedArguments[const Symbol('onResult')]
+                as Function(String, bool);
             Future.microtask(() => onResult(expectedText, true));
           });
 
@@ -276,9 +271,8 @@ void main() {
               listenFor: any(named: 'listenFor'),
             ),
           ).thenAnswer((invocation) async {
-            final onResult =
-                invocation.namedArguments[const Symbol('onResult')]
-                    as Function(String, bool);
+            final onResult = invocation.namedArguments[const Symbol('onResult')]
+                as Function(String, bool);
             Future.microtask(() => onResult('test', true));
           });
 
@@ -289,8 +283,7 @@ void main() {
           result.fold(
             (_) => fail('Should return success'),
             (dictationResult) {
-              expect(dictationResult.confidence,
-                  greaterThanOrEqualTo(0.0));
+              expect(dictationResult.confidence, greaterThanOrEqualTo(0.0));
               expect(dictationResult.confidence, lessThanOrEqualTo(1.0));
             },
           );
@@ -312,9 +305,8 @@ void main() {
               listenFor: any(named: 'listenFor'),
             ),
           ).thenAnswer((invocation) async {
-            final onResult =
-                invocation.namedArguments[const Symbol('onResult')]
-                    as Function(String, bool);
+            final onResult = invocation.namedArguments[const Symbol('onResult')]
+                as Function(String, bool);
             Future.microtask(() => onResult('final text', true));
           });
 

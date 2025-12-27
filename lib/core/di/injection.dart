@@ -324,8 +324,8 @@ void setupInjection() {
     ),
   );
 
-  getIt.registerFactory<DictationCubit>(
-    () => DictationCubit(
+  getIt.registerSingleton<DictationCubit>(
+    DictationCubit(
       transcribeVoiceUseCase: getIt<TranscribeVoiceUseCase>(),
     ),
   );

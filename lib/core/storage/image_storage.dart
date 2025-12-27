@@ -39,7 +39,7 @@ class ImageStorage {
     try {
       final bytes = await imageFile.readAsBytes();
       final image = img.decodeImage(bytes);
-      
+
       if (image == null) {
         // If decoding fails, return original file
         return imageFile;
@@ -58,14 +58,15 @@ class ImageStorage {
 
       // Encode as JPEG with 85% quality
       final compressedBytes = img.encodeJpg(processedImage, quality: 85);
-      
+
       // Write compressed image back to a temp file
       final tempDir = await getTemporaryDirectory();
       final compressedFile = File(
-        p.join(tempDir.path, 'compressed_${DateTime.now().millisecondsSinceEpoch}.jpg'),
+        p.join(tempDir.path,
+            'compressed_${DateTime.now().millisecondsSinceEpoch}.jpg'),
       );
       await compressedFile.writeAsBytes(compressedBytes);
-      
+
       return compressedFile;
     } catch (e) {
       // If compression fails, return original file
@@ -90,7 +91,7 @@ class ImageStorage {
       // Compress the image before saving
       final compressedFile = await _compressImage(imageFile);
       await compressedFile.copy(savePath);
-      
+
       // Clean up the compressed temp file if it's different from original
       if (compressedFile.path != imageFile.path) {
         try {
@@ -99,7 +100,7 @@ class ImageStorage {
           // Ignore cleanup errors
         }
       }
-      
+
       return savePath;
     } catch (e) {
       throw FileSystemException(

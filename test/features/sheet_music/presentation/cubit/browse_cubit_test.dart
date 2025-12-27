@@ -173,7 +173,8 @@ void main() {
         expect(browseCubit.state, isA<BrowseLoaded>());
         final state = browseCubit.state as BrowseLoaded;
         expect(state.searchQuery, 'Moonlight');
-        expect(state.filteredSheets.length, 2); // Moonlight Sonata + Clair de Lune (matches notes)
+        expect(state.filteredSheets.length,
+            2); // Moonlight Sonata + Clair de Lune (matches notes)
         // Clair de Lune is more recent, so it comes first
         expect(state.filteredSheets[0].title, 'Clair de Lune');
         expect(state.filteredSheets[1].title, 'Moonlight Sonata');
@@ -187,7 +188,8 @@ void main() {
         expect(browseCubit.state, isA<BrowseLoaded>());
         final state = browseCubit.state as BrowseLoaded;
         expect(state.filteredSheets.length, 2);
-        expect(state.filteredSheets.every((s) => s.composer.contains('Beethoven')),
+        expect(
+            state.filteredSheets.every((s) => s.composer.contains('Beethoven')),
             isTrue);
       });
 
@@ -208,7 +210,9 @@ void main() {
         // Assert
         expect(browseCubit.state, isA<BrowseLoaded>());
         final state = browseCubit.state as BrowseLoaded;
-        expect(state.filteredSheets.any((s) => s.notes?.contains('Moonlight') ?? false),
+        expect(
+            state.filteredSheets
+                .any((s) => s.notes?.contains('Moonlight') ?? false),
             isTrue);
       });
 
@@ -249,7 +253,8 @@ void main() {
         final state = browseCubit.state as BrowseLoaded;
         expect(state.selectedTags, ['piano']);
         expect(state.filteredSheets.length, 3);
-        expect(state.filteredSheets.every((s) => s.tags.contains('piano')), isTrue);
+        expect(state.filteredSheets.every((s) => s.tags.contains('piano')),
+            isTrue);
       });
 
       test('filter by multiple tags', () async {
@@ -294,8 +299,9 @@ void main() {
         expect(browseCubit.state, isA<BrowseLoaded>());
         final state = browseCubit.state as BrowseLoaded;
         expect(state.filteredSheets.length, 2);
-        expect(state.filteredSheets.every((s) => 
-            s.composer.contains('Beethoven') && s.tags.contains('piano')), 
+        expect(
+            state.filteredSheets.every((s) =>
+                s.composer.contains('Beethoven') && s.tags.contains('piano')),
             isTrue);
       });
     });
@@ -432,7 +438,7 @@ void main() {
 
       // Act
       final refreshFuture = browseCubit.refresh();
-      
+
       // The state should have isRefreshing true before completing
       expect(browseCubit.state, isA<BrowseLoaded>());
       final state = browseCubit.state as BrowseLoaded;

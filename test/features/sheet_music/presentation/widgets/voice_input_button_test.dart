@@ -8,7 +8,8 @@ import 'package:sheet_scanner/features/sheet_music/presentation/widgets/voice_in
 
 class MockDictationCubit extends Mock implements DictationCubit {
   @override
-  Stream<DictationState> get stream => Stream.value(const DictationState.idle());
+  Stream<DictationState> get stream =>
+      Stream.value(const DictationState.idle());
 
   @override
   DictationState get state => const DictationState.idle();

@@ -17,7 +17,7 @@ void main() {
     setUp(() {
       mockRepository = MockSpeechRecognitionRepository();
       useCase = TranscribeVoiceUseCase(repository: mockRepository);
-      
+
       // Register fallback values for mocktail
       registerFallbackValue(const Duration(minutes: 1));
     });
@@ -38,9 +38,9 @@ void main() {
           );
 
           when(() => mockRepository.startVoiceInput(
-            language: any(named: 'language'),
-            listenFor: any(named: 'listenFor'),
-          )).thenAnswer((_) async => Right(expectedResult));
+                language: any(named: 'language'),
+                listenFor: any(named: 'listenFor'),
+              )).thenAnswer((_) async => Right(expectedResult));
 
           final params = TranscribeVoiceParams(
             language: 'en_US',
@@ -72,9 +72,9 @@ void main() {
           );
 
           when(() => mockRepository.startVoiceInput(
-            language: any(named: 'language'),
-            listenFor: any(named: 'listenFor'),
-          )).thenAnswer((_) async => Left(failure));
+                language: any(named: 'language'),
+                listenFor: any(named: 'listenFor'),
+              )).thenAnswer((_) async => Left(failure));
 
           final params = TranscribeVoiceParams();
 
@@ -99,11 +99,11 @@ void main() {
           // THEN: Should pass 'es_ES' to repository
 
           when(() => mockRepository.startVoiceInput(
-            language: 'es_ES',
-            listenFor: any(named: 'listenFor'),
-          )).thenAnswer(
-            (_) async => Right(const 
-              DictationResult(
+                language: 'es_ES',
+                listenFor: any(named: 'listenFor'),
+              )).thenAnswer(
+            (_) async => Right(
+              const DictationResult(
                 text: 'hola',
                 confidence: 0.9,
                 isFinal: true,
@@ -117,9 +117,9 @@ void main() {
           await useCase.call(params);
 
           verify(() => mockRepository.startVoiceInput(
-            language: 'es_ES',
-            listenFor: any(named: 'listenFor'),
-          )).called(1);
+                language: 'es_ES',
+                listenFor: any(named: 'listenFor'),
+              )).called(1);
         },
       );
 
@@ -133,11 +133,11 @@ void main() {
           const duration = Duration(seconds: 45);
 
           when(() => mockRepository.startVoiceInput(
-            language: any(named: 'language'),
-            listenFor: duration,
-          )).thenAnswer(
-            (_) async => Right(const 
-              DictationResult(
+                language: any(named: 'language'),
+                listenFor: duration,
+              )).thenAnswer(
+            (_) async => Right(
+              const DictationResult(
                 text: 'test',
                 confidence: 0.85,
                 isFinal: true,
@@ -151,9 +151,9 @@ void main() {
           await useCase.call(params);
 
           verify(() => mockRepository.startVoiceInput(
-            language: any(named: 'language'),
-            listenFor: duration,
-          )).called(1);
+                language: any(named: 'language'),
+                listenFor: duration,
+              )).called(1);
         },
       );
     });
@@ -228,9 +228,9 @@ void main() {
           // THEN: Should handle gracefully (repository should handle exceptions)
 
           when(() => mockRepository.startVoiceInput(
-            language: any(named: 'language'),
-            listenFor: any(named: 'listenFor'),
-          )).thenThrow(Exception('Repository error'));
+                language: any(named: 'language'),
+                listenFor: any(named: 'listenFor'),
+              )).thenThrow(Exception('Repository error'));
 
           final params = TranscribeVoiceParams();
 
@@ -251,9 +251,9 @@ void main() {
           final failure = SpeechRecognitionFailure(message: 'Error');
 
           when(() => mockRepository.startVoiceInput(
-            language: any(named: 'language'),
-            listenFor: any(named: 'listenFor'),
-          )).thenAnswer((_) async => Left(failure));
+                language: any(named: 'language'),
+                listenFor: any(named: 'listenFor'),
+              )).thenAnswer((_) async => Left(failure));
 
           final params = TranscribeVoiceParams();
 
@@ -273,11 +273,11 @@ void main() {
           // THEN: Should handle each independently
 
           when(() => mockRepository.startVoiceInput(
-            language: any(named: 'language'),
-            listenFor: any(named: 'listenFor'),
-          )).thenAnswer(
-            (_) async => Right(const 
-              DictationResult(
+                language: any(named: 'language'),
+                listenFor: any(named: 'listenFor'),
+              )).thenAnswer(
+            (_) async => Right(
+              const DictationResult(
                 text: 'test',
                 confidence: 0.9,
                 isFinal: true,
@@ -294,9 +294,9 @@ void main() {
           expect(result1.isRight(), isTrue);
           expect(result2.isRight(), isTrue);
           verify(() => mockRepository.startVoiceInput(
-            language: any(named: 'language'),
-            listenFor: any(named: 'listenFor'),
-          )).called(2);
+                language: any(named: 'language'),
+                listenFor: any(named: 'listenFor'),
+              )).called(2);
         },
       );
 
@@ -308,9 +308,9 @@ void main() {
           // THEN: Each should maintain its own params
 
           when(() => mockRepository.startVoiceInput(
-            language: 'en_US',
-            listenFor: any(named: 'listenFor'),
-          )).thenAnswer(
+                language: 'en_US',
+                listenFor: any(named: 'listenFor'),
+              )).thenAnswer(
             (_) async => Right(
               const DictationResult(
                 text: 'english',
@@ -322,9 +322,9 @@ void main() {
           );
 
           when(() => mockRepository.startVoiceInput(
-            language: 'es_ES',
-            listenFor: any(named: 'listenFor'),
-          )).thenAnswer(
+                language: 'es_ES',
+                listenFor: any(named: 'listenFor'),
+              )).thenAnswer(
             (_) async => Right(
               const DictationResult(
                 text: 'español',

@@ -63,7 +63,8 @@ void main() {
     });
 
     group('loadSheetMusic', () {
-      test('loadSheetMusic emits [EditSheetLoading, EditSheetLoaded] on success',
+      test(
+          'loadSheetMusic emits [EditSheetLoading, EditSheetLoaded] on success',
           () async {
         // Arrange
         when(() => mockGetSheetMusicByIdUseCase(any()))
@@ -283,7 +284,8 @@ void main() {
     });
 
     group('submitForm', () {
-      test('submitForm emits [EditSheetSubmitting, EditSheetSuccess] on success',
+      test(
+          'submitForm emits [EditSheetSubmitting, EditSheetSuccess] on success',
           () async {
         // Arrange
         when(() => mockUpdateSheetMusicUseCase(any()))

@@ -144,8 +144,7 @@ void main() {
       expect(homeCubit.state, isA<HomeLoaded>());
     });
 
-    test('loadSheetMusic called multiple times emits correct states',
-        () async {
+    test('loadSheetMusic called multiple times emits correct states', () async {
       // Arrange
       when(() => mockGetAllSheetMusicUseCase.call())
           .thenAnswer((_) async => Right(tSheetMusicList));

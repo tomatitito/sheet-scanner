@@ -18,12 +18,13 @@ class DatabaseManager {
   static Future<bool> healthCheck() async {
     try {
       final database = getIt<AppDatabase>();
-      
+
       // Try a simple query to verify database is working
       // This will also trigger lazy initialization if not done yet
       final count = await (database.select(database.sheetMusicTable)).get();
-      
-      _logger.info('Database health check passed. Sheet music records: ${count.length}');
+
+      _logger.info(
+          'Database health check passed. Sheet music records: ${count.length}');
       return true;
     } catch (e) {
       _logger.severe('Database health check failed: $e');
@@ -52,10 +53,11 @@ class DatabaseManager {
   static Future<Map<String, dynamic>> getDatabaseInfo() async {
     try {
       final database = getIt<AppDatabase>();
-      
-      final sheetCount = await (database.select(database.sheetMusicTable)).get();
+
+      final sheetCount =
+          await (database.select(database.sheetMusicTable)).get();
       final tagCount = await (database.select(database.tagsTable)).get();
-      
+
       return {
         'status': 'ok',
         'sheetMusicRecords': sheetCount.length,

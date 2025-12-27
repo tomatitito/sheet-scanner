@@ -121,8 +121,7 @@ void main() {
 
     test('should handle retrieval of different IDs', () async {
       // Arrange
-      when(() => mockRepository.getById(any()))
-          .thenAnswer((invocation) async {
+      when(() => mockRepository.getById(any())).thenAnswer((invocation) async {
         final id = invocation.positionalArguments[0] as int;
         return Right(tSheetMusic.copyWith(id: id));
       });

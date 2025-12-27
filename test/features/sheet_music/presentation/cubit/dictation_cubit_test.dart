@@ -71,8 +71,8 @@ void main() {
           // THEN: First emits listening state with empty transcription
 
           when(() => mockUseCase.call(any())).thenAnswer(
-            (_) async => Right(const 
-              DictationResult(
+            (_) async => Right(
+              const DictationResult(
                 text: 'hello world',
                 confidence: 0.95,
                 isFinal: true,
