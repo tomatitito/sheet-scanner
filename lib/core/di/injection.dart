@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:sheet_scanner/core/database/database.dart';
 import 'package:sheet_scanner/core/services/speech_recognition_service.dart';
+import 'package:sheet_scanner/core/services/speech_recognition_service_factory.dart';
 import 'package:sheet_scanner/features/backup/data/datasources/backup_local_datasource.dart';
 import 'package:sheet_scanner/features/backup/data/repositories/backup_repository_impl.dart';
 import 'package:sheet_scanner/features/backup/domain/repositories/backup_repository.dart';
@@ -71,9 +72,9 @@ void setupInjection() {
     throw Exception('Failed to initialize database: $e');
   }
 
-  // Speech Recognition Service
+  // Speech Recognition Service (using factory for engine selection)
   getIt.registerSingleton<SpeechRecognitionService>(
-    SpeechRecognitionServiceImpl(),
+    SpeechRecognitionServiceFactory.create(),
   );
 
   // ==================== SHEET MUSIC FEATURE ====================

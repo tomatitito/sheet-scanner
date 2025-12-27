@@ -40,6 +40,12 @@ dependencies:
   # Voice Input - Speech to Text
   speech_to_text: ^7.3.0
 
+  # Voice Input - Whisper (offline)
+  whisper_flutter_new: ^1.0.1
+
+  # Audio Recording
+  record: ^5.1.0
+
   # File Operations
   file_picker: ^10.3.0
   share_plus: ^12.0.1
