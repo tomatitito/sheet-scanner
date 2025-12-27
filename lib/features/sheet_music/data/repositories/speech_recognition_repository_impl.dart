@@ -123,7 +123,7 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
       // The service layer has its own timeouts (8s for recording, 2min for transcription).
       // We use a very long timeout here (5 minutes) to allow transcription to complete normally.
       debugPrint('[REPO-TRACE] Awaiting completer future with timeout 5 minutes (for listening + transcription)...');
-      final timeoutDuration = const Duration(minutes: 5);
+      const Duration timeoutDuration = Duration(minutes: 5);
       final awaitStartTime = DateTime.now();
       final result = await _listenCompleter!.future.timeout(
         timeoutDuration,

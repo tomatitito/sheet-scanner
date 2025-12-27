@@ -212,7 +212,6 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
       } catch (e) {
         if (e is TimeoutException) {
           debugPrint('ERROR: ${e.toString()}');
-          throw e; // Re-throw to be caught by outer try/catch
         }
         rethrow;
       }

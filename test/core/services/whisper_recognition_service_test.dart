@@ -9,6 +9,7 @@ void main() {
     late WhisperRecognitionServiceImpl service;
 
     setUp(() {
+      TestWidgetsFlutterBinding.ensureInitialized();
       service = WhisperRecognitionServiceImpl();
     });
 
