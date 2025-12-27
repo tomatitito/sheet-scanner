@@ -25,7 +25,7 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
 
   WhisperRecognitionServiceImpl() {
     _whisper = const Whisper(
-      model: WhisperModel.base, // Balance between accuracy and size
+      model: WhisperModel.tiny, // Tiny model for 5-10x faster transcription on Android
       downloadHost: 'https://huggingface.co/ggerganov/whisper.cpp/resolve/main',
     );
     _audioRecorder = AudioRecorder();
