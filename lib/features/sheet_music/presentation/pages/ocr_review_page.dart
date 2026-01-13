@@ -6,6 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/ocr_review_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/ocr_review_state.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/composer_autocomplete_field.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/title_autocomplete_field.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/musical_key_dropdown.dart';
 
 /// Page for reviewing and editing OCR-detected sheet music metadata
 ///
@@ -37,7 +40,9 @@ class OCRReviewPage extends StatefulWidget {
 class _OCRReviewPageState extends State<OCRReviewPage> {
   late final TextEditingController _titleController;
   late final TextEditingController _composerController;
+  late final TextEditingController _opusController;
   late final TextEditingController _notesController;
+  String? _selectedMusicalKey;
   final List<String> _tags = [];
 
   @override
@@ -45,6 +50,7 @@ class _OCRReviewPageState extends State<OCRReviewPage> {
     super.initState();
     _titleController = TextEditingController(text: widget.detectedTitle);
     _composerController = TextEditingController(text: widget.detectedComposer);
+    _opusController = TextEditingController();
     _notesController = TextEditingController();
   }
 
@@ -52,6 +58,7 @@ class _OCRReviewPageState extends State<OCRReviewPage> {
   void dispose() {
     _titleController.dispose();
     _composerController.dispose();
+    _opusController.dispose();
     _notesController.dispose();
     super.dispose();
   }
@@ -60,6 +67,8 @@ class _OCRReviewPageState extends State<OCRReviewPage> {
     context.read<OCRReviewCubit>().validate(
           title: value,
           composer: _composerController.text,
+          opus: _opusController.text.isEmpty ? null : _opusController.text,
+          musicalKey: _selectedMusicalKey,
           notes: _notesController.text,
           tags: _tags,
         );
@@ -69,6 +78,33 @@ class _OCRReviewPageState extends State<OCRReviewPage> {
     context.read<OCRReviewCubit>().validate(
           title: _titleController.text,
           composer: value,
+          opus: _opusController.text.isEmpty ? null : _opusController.text,
+          musicalKey: _selectedMusicalKey,
+          notes: _notesController.text,
+          tags: _tags,
+        );
+  }
+
+  void _onOpusChanged(String value) {
+    context.read<OCRReviewCubit>().validate(
+          title: _titleController.text,
+          composer: _composerController.text,
+          opus: value.isEmpty ? null : value,
+          musicalKey: _selectedMusicalKey,
+          notes: _notesController.text,
+          tags: _tags,
+        );
+  }
+
+  void _onMusicalKeyChanged(String? value) {
+    setState(() {
+      _selectedMusicalKey = value;
+    });
+    context.read<OCRReviewCubit>().validate(
+          title: _titleController.text,
+          composer: _composerController.text,
+          opus: _opusController.text.isEmpty ? null : _opusController.text,
+          musicalKey: value,
           notes: _notesController.text,
           tags: _tags,
         );
@@ -78,6 +114,8 @@ class _OCRReviewPageState extends State<OCRReviewPage> {
     context.read<OCRReviewCubit>().validate(
           title: _titleController.text,
           composer: _composerController.text,
+          opus: _opusController.text.isEmpty ? null : _opusController.text,
+          musicalKey: _selectedMusicalKey,
           notes: value,
           tags: _tags,
         );
@@ -91,6 +129,8 @@ class _OCRReviewPageState extends State<OCRReviewPage> {
       context.read<OCRReviewCubit>().validate(
             title: _titleController.text,
             composer: _composerController.text,
+            opus: _opusController.text.isEmpty ? null : _opusController.text,
+            musicalKey: _selectedMusicalKey,
             notes: _notesController.text,
             tags: _tags,
           );
@@ -104,6 +144,8 @@ class _OCRReviewPageState extends State<OCRReviewPage> {
     context.read<OCRReviewCubit>().validate(
           title: _titleController.text,
           composer: _composerController.text,
+          opus: _opusController.text.isEmpty ? null : _opusController.text,
+          musicalKey: _selectedMusicalKey,
           notes: _notesController.text,
           tags: _tags,
         );
@@ -114,6 +156,8 @@ class _OCRReviewPageState extends State<OCRReviewPage> {
     context.read<OCRReviewCubit>().validate(
           title: _titleController.text,
           composer: _composerController.text,
+          opus: _opusController.text.isEmpty ? null : _opusController.text,
+          musicalKey: _selectedMusicalKey,
           notes: _notesController.text,
           tags: _tags,
         );
@@ -131,6 +175,9 @@ class _OCRReviewPageState extends State<OCRReviewPage> {
       final result = {
         'title': _titleController.text.trim(),
         'composer': _composerController.text.trim(),
+        'opus':
+            _opusController.text.isEmpty ? null : _opusController.text.trim(),
+        'musicalKey': _selectedMusicalKey,
         'notes':
             _notesController.text.isEmpty ? null : _notesController.text.trim(),
         'tags': List<String>.from(_tags),
@@ -157,10 +204,14 @@ class _OCRReviewPageState extends State<OCRReviewPage> {
         confidence: widget.confidence,
         titleController: _titleController,
         composerController: _composerController,
+        opusController: _opusController,
         notesController: _notesController,
+        musicalKey: _selectedMusicalKey,
+        onMusicalKeyChanged: _onMusicalKeyChanged,
         tags: _tags,
         onTitleChanged: _onTitleChanged,
         onComposerChanged: _onComposerChanged,
+        onOpusChanged: _onOpusChanged,
         onNotesChanged: _onNotesChanged,
         onAddTag: _addTag,
         onRemoveTag: _removeTag,
@@ -176,10 +227,14 @@ class _OCRReviewForm extends StatefulWidget {
   final double confidence;
   final TextEditingController titleController;
   final TextEditingController composerController;
+  final TextEditingController opusController;
   final TextEditingController notesController;
+  final String? musicalKey;
+  final ValueChanged<String?> onMusicalKeyChanged;
   final List<String> tags;
   final ValueChanged<String> onTitleChanged;
   final ValueChanged<String> onComposerChanged;
+  final ValueChanged<String> onOpusChanged;
   final ValueChanged<String> onNotesChanged;
   final Function(String) onAddTag;
   final Function(String) onRemoveTag;
@@ -191,10 +246,14 @@ class _OCRReviewForm extends StatefulWidget {
     required this.confidence,
     required this.titleController,
     required this.composerController,
+    required this.opusController,
     required this.notesController,
+    this.musicalKey,
+    required this.onMusicalKeyChanged,
     required this.tags,
     required this.onTitleChanged,
     required this.onComposerChanged,
+    required this.onOpusChanged,
     required this.onNotesChanged,
     required this.onAddTag,
     required this.onRemoveTag,
@@ -342,7 +401,7 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
         ),
         const SizedBox(height: 24),
 
-        // Title field
+        // Title field with autocomplete (based on composer)
         Text(
           'Title',
           style: Theme.of(context)
@@ -351,21 +410,16 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
               ?.copyWith(fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 8),
-        TextFormField(
+        TitleAutocompleteField(
           controller: widget.titleController,
+          composerName: widget.composerController.text,
           enabled: !isSubmitting,
+          errorText: errors['title'],
           onChanged: widget.onTitleChanged,
-          decoration: InputDecoration(
-            hintText: 'Enter sheet music title',
-            errorText: errors['title'],
-            border: const OutlineInputBorder(),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          ),
         ),
         const SizedBox(height: 16),
 
-        // Composer field
+        // Composer field with autocomplete
         Text(
           'Composer',
           style: Theme.of(context)
@@ -374,17 +428,51 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
               ?.copyWith(fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 8),
-        TextFormField(
+        ComposerAutocompleteField(
           controller: widget.composerController,
           enabled: !isSubmitting,
+          errorText: errors['composer'],
           onChanged: widget.onComposerChanged,
+        ),
+        const SizedBox(height: 16),
+
+        // Opus/Catalog number field (optional)
+        Text(
+          'Opus/Catalog Number',
+          style: Theme.of(context)
+              .textTheme
+              .labelLarge
+              ?.copyWith(fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: widget.opusController,
+          enabled: !isSubmitting,
+          onChanged: widget.onOpusChanged,
           decoration: InputDecoration(
-            hintText: 'Enter composer name',
-            errorText: errors['composer'],
+            hintText: 'e.g., Op. 27, BWV 846, K. 331',
+            errorText: errors['opus'],
             border: const OutlineInputBorder(),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           ),
+        ),
+        const SizedBox(height: 16),
+
+        // Musical Key dropdown (optional)
+        Text(
+          'Musical Key',
+          style: Theme.of(context)
+              .textTheme
+              .labelLarge
+              ?.copyWith(fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(height: 8),
+        MusicalKeyDropdown(
+          selectedValue: widget.musicalKey,
+          enabled: !isSubmitting,
+          errorText: errors['musicalKey'],
+          onChanged: widget.onMusicalKeyChanged,
         ),
         const SizedBox(height: 16),
 
@@ -632,6 +720,46 @@ class _OCRReviewFormState extends State<_OCRReviewForm> {
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 ),
+              ),
+              const SizedBox(height: 16),
+
+              // Opus/Catalog number field (optional)
+              Text(
+                'Opus/Catalog Number',
+                style: Theme.of(context)
+                    .textTheme
+                    .labelLarge
+                    ?.copyWith(fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: widget.opusController,
+                enabled: !isSubmitting,
+                onChanged: widget.onOpusChanged,
+                decoration: InputDecoration(
+                  hintText: 'e.g., Op. 27, BWV 846, K. 331',
+                  errorText: errors['opus'],
+                  border: const OutlineInputBorder(),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Musical Key dropdown (optional)
+              Text(
+                'Musical Key',
+                style: Theme.of(context)
+                    .textTheme
+                    .labelLarge
+                    ?.copyWith(fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 8),
+              MusicalKeyDropdown(
+                selectedValue: widget.musicalKey,
+                enabled: !isSubmitting,
+                errorText: errors['musicalKey'],
+                onChanged: widget.onMusicalKeyChanged,
               ),
               const SizedBox(height: 16),
 

@@ -19,6 +19,8 @@ mixin _$SheetMusic {
   int get id => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   String get composer => throw _privateConstructorUsedError;
+  String? get opus => throw _privateConstructorUsedError;
+  String? get musicalKey => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
   List<String> get imageUrls => throw _privateConstructorUsedError;
   List<String> get tags => throw _privateConstructorUsedError;
@@ -42,6 +44,8 @@ abstract class $SheetMusicCopyWith<$Res> {
       {int id,
       String title,
       String composer,
+      String? opus,
+      String? musicalKey,
       String? notes,
       List<String> imageUrls,
       List<String> tags,
@@ -67,6 +71,8 @@ class _$SheetMusicCopyWithImpl<$Res, $Val extends SheetMusic>
     Object? id = null,
     Object? title = null,
     Object? composer = null,
+    Object? opus = freezed,
+    Object? musicalKey = freezed,
     Object? notes = freezed,
     Object? imageUrls = null,
     Object? tags = null,
@@ -86,6 +92,14 @@ class _$SheetMusicCopyWithImpl<$Res, $Val extends SheetMusic>
           ? _value.composer
           : composer // ignore: cast_nullable_to_non_nullable
               as String,
+      opus: freezed == opus
+          ? _value.opus
+          : opus // ignore: cast_nullable_to_non_nullable
+              as String?,
+      musicalKey: freezed == musicalKey
+          ? _value.musicalKey
+          : musicalKey // ignore: cast_nullable_to_non_nullable
+              as String?,
       notes: freezed == notes
           ? _value.notes
           : notes // ignore: cast_nullable_to_non_nullable
@@ -122,6 +136,8 @@ abstract class _$$SheetMusicImplCopyWith<$Res>
       {int id,
       String title,
       String composer,
+      String? opus,
+      String? musicalKey,
       String? notes,
       List<String> imageUrls,
       List<String> tags,
@@ -145,6 +161,8 @@ class __$$SheetMusicImplCopyWithImpl<$Res>
     Object? id = null,
     Object? title = null,
     Object? composer = null,
+    Object? opus = freezed,
+    Object? musicalKey = freezed,
     Object? notes = freezed,
     Object? imageUrls = null,
     Object? tags = null,
@@ -164,6 +182,14 @@ class __$$SheetMusicImplCopyWithImpl<$Res>
           ? _value.composer
           : composer // ignore: cast_nullable_to_non_nullable
               as String,
+      opus: freezed == opus
+          ? _value.opus
+          : opus // ignore: cast_nullable_to_non_nullable
+              as String?,
+      musicalKey: freezed == musicalKey
+          ? _value.musicalKey
+          : musicalKey // ignore: cast_nullable_to_non_nullable
+              as String?,
       notes: freezed == notes
           ? _value.notes
           : notes // ignore: cast_nullable_to_non_nullable
@@ -195,6 +221,8 @@ class _$SheetMusicImpl implements _SheetMusic {
       {required this.id,
       required this.title,
       required this.composer,
+      this.opus,
+      this.musicalKey,
       this.notes,
       final List<String> imageUrls = const [],
       final List<String> tags = const [],
@@ -209,6 +237,10 @@ class _$SheetMusicImpl implements _SheetMusic {
   final String title;
   @override
   final String composer;
+  @override
+  final String? opus;
+  @override
+  final String? musicalKey;
   @override
   final String? notes;
   final List<String> _imageUrls;
@@ -236,7 +268,7 @@ class _$SheetMusicImpl implements _SheetMusic {
 
   @override
   String toString() {
-    return 'SheetMusic(id: $id, title: $title, composer: $composer, notes: $notes, imageUrls: $imageUrls, tags: $tags, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'SheetMusic(id: $id, title: $title, composer: $composer, opus: $opus, musicalKey: $musicalKey, notes: $notes, imageUrls: $imageUrls, tags: $tags, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -248,6 +280,9 @@ class _$SheetMusicImpl implements _SheetMusic {
             (identical(other.title, title) || other.title == title) &&
             (identical(other.composer, composer) ||
                 other.composer == composer) &&
+            (identical(other.opus, opus) || other.opus == opus) &&
+            (identical(other.musicalKey, musicalKey) ||
+                other.musicalKey == musicalKey) &&
             (identical(other.notes, notes) || other.notes == notes) &&
             const DeepCollectionEquality()
                 .equals(other._imageUrls, _imageUrls) &&
@@ -264,6 +299,8 @@ class _$SheetMusicImpl implements _SheetMusic {
       id,
       title,
       composer,
+      opus,
+      musicalKey,
       notes,
       const DeepCollectionEquality().hash(_imageUrls),
       const DeepCollectionEquality().hash(_tags),
@@ -284,6 +321,8 @@ abstract class _SheetMusic implements SheetMusic {
       {required final int id,
       required final String title,
       required final String composer,
+      final String? opus,
+      final String? musicalKey,
       final String? notes,
       final List<String> imageUrls,
       final List<String> tags,
@@ -296,6 +335,10 @@ abstract class _SheetMusic implements SheetMusic {
   String get title;
   @override
   String get composer;
+  @override
+  String? get opus;
+  @override
+  String? get musicalKey;
   @override
   String? get notes;
   @override

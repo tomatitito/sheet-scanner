@@ -45,6 +45,8 @@ class EditSheetCubit extends Cubit<EditSheetState> {
   Map<String, String> validateForm({
     required String title,
     required String composer,
+    String? opus,
+    String? musicalKey,
     String? notes,
     List<String> tags = const [],
   }) {
@@ -66,6 +68,14 @@ class EditSheetCubit extends Cubit<EditSheetState> {
       errors['composer'] = 'Composer must not exceed 100 characters';
     }
 
+    if (opus != null && opus.length > 100) {
+      errors['opus'] = 'Opus must not exceed 100 characters';
+    }
+
+    if (musicalKey != null && musicalKey.length > 50) {
+      errors['musicalKey'] = 'Musical key must not exceed 50 characters';
+    }
+
     if (notes != null && notes.length > 1000) {
       errors['notes'] = 'Notes must not exceed 1000 characters';
     }
@@ -77,6 +87,8 @@ class EditSheetCubit extends Cubit<EditSheetState> {
   void validate({
     required String title,
     required String composer,
+    String? opus,
+    String? musicalKey,
     String? notes,
     List<String> tags = const [],
   }) {
@@ -85,6 +97,8 @@ class EditSheetCubit extends Cubit<EditSheetState> {
     final errors = validateForm(
       title: title,
       composer: composer,
+      opus: opus,
+      musicalKey: musicalKey,
       notes: notes,
       tags: tags,
     );
@@ -101,6 +115,8 @@ class EditSheetCubit extends Cubit<EditSheetState> {
     required int id,
     required String title,
     required String composer,
+    String? opus,
+    String? musicalKey,
     String? notes,
     List<String> tags = const [],
     List<String> imageUrls = const [],
@@ -110,6 +126,8 @@ class EditSheetCubit extends Cubit<EditSheetState> {
     final errors = validateForm(
       title: title,
       composer: composer,
+      opus: opus,
+      musicalKey: musicalKey,
       notes: notes,
       tags: tags,
     );
@@ -125,6 +143,8 @@ class EditSheetCubit extends Cubit<EditSheetState> {
       id: id,
       title: title,
       composer: composer,
+      opus: opus,
+      musicalKey: musicalKey,
       notes: notes,
       tags: tags,
       imageUrls: imageUrls,

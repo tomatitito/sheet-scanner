@@ -37,6 +37,8 @@ class OCRReviewCubit extends Cubit<OCRReviewState> {
   void validate({
     required String title,
     required String composer,
+    String? opus,
+    String? musicalKey,
     required String notes,
     required List<String> tags,
   }) {
@@ -48,6 +50,14 @@ class OCRReviewCubit extends Cubit<OCRReviewState> {
 
     if (composer.trim().isEmpty) {
       errors['composer'] = 'Composer is required';
+    }
+
+    if (opus != null && opus.length > 100) {
+      errors['opus'] = 'Opus must not exceed 100 characters';
+    }
+
+    if (musicalKey != null && musicalKey.length > 50) {
+      errors['musicalKey'] = 'Musical key must not exceed 50 characters';
     }
 
     if (notes.length > 500) {
@@ -81,11 +91,19 @@ class OCRReviewCubit extends Cubit<OCRReviewState> {
   Future<void> submitForm({
     required String title,
     required String composer,
+    String? opus,
+    String? musicalKey,
     required String notes,
     required List<String> tags,
   }) async {
     // Validate first
-    validate(title: title, composer: composer, notes: notes, tags: tags);
+    validate(
+        title: title,
+        composer: composer,
+        opus: opus,
+        musicalKey: musicalKey,
+        notes: notes,
+        tags: tags);
 
     await state.whenOrNull(
       initialized: (detTitle, detComposer, conf, image, eTitle, eComposer,
@@ -114,6 +132,8 @@ class OCRReviewCubit extends Cubit<OCRReviewState> {
           id: 0, // Will be set by the repository
           title: title.trim(),
           composer: composer.trim(),
+          opus: opus?.isEmpty == true ? null : opus?.trim(),
+          musicalKey: musicalKey?.isEmpty == true ? null : musicalKey?.trim(),
           notes: notes.isEmpty ? null : notes.trim(),
           imageUrls: image != null ? [image.path] : [],
           tags: tags,

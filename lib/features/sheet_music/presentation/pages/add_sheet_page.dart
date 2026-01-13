@@ -3,12 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sheet_scanner/core/accessibility/semantic_widgets.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
+import 'package:sheet_scanner/data/catalog_prefixes.dart';
 import 'package:sheet_scanner/features/sheet_music/data/services/file_picker_service.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/add_sheet_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/add_sheet_state.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/file_picker_drop_zone.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/language_selector.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/composer_autocomplete_field.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/title_autocomplete_field.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/voice_input_button.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/musical_key_dropdown.dart';
 
 /// Page for adding a new sheet music entry to the library
 class AddSheetPage extends StatefulWidget {
@@ -28,7 +32,9 @@ class AddSheetPage extends StatefulWidget {
 class _AddSheetPageState extends State<AddSheetPage> {
   late final TextEditingController _titleController;
   late final TextEditingController _composerController;
+  late final TextEditingController _opusController;
   late final TextEditingController _notesController;
+  String? _musicalKey;
   final List<String> _tags = [];
   final List<String> _selectedFiles = [];
   late final FilePickerService _filePickerService;
@@ -38,6 +44,7 @@ class _AddSheetPageState extends State<AddSheetPage> {
     super.initState();
     _titleController = TextEditingController();
     _composerController = TextEditingController();
+    _opusController = TextEditingController();
     _notesController = TextEditingController();
     _filePickerService = getIt<FilePickerService>();
   }
@@ -46,6 +53,7 @@ class _AddSheetPageState extends State<AddSheetPage> {
   void dispose() {
     _titleController.dispose();
     _composerController.dispose();
+    _opusController.dispose();
     _notesController.dispose();
     super.dispose();
   }
@@ -80,7 +88,10 @@ class _AddSheetPageState extends State<AddSheetPage> {
         child: _AddSheetForm(
           titleController: _titleController,
           composerController: _composerController,
+          opusController: _opusController,
           notesController: _notesController,
+          musicalKey: _musicalKey,
+          onMusicalKeyChanged: (value) => setState(() => _musicalKey = value),
           tags: _tags,
           selectedFiles: _selectedFiles,
           filePickerService: _filePickerService,
@@ -94,7 +105,10 @@ class _AddSheetPageState extends State<AddSheetPage> {
 class _AddSheetForm extends StatefulWidget {
   final TextEditingController titleController;
   final TextEditingController composerController;
+  final TextEditingController opusController;
   final TextEditingController notesController;
+  final String? musicalKey;
+  final ValueChanged<String?> onMusicalKeyChanged;
   final List<String> tags;
   final List<String> selectedFiles;
   final FilePickerService filePickerService;
@@ -103,7 +117,10 @@ class _AddSheetForm extends StatefulWidget {
   const _AddSheetForm({
     required this.titleController,
     required this.composerController,
+    required this.opusController,
     required this.notesController,
+    this.musicalKey,
+    required this.onMusicalKeyChanged,
     required this.tags,
     required this.selectedFiles,
     required this.filePickerService,
@@ -117,15 +134,43 @@ class _AddSheetForm extends StatefulWidget {
 class _AddSheetFormState extends State<_AddSheetForm> {
   final _formKey = GlobalKey<FormState>();
   String _newTag = '';
+  String? _selectedMusicalKey;
+
+  /// Track if user has manually edited the opus field.
+  /// Once edited, we don't auto-populate anymore to respect user's input.
+  bool _opusManuallyEdited = false;
 
   void _validateForm() {
     final cubit = context.read<AddSheetCubit>();
     cubit.validate(
       title: widget.titleController.text,
       composer: widget.composerController.text,
+      opus: widget.opusController.text.isEmpty
+          ? null
+          : widget.opusController.text,
+      musicalKey: _selectedMusicalKey,
       notes: widget.notesController.text,
       tags: widget.tags,
     );
+  }
+
+  /// Auto-populate opus field based on composer, unless user has edited it.
+  void _onComposerChanged(String composer) {
+    _validateForm();
+
+    // Only auto-populate if opus field is empty or was auto-populated before
+    if (!_opusManuallyEdited) {
+      final prefix = getCatalogPrefixForComposer(composer);
+      if (prefix != null) {
+        widget.opusController.text = prefix;
+      }
+    }
+  }
+
+  /// Mark opus as manually edited when user types in it.
+  void _onOpusChanged(String _) {
+    _opusManuallyEdited = true;
+    _validateForm();
   }
 
   void _addTag(String tag) {
@@ -209,6 +254,10 @@ class _AddSheetFormState extends State<_AddSheetForm> {
     context.read<AddSheetCubit>().submitForm(
           title: widget.titleController.text,
           composer: widget.composerController.text,
+          opus: widget.opusController.text.isEmpty
+              ? null
+              : widget.opusController.text,
+          musicalKey: _selectedMusicalKey,
           notes: widget.notesController.text,
           tags: widget.tags,
         );
@@ -256,22 +305,17 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                       ],
                     ),
                   ),
-                  // Title field with voice input
+                  // Title field with autocomplete (based on composer) and voice input
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: TextFormField(
+                        child: TitleAutocompleteField(
                           controller: widget.titleController,
+                          composerName: widget.composerController.text,
                           enabled: !isSubmitting,
+                          errorText: errors['title'],
                           onChanged: (_) => _validateForm(),
-                          decoration: InputDecoration(
-                            labelText: 'Title *',
-                            hintText: 'Enter sheet music title',
-                            errorText: errors['title'],
-                            border: const OutlineInputBorder(),
-                            prefixIcon: const Icon(Icons.title),
-                          ),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -300,22 +344,16 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Composer field with voice input
+                  // Composer field with autocomplete and voice input
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: TextFormField(
+                        child: ComposerAutocompleteField(
                           controller: widget.composerController,
                           enabled: !isSubmitting,
-                          onChanged: (_) => _validateForm(),
-                          decoration: InputDecoration(
-                            labelText: 'Composer *',
-                            hintText: 'Enter composer name',
-                            errorText: errors['composer'],
-                            border: const OutlineInputBorder(),
-                            prefixIcon: const Icon(Icons.person),
-                          ),
+                          errorText: errors['composer'],
+                          onChanged: _onComposerChanged,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -341,6 +379,39 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Opus/Catalog number field (optional)
+                  // Auto-populated based on composer, but user can override
+                  TextFormField(
+                    controller: widget.opusController,
+                    enabled: !isSubmitting,
+                    onChanged: _onOpusChanged,
+                    decoration: InputDecoration(
+                      labelText: 'Opus/Catalog Number',
+                      hintText: 'e.g., Op. 27, BWV 846, K. 331',
+                      helperText: _opusManuallyEdited
+                          ? null
+                          : 'Auto-filled based on composer',
+                      errorText: errors['opus'],
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.tag),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Musical Key dropdown (optional)
+                  MusicalKeyDropdown(
+                    selectedValue: _selectedMusicalKey,
+                    enabled: !isSubmitting,
+                    errorText: errors['musicalKey'],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedMusicalKey = value;
+                      });
+                      _validateForm();
+                    },
                   ),
                   const SizedBox(height: 16),
 

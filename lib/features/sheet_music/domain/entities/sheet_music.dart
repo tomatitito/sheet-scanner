@@ -8,6 +8,8 @@ class SheetMusic with _$SheetMusic {
     required int id,
     required String title,
     required String composer,
+    String? opus,
+    String? musicalKey,
     String? notes,
     @Default([]) List<String> imageUrls,
     @Default([]) List<String> tags,

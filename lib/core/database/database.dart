@@ -12,6 +12,8 @@ class SheetMusicTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get title => text()();
   TextColumn get composer => text()();
+  TextColumn get opus => text().nullable()();
+  TextColumn get musicalKey => text().nullable()();
   TextColumn get notes => text().nullable()();
   TextColumn get imageUrls => text().withDefault(const Constant('[]'))();
   DateTimeColumn get createdAt => dateTime()();
@@ -65,7 +67,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -79,6 +81,8 @@ class AppDatabase extends _$AppDatabase {
             'id UNINDEXED, ' // Don't index id since we only use it for joins
             'title, '
             'composer, '
+            'opus, '
+            'musical_key, '
             'notes, '
             'content=sheet_music_table, ' // Link to content table
             'content_rowid=id' // Use id as rowid
@@ -88,15 +92,15 @@ class AppDatabase extends _$AppDatabase {
           // Trigger: Insert into FTS when inserting into main table
           await customStatement(
             'CREATE TRIGGER sheet_music_fts_insert AFTER INSERT ON sheet_music_table BEGIN '
-            'INSERT INTO sheet_music_fts(rowid, id, title, composer, notes) '
-            'VALUES (new.id, new.id, new.title, new.composer, new.notes); '
+            'INSERT INTO sheet_music_fts(rowid, id, title, composer, opus, musical_key, notes) '
+            'VALUES (new.id, new.id, new.title, new.composer, new.opus, new.musical_key, new.notes); '
             'END',
           );
 
           // Trigger: Update FTS when updating main table
           await customStatement(
             'CREATE TRIGGER sheet_music_fts_update AFTER UPDATE ON sheet_music_table BEGIN '
-            'UPDATE sheet_music_fts SET title = new.title, composer = new.composer, notes = new.notes '
+            'UPDATE sheet_music_fts SET title = new.title, composer = new.composer, opus = new.opus, musical_key = new.musical_key, notes = new.notes '
             'WHERE rowid = old.id; '
             'END',
           );
@@ -160,6 +164,117 @@ class AppDatabase extends _$AppDatabase {
               'ALTER TABLE sheet_music_table ADD COLUMN image_urls TEXT NOT NULL DEFAULT \'[]\'',
             );
           }
+          if (from < 4) {
+            // Migration from v3 to v4: Add opus column and update FTS5 to include opus
+            await customStatement(
+              'ALTER TABLE sheet_music_table ADD COLUMN opus TEXT',
+            );
+
+            // Drop old FTS table and triggers
+            await customStatement(
+                'DROP TRIGGER IF EXISTS sheet_music_fts_insert');
+            await customStatement(
+                'DROP TRIGGER IF EXISTS sheet_music_fts_update');
+            await customStatement(
+                'DROP TRIGGER IF EXISTS sheet_music_fts_delete');
+            await customStatement('DROP TABLE IF EXISTS sheet_music_fts');
+
+            // Recreate FTS5 virtual table with opus column
+            await customStatement(
+              'CREATE VIRTUAL TABLE sheet_music_fts USING fts5('
+              'id UNINDEXED, '
+              'title, '
+              'composer, '
+              'opus, '
+              'notes, '
+              'content=sheet_music_table, '
+              'content_rowid=id'
+              ')',
+            );
+
+            // Populate FTS table from existing data
+            await customStatement(
+              'INSERT INTO sheet_music_fts(rowid, id, title, composer, opus, notes) '
+              'SELECT id, id, title, composer, opus, notes FROM sheet_music_table',
+            );
+
+            // Recreate triggers
+            await customStatement(
+              'CREATE TRIGGER sheet_music_fts_insert AFTER INSERT ON sheet_music_table BEGIN '
+              'INSERT INTO sheet_music_fts(rowid, id, title, composer, opus, notes) '
+              'VALUES (new.id, new.id, new.title, new.composer, new.opus, new.notes); '
+              'END',
+            );
+
+            await customStatement(
+              'CREATE TRIGGER sheet_music_fts_update AFTER UPDATE ON sheet_music_table BEGIN '
+              'UPDATE sheet_music_fts SET title = new.title, composer = new.composer, opus = new.opus, notes = new.notes '
+              'WHERE rowid = old.id; '
+              'END',
+            );
+
+            await customStatement(
+              'CREATE TRIGGER sheet_music_fts_delete AFTER DELETE ON sheet_music_table BEGIN '
+              'DELETE FROM sheet_music_fts WHERE rowid = old.id; '
+              'END',
+            );
+          }
+          if (from < 5) {
+            // Migration from v4 to v5: Add musical_key column and update FTS5
+            await customStatement(
+              'ALTER TABLE sheet_music_table ADD COLUMN musical_key TEXT',
+            );
+
+            // Drop old FTS table and triggers
+            await customStatement(
+                'DROP TRIGGER IF EXISTS sheet_music_fts_insert');
+            await customStatement(
+                'DROP TRIGGER IF EXISTS sheet_music_fts_update');
+            await customStatement(
+                'DROP TRIGGER IF EXISTS sheet_music_fts_delete');
+            await customStatement('DROP TABLE IF EXISTS sheet_music_fts');
+
+            // Recreate FTS5 virtual table with musical_key column
+            await customStatement(
+              'CREATE VIRTUAL TABLE sheet_music_fts USING fts5('
+              'id UNINDEXED, '
+              'title, '
+              'composer, '
+              'opus, '
+              'musical_key, '
+              'notes, '
+              'content=sheet_music_table, '
+              'content_rowid=id'
+              ')',
+            );
+
+            // Populate FTS table from existing data
+            await customStatement(
+              'INSERT INTO sheet_music_fts(rowid, id, title, composer, opus, musical_key, notes) '
+              'SELECT id, id, title, composer, opus, musical_key, notes FROM sheet_music_table',
+            );
+
+            // Recreate triggers
+            await customStatement(
+              'CREATE TRIGGER sheet_music_fts_insert AFTER INSERT ON sheet_music_table BEGIN '
+              'INSERT INTO sheet_music_fts(rowid, id, title, composer, opus, musical_key, notes) '
+              'VALUES (new.id, new.id, new.title, new.composer, new.opus, new.musical_key, new.notes); '
+              'END',
+            );
+
+            await customStatement(
+              'CREATE TRIGGER sheet_music_fts_update AFTER UPDATE ON sheet_music_table BEGIN '
+              'UPDATE sheet_music_fts SET title = new.title, composer = new.composer, opus = new.opus, musical_key = new.musical_key, notes = new.notes '
+              'WHERE rowid = old.id; '
+              'END',
+            );
+
+            await customStatement(
+              'CREATE TRIGGER sheet_music_fts_delete AFTER DELETE ON sheet_music_table BEGIN '
+              'DELETE FROM sheet_music_fts WHERE rowid = old.id; '
+              'END',
+            );
+          }
         },
       );
 
@@ -170,7 +285,7 @@ class AppDatabase extends _$AppDatabase {
     }
     final escapedQuery = query.replaceAll('"', '""');
     final results = await customSelect(
-      'SELECT sm.id, sm.title, sm.composer, sm.notes, sm.image_urls, sm.created_at, sm.updated_at '
+      'SELECT sm.id, sm.title, sm.composer, sm.opus, sm.musical_key, sm.notes, sm.image_urls, sm.created_at, sm.updated_at '
       'FROM sheet_music sm '
       'WHERE sm.id IN ('
       '  SELECT id FROM sheet_music_fts WHERE sheet_music_fts MATCH ?'
@@ -184,6 +299,8 @@ class AppDatabase extends _$AppDatabase {
         id: row.read<int>('id'),
         title: row.read<String>('title'),
         composer: row.read<String>('composer'),
+        opus: row.read<String?>('opus'),
+        musicalKey: row.read<String?>('musical_key'),
         notes: row.read<String?>('notes'),
         imageUrls: row.read<String>('image_urls'),
         createdAt: row.read<DateTime>('created_at'),
