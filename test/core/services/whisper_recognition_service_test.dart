@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:sheet_scanner/core/services/whisper_service.dart';
 
 void main() {
@@ -15,7 +12,8 @@ void main() {
       // Mock the record plugin's platform channel
       const recordChannel = MethodChannel('com.llfbandit.record/messages');
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(recordChannel, (MethodCall methodCall) async {
+          .setMockMethodCallHandler(recordChannel,
+              (MethodCall methodCall) async {
         switch (methodCall.method) {
           case 'create':
             return <String, dynamic>{};
@@ -40,7 +38,8 @@ void main() {
       const permissionChannel =
           MethodChannel('flutter.baseflow.com/permissions/methods');
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(permissionChannel, (MethodCall methodCall) async {
+          .setMockMethodCallHandler(permissionChannel,
+              (MethodCall methodCall) async {
         switch (methodCall.method) {
           case 'requestPermissions':
             return <int, int>{6: 1}; // Microphone (6) -> granted (1)
@@ -59,7 +58,8 @@ void main() {
       const pathProviderChannel =
           MethodChannel('plugins.flutter.io/path_provider');
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(pathProviderChannel, (MethodCall methodCall) async {
+          .setMockMethodCallHandler(pathProviderChannel,
+              (MethodCall methodCall) async {
         switch (methodCall.method) {
           case 'getTemporaryDirectory':
             return '/tmp';
@@ -147,11 +147,10 @@ void main() {
           // THEN: onError callback should be invoked or listening starts
 
           String? errorMessage;
-          bool? resultReceived;
 
           await service.startListening(
             onResult: (text, isFinal) {
-              resultReceived = isFinal;
+              // Result received
             },
             onError: (error) {
               errorMessage = error;
@@ -222,10 +221,8 @@ void main() {
 
           final result = await service.stopListening();
 
-          expect(
-            result == null || result is String,
-            isTrue,
-          );
+          // Result is either null or a String (this verifies the call completed)
+          expect(result, anyOf(isNull, isA<String>()));
         },
       );
 
@@ -359,7 +356,8 @@ void main() {
           // THEN: Should throw or handle gracefully
 
           expect(
-            () async => await service.transcribeAudioFile('/non/existent/path.wav'),
+            () async =>
+                await service.transcribeAudioFile('/non/existent/path.wav'),
             throwsA(anything),
           );
         },
@@ -412,12 +410,10 @@ void main() {
           // THEN: Should complete without error
 
           bool? recordingCompleted;
-          String? transcriptionResult;
 
           await service.startListening(
             onResult: (text, isFinal) {
               if (isFinal) {
-                transcriptionResult = text;
                 recordingCompleted = true;
               }
             },
@@ -430,7 +426,8 @@ void main() {
           await Future.delayed(const Duration(seconds: 2));
 
           // Should have processed without crashing
-          expect(recordingCompleted == null || recordingCompleted is bool, isTrue);
+          expect(
+              recordingCompleted == null || recordingCompleted == true, isTrue);
         },
       );
     });
@@ -471,13 +468,11 @@ void main() {
           // WHEN: Recording operation encounters error
           // THEN: Should call onError with message
 
-          String? errorMessage;
           bool errorCalled = false;
 
           await service.startListening(
             onResult: (text, isFinal) {},
             onError: (error) {
-              errorMessage = error;
               errorCalled = true;
             },
             language: 'en_US',

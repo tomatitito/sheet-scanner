@@ -1,0 +1,7 @@
+{
+  "last_failure": "2026-01-13T23:57:31.17724+01:00",
+  "failure_count": 1,
+  "backoff_until": "2026-01-13T23:58:01.177241+01:00",
+  "needs_manual_sync": false,
+  "failure_reason": "git pull failed in worktree: exit status 128\nFrom github.com:tomatitito/sheet-scanner\n * branch            beads-sync -\u003e FETCH_HEAD\nfatal: Cannot rebase onto multiple branches.\n"
+}

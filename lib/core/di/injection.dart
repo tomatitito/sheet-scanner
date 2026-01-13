@@ -1,5 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:sheet_scanner/core/database/database.dart';
+import 'package:sheet_scanner/core/services/api_key_service.dart';
+import 'package:sheet_scanner/core/services/dictation_post_processor.dart';
 import 'package:sheet_scanner/core/services/speech_recognition_service.dart';
 import 'package:sheet_scanner/core/services/speech_recognition_service_factory.dart';
 import 'package:sheet_scanner/features/backup/data/datasources/backup_local_datasource.dart';
@@ -71,6 +73,21 @@ void setupInjection() {
   } catch (e) {
     throw Exception('Failed to initialize database: $e');
   }
+
+  // API Key Service (for secure storage of API keys)
+  getIt.registerSingleton<ApiKeyService>(
+    ApiKeyService(),
+  );
+
+  // Wire up API key service to factory
+  SpeechRecognitionServiceFactory.setApiKeyService(getIt<ApiKeyService>());
+
+  // Dictation Post-Processor (for AI text cleanup)
+  getIt.registerSingleton<DictationPostProcessor>(
+    DictationPostProcessor(
+      getApiKey: () => getIt<ApiKeyService>().getOpenAiApiKeySync(),
+    ),
+  );
 
   // Speech Recognition Service (using factory for engine selection)
   getIt.registerSingleton<SpeechRecognitionService>(
@@ -328,6 +345,7 @@ void setupInjection() {
   getIt.registerFactory<DictationCubit>(
     () => DictationCubit(
       transcribeVoiceUseCase: getIt<TranscribeVoiceUseCase>(),
+      postProcessor: getIt<DictationPostProcessor>(),
     ),
   );
 

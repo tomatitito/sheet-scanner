@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sheet_scanner/features/settings/presentation/widgets/voice_settings_section.dart';
 
 /// Settings/configuration screen for the app.
 class SettingsPage extends StatelessWidget {
@@ -14,6 +15,9 @@ class SettingsPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // Voice Recognition Settings
+            const VoiceSettingsSection(),
+
             // Backup & Export
             _SettingsSection(
               title: 'Backup & Export',

@@ -3,10 +3,20 @@ import 'package:go_router/go_router.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/core/keyboard/keyboard_shortcuts.dart';
 import 'package:sheet_scanner/core/router/app_router.dart';
+import 'package:sheet_scanner/core/services/speech_recognition_service_factory.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize speech recognition factory (loads saved engine preference)
+  await SpeechRecognitionServiceFactory.initialize();
+
+  // Set up dependency injection
   setupInjection();
+
+  // Refresh API key cache after DI is set up
+  await SpeechRecognitionServiceFactory.refreshApiKey();
+
   runApp(const MainApp());
 }
 

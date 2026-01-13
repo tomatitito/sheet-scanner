@@ -118,17 +118,16 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
       debugPrint('[REPO-TRACE] _speechService.startListening() returned after ${listenStartDuration.inMilliseconds}ms');
 
       // Wait for the listening session to complete or timeout
-      // CRITICAL: The timeout must account for BOTH listening AND Whisper transcription time.
-      // Whisper transcription can take 1-5 minutes depending on audio length and device.
-      // The service layer has its own timeouts (8s for recording, 2min for transcription).
-      // We use a very long timeout here (5 minutes) to allow transcription to complete normally.
-      debugPrint('[REPO-TRACE] Awaiting completer future with timeout 5 minutes (for listening + transcription)...');
-      const Duration timeoutDuration = Duration(minutes: 5);
+      // Timeout accounts for: recording time (30s default) + transcription time (90s max)
+      // The service layer has its own timeouts (5s for recording start, 90s for transcription).
+      // Total max time: listenFor + 90s transcription + 15s buffer = ~2.5 minutes
+      debugPrint('[REPO-TRACE] Awaiting completer future with timeout ${listenFor.inSeconds + 120}s (listen + transcription)...');
+      final Duration timeoutDuration = listenFor + const Duration(seconds: 120);
       final awaitStartTime = DateTime.now();
       final result = await _listenCompleter!.future.timeout(
         timeoutDuration,
         onTimeout: () {
-          debugPrint('[REPO-TRACE] Timeout fired after 5 minutes - operation still pending');
+          debugPrint('[REPO-TRACE] Timeout fired after ${timeoutDuration.inSeconds}s - operation still pending');
           // Stop listening on timeout
           unawaited(_speechService.stopListening());
           return DictationResult(

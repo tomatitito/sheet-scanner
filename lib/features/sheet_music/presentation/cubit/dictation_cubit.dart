@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sheet_scanner/core/services/dictation_post_processor.dart';
 import 'package:sheet_scanner/features/sheet_music/domain/usecases/transcribe_voice_use_case.dart';
 import 'dictation_state.dart';
 
@@ -10,10 +11,12 @@ import 'dictation_state.dart';
 /// Handles:
 /// - Starting/stopping voice input
 /// - Emitting state changes during transcription
+/// - AI/local post-processing of dictated text
 /// - Error handling
 /// - Timeout management
 class DictationCubit extends Cubit<DictationState> {
   final TranscribeVoiceUseCase _transcribeVoiceUseCase;
+  final DictationPostProcessor? _postProcessor;
 
   /// Timer for tracking elapsed time during listening.
   Timer? _elapsedTimer;
@@ -31,8 +34,11 @@ class DictationCubit extends Cubit<DictationState> {
   /// Flag to indicate if a cancellation was requested while listening
   bool _cancelRequested = false;
 
-  DictationCubit({required TranscribeVoiceUseCase transcribeVoiceUseCase})
-      : _transcribeVoiceUseCase = transcribeVoiceUseCase,
+  DictationCubit({
+    required TranscribeVoiceUseCase transcribeVoiceUseCase,
+    DictationPostProcessor? postProcessor,
+  })  : _transcribeVoiceUseCase = transcribeVoiceUseCase,
+        _postProcessor = postProcessor,
         super(const DictationState.idle());
 
   /// Start voice dictation for the specified field.
@@ -97,10 +103,23 @@ class DictationCubit extends Cubit<DictationState> {
         debugPrint('[CUBIT-ERROR] Got failure result: ${failure.userMessage}');
         emit(DictationState.error(failure: failure));
       },
-      (dictationResult) {
+      (dictationResult) async {
         debugPrint('[CUBIT-TRACE] Got success result: "${dictationResult.text}"');
+
+        // Apply post-processing if available
+        String finalText = dictationResult.text;
+        if (_postProcessor != null && finalText.isNotEmpty) {
+          try {
+            debugPrint('[CUBIT-TRACE] Applying post-processing...');
+            finalText = await _postProcessor!.processText(finalText);
+            debugPrint('[CUBIT-TRACE] Post-processed result: "$finalText"');
+          } catch (e) {
+            debugPrint('[CUBIT-WARN] Post-processing failed: $e');
+          }
+        }
+
         emit(DictationState.complete(
-          finalText: dictationResult.text,
+          finalText: finalText,
           confidence: dictationResult.confidence,
         ));
       },
