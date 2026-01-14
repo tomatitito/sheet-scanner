@@ -1,0 +1,816 @@
+{
+  "composers": [
+    {
+      "name": "Quantz",
+      "complete_name": "Johann Joachim Quantz",
+      "epoch": "Baroque",
+      "birth": "1697-01-30",
+      "death": "1773-07-12",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "Flute Concerto in G major, QV 5:174", "subtitle": "", "searchterms": "concerto", "popular": "1", "recommended": "1", "genre": "Orchestral"},
+        {"title": "Flute Concerto in D major, QV 5:45", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "1", "genre": "Orchestral"},
+        {"title": "Flute Concerto in C major, QV 5:35", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "0", "genre": "Orchestral"},
+        {"title": "Flute Concerto in E minor, QV 5:113", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "1", "genre": "Orchestral"},
+        {"title": "Flute Sonata in A minor, QV 1:152", "subtitle": "", "searchterms": "sonata", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Flute Sonata in C major, QV 1:8", "subtitle": "", "searchterms": "sonata", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Flute Sonata in D major, QV 1:48", "subtitle": "", "searchterms": "sonata", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Flute Sonata in E minor, QV 1:77", "subtitle": "", "searchterms": "sonata", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "6 Duets for Two Flutes, Op. 2", "subtitle": "", "searchterms": "duet", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Trio Sonata in C minor, QV 2:2", "subtitle": "", "searchterms": "trio", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Capriccio in G major, QV 1:57", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Kuhlau",
+      "complete_name": "Friedrich Kuhlau",
+      "epoch": "Classical",
+      "birth": "1786-09-11",
+      "death": "1832-03-12",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "Introduction and Variations on a Swedish Air, Op. 102", "subtitle": "", "searchterms": "variations", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Grand Solo No. 1 in D minor, Op. 57, No. 1", "subtitle": "", "searchterms": "solo", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Grand Solo No. 2 in E minor, Op. 57, No. 2", "subtitle": "", "searchterms": "solo", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Grand Solo No. 3 in G major, Op. 57, No. 3", "subtitle": "", "searchterms": "solo", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "3 Flute Duets, Op. 10", "subtitle": "", "searchterms": "duet", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "3 Flute Duets, Op. 39", "subtitle": "", "searchterms": "duet", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "3 Flute Duets, Op. 80", "subtitle": "", "searchterms": "duet brilliant", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "3 Flute Duets, Op. 81", "subtitle": "", "searchterms": "duet", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "3 Flute Duets, Op. 87", "subtitle": "", "searchterms": "duet", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "3 Flute Duets, Op. 102", "subtitle": "", "searchterms": "duet", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Trio in G major for 3 Flutes, Op. 13, No. 1", "subtitle": "", "searchterms": "trio", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Trio in E minor for 3 Flutes, Op. 13, No. 2", "subtitle": "", "searchterms": "trio", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Trio in D major for 3 Flutes, Op. 13, No. 3", "subtitle": "", "searchterms": "trio", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Fantasia in D major, Op. 38, No. 1", "subtitle": "", "searchterms": "fantasia fantasy", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "12 Variations and Solos for Flute, Op. 10b", "subtitle": "", "searchterms": "variations", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Divertissement in F major, Op. 68", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Flute Quintet in E minor, Op. 51, No. 3", "subtitle": "", "searchterms": "quintet", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Franz Doppler",
+      "complete_name": "Franz Doppler",
+      "epoch": "Romantic",
+      "birth": "1821-10-16",
+      "death": "1883-07-27",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "Fantaisie Pastorale Hongroise, Op. 26", "subtitle": "", "searchterms": "hungarian fantasy", "popular": "1", "recommended": "1", "genre": "Orchestral"},
+        {"title": "Andante et Rondo, Op. 25", "subtitle": "", "searchterms": "", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Mazurka de Salon, Op. 16", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Valse di Bravura, Op. 33", "subtitle": "", "searchterms": "waltz", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Nocturne, Op. 17", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Duettino Hongrois, Op. 36", "subtitle": "for 2 flutes and piano", "searchterms": "hungarian duet", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Rigoletto Fantaisie, Op. 38", "subtitle": "for 2 flutes and piano", "searchterms": "verdi", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "L'Oiseau des bois, Op. 21", "subtitle": "", "searchterms": "bird", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Airs Valaques, Op. 10", "subtitle": "for 2 flutes and piano", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Souvenir du Rigi, Op. 34", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Flute Concerto in D minor", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "1", "genre": "Orchestral"}
+      ]
+    },
+    {
+      "name": "Karl Doppler",
+      "complete_name": "Karl Doppler",
+      "epoch": "Romantic",
+      "birth": "1825-09-12",
+      "death": "1900-03-10",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Concertino in E minor, Op. 17", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Orchestral"},
+        {"title": "Nocturne, Op. 19", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Reinecke",
+      "complete_name": "Carl Reinecke",
+      "epoch": "Romantic",
+      "birth": "1824-06-23",
+      "death": "1910-03-10",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "Flute Concerto in D major, Op. 283", "subtitle": "", "searchterms": "concerto", "popular": "1", "recommended": "1", "genre": "Orchestral"},
+        {"title": "Sonata 'Undine' in E minor, Op. 167", "subtitle": "", "searchterms": "undine sonata", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Ballade, Op. 288", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Introduction and Allegro, Op. 87", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Trio in A major for Clarinet (or Flute), Viola and Piano, Op. 264", "subtitle": "", "searchterms": "trio", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Taffanel",
+      "complete_name": "Paul Taffanel",
+      "epoch": "Romantic",
+      "birth": "1844-09-16",
+      "death": "1908-11-22",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "Andante Pastoral et Scherzettino", "subtitle": "", "searchterms": "", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Grand Fantasy on Mignon", "subtitle": "", "searchterms": "mignon thomas", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Sicilienne-Étude", "subtitle": "", "searchterms": "etude", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Wind Quintet in G minor", "subtitle": "", "searchterms": "quintet", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "17 Grands Exercices Journaliers de Mécanisme", "subtitle": "", "searchterms": "exercises daily", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Gaubert",
+      "complete_name": "Philippe Gaubert",
+      "epoch": "Late Romantic",
+      "birth": "1879-07-03",
+      "death": "1941-07-08",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "Sonata No. 1 for Flute and Piano", "subtitle": "", "searchterms": "sonata", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Sonata No. 2 for Flute and Piano", "subtitle": "", "searchterms": "sonata", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Sonata No. 3 for Flute and Piano", "subtitle": "", "searchterms": "sonata", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Sonatine for Flute and Piano", "subtitle": "", "searchterms": "sonatine", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Nocturne et Allegro Scherzando", "subtitle": "", "searchterms": "", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Fantaisie", "subtitle": "", "searchterms": "fantasy", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Madrigal", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Sicilienne", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Berceuse", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Soir Païen", "subtitle": "", "searchterms": "pagan evening", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Romance", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Sur l'eau", "subtitle": "", "searchterms": "on the water", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Deux Esquisses", "subtitle": "", "searchterms": "sketches", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Ballade", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Trois Aquarelles", "subtitle": "", "searchterms": "watercolors", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "17 Grands Exercices Journaliers de Mécanisme", "subtitle": "with Taffanel", "searchterms": "exercises daily", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Moyse",
+      "complete_name": "Marcel Moyse",
+      "epoch": "20th Century",
+      "birth": "1889-05-17",
+      "death": "1984-11-01",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "De la Sonorité: Art et Technique", "subtitle": "", "searchterms": "tone development exercises", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "24 Petites Études Mélodiques", "subtitle": "", "searchterms": "studies etudes", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "25 Études Mélodiques", "subtitle": "", "searchterms": "studies etudes", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "100 Easy and Progressive Studies", "subtitle": "after Cramer", "searchterms": "etudes", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Exercices Journaliers", "subtitle": "", "searchterms": "daily exercises", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Gammes et Arpèges", "subtitle": "", "searchterms": "scales arpeggios", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Études et Exercises Techniques", "subtitle": "", "searchterms": "technical studies", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Tone Development Through Interpretation", "subtitle": "", "searchterms": "tone", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Andersen",
+      "complete_name": "Joachim Andersen",
+      "epoch": "Romantic",
+      "birth": "1847-04-29",
+      "death": "1909-05-07",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "24 Études, Op. 15", "subtitle": "", "searchterms": "studies", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "24 Études, Op. 21", "subtitle": "", "searchterms": "studies", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "24 Études, Op. 30", "subtitle": "", "searchterms": "studies", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "24 Études, Op. 33", "subtitle": "", "searchterms": "studies", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "24 Études, Op. 37", "subtitle": "", "searchterms": "studies virtuosity", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "24 Grandes Études, Op. 60", "subtitle": "", "searchterms": "studies", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "26 Little Caprices, Op. 37", "subtitle": "", "searchterms": "caprices", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "8 Études de Salon, Op. 41", "subtitle": "", "searchterms": "studies etudes", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "6 Études, Op. 41", "subtitle": "", "searchterms": "studies", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "18 Petits Études, Op. 41", "subtitle": "", "searchterms": "studies", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Morceau de Concert, Op. 61", "subtitle": "", "searchterms": "concert piece", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Ballade et Danse des Sylphes, Op. 5", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Scherzino, Op. 55, No. 6", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Boehm",
+      "complete_name": "Theobald Boehm",
+      "epoch": "Romantic",
+      "birth": "1794-04-09",
+      "death": "1881-11-25",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "24 Caprices-Études, Op. 26", "subtitle": "", "searchterms": "caprices etudes", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "12 Études, Op. 15", "subtitle": "", "searchterms": "studies", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Grand Polonaise in D major, Op. 16", "subtitle": "", "searchterms": "", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Introduction and Variations on Nel cor più non mi sento, Op. 4", "subtitle": "", "searchterms": "paisiello variations", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Fantasy on Themes from Oberon, Op. 25", "subtitle": "", "searchterms": "weber fantasy", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Elegy, Op. 47", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "24 Melodious Studies, Op. 37", "subtitle": "", "searchterms": "etudes", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Devienne",
+      "complete_name": "François Devienne",
+      "epoch": "Classical",
+      "birth": "1759-01-31",
+      "death": "1803-09-05",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "Flute Concerto No. 1 in D major", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "0", "genre": "Orchestral"},
+        {"title": "Flute Concerto No. 2 in D major", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "1", "genre": "Orchestral"},
+        {"title": "Flute Concerto No. 7 in E minor", "subtitle": "", "searchterms": "concerto", "popular": "1", "recommended": "1", "genre": "Orchestral"},
+        {"title": "Flute Concerto No. 8 in G major", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "0", "genre": "Orchestral"},
+        {"title": "Flute Concerto No. 10 in D major", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "0", "genre": "Orchestral"},
+        {"title": "Flute Sonata in E minor, Op. 58, No. 1", "subtitle": "", "searchterms": "sonata", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Flute Sonata in G major, Op. 68, No. 1", "subtitle": "", "searchterms": "sonata", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Flute Sonata in D major, Op. 68, No. 2", "subtitle": "", "searchterms": "sonata", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "6 Flute Duets, Op. 82", "subtitle": "", "searchterms": "duet", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "6 Flute Trios, Op. 19", "subtitle": "", "searchterms": "trio", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "6 Flute Quartets, Op. 66", "subtitle": "", "searchterms": "quartet", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Tulou",
+      "complete_name": "Jean-Louis Tulou",
+      "epoch": "Romantic",
+      "birth": "1786-09-12",
+      "death": "1865-07-23",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Grand Solo No. 3, Op. 74", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Grand Solo No. 5, Op. 79", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Grand Solo No. 13, Op. 96", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Flute Concerto No. 3 in A major, Op. 10", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "0", "genre": "Orchestral"},
+        {"title": "Flute Concerto No. 5 in D major, Op. 50", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "0", "genre": "Orchestral"},
+        {"title": "12 Grandes Études, Op. 58", "subtitle": "", "searchterms": "etudes", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "6 Duets, Op. 103", "subtitle": "", "searchterms": "duet", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Mercadante",
+      "complete_name": "Saverio Mercadante",
+      "epoch": "Romantic",
+      "birth": "1795-09-17",
+      "death": "1870-12-17",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Flute Concerto No. 1 in E major", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "0", "genre": "Orchestral"},
+        {"title": "Flute Concerto No. 2 in E minor", "subtitle": "", "searchterms": "concerto", "popular": "1", "recommended": "1", "genre": "Orchestral"},
+        {"title": "Flute Concerto No. 3 in D major", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "0", "genre": "Orchestral"},
+        {"title": "Flute Concerto No. 4 in E major", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "0", "genre": "Orchestral"},
+        {"title": "Flute Concerto No. 5 in D major", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "0", "genre": "Orchestral"},
+        {"title": "Flute Concerto No. 6 in E minor", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "0", "genre": "Orchestral"}
+      ]
+    },
+    {
+      "name": "Enescu",
+      "complete_name": "George Enescu",
+      "epoch": "20th Century",
+      "birth": "1881-08-19",
+      "death": "1955-05-04",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Cantabile et Presto", "subtitle": "", "searchterms": "", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Fauré",
+      "complete_name": "Gabriel Fauré",
+      "epoch": "Romantic",
+      "birth": "1845-05-12",
+      "death": "1924-11-04",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "Fantaisie, Op. 79", "subtitle": "", "searchterms": "fantasy", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Morceau de Concours", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Sicilienne, Op. 78", "subtitle": "", "searchterms": "", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Berceuse, Op. 16", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Après un rêve, Op. 7, No. 1", "subtitle": "arr. for flute", "searchterms": "after a dream", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Pièce", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Widor",
+      "complete_name": "Charles-Marie Widor",
+      "epoch": "Romantic",
+      "birth": "1844-02-21",
+      "death": "1937-03-12",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Suite for Flute and Piano, Op. 34", "subtitle": "", "searchterms": "suite", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Ferroud",
+      "complete_name": "Pierre-Octave Ferroud",
+      "epoch": "20th Century",
+      "birth": "1900-01-06",
+      "death": "1936-08-17",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "3 Pièces pour flûte seule", "subtitle": "", "searchterms": "three pieces solo", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Ibert",
+      "complete_name": "Jacques Ibert",
+      "epoch": "20th Century",
+      "birth": "1890-08-15",
+      "death": "1962-02-05",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "Flute Concerto", "subtitle": "", "searchterms": "concerto", "popular": "1", "recommended": "1", "genre": "Orchestral"},
+        {"title": "Pièce pour flûte seule", "subtitle": "", "searchterms": "solo piece", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Jeux: Sonatine", "subtitle": "", "searchterms": "games sonatina", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Aria", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Entr'acte", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Poulenc",
+      "complete_name": "Francis Poulenc",
+      "epoch": "20th Century",
+      "birth": "1899-01-07",
+      "death": "1963-01-30",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "Flute Sonata", "subtitle": "", "searchterms": "sonata", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Dutilleux",
+      "complete_name": "Henri Dutilleux",
+      "epoch": "20th Century",
+      "birth": "1916-01-22",
+      "death": "2013-05-22",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Sonatine for Flute and Piano", "subtitle": "", "searchterms": "sonatina", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Jolivet",
+      "complete_name": "André Jolivet",
+      "epoch": "20th Century",
+      "birth": "1905-08-08",
+      "death": "1974-12-20",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Flute Concerto", "subtitle": "", "searchterms": "concerto", "popular": "1", "recommended": "1", "genre": "Orchestral"},
+        {"title": "Chant de Linos", "subtitle": "", "searchterms": "", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "5 Incantations", "subtitle": "", "searchterms": "incantation solo", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Martin",
+      "complete_name": "Frank Martin",
+      "epoch": "20th Century",
+      "birth": "1890-09-15",
+      "death": "1974-11-21",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Ballade for Flute and Piano", "subtitle": "", "searchterms": "", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Messiaen",
+      "complete_name": "Olivier Messiaen",
+      "epoch": "20th Century",
+      "birth": "1908-12-10",
+      "death": "1992-04-27",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "Le Merle Noir", "subtitle": "", "searchterms": "blackbird", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Sancan",
+      "complete_name": "Pierre Sancan",
+      "epoch": "20th Century",
+      "birth": "1916-10-24",
+      "death": "2008-10-20",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Sonatine for Flute and Piano", "subtitle": "", "searchterms": "", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Bozza",
+      "complete_name": "Eugène Bozza",
+      "epoch": "20th Century",
+      "birth": "1905-04-04",
+      "death": "1991-09-28",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "Image, Op. 38", "subtitle": "", "searchterms": "", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Agrestide, Op. 44", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Aria", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Deux Impressions", "subtitle": "", "searchterms": "impressions", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Mouquet",
+      "complete_name": "Jules Mouquet",
+      "epoch": "Romantic",
+      "birth": "1867-07-10",
+      "death": "1946-10-25",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "La Flûte de Pan, Op. 15", "subtitle": "", "searchterms": "sonata pan", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Ganne",
+      "complete_name": "Louis Ganne",
+      "epoch": "Romantic",
+      "birth": "1862-04-05",
+      "death": "1923-07-14",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Andante et Scherzo", "subtitle": "", "searchterms": "", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Chaminade",
+      "complete_name": "Cécile Chaminade",
+      "epoch": "Romantic",
+      "birth": "1857-08-08",
+      "death": "1944-04-13",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Concertino, Op. 107", "subtitle": "", "searchterms": "", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Honegger",
+      "complete_name": "Arthur Honegger",
+      "epoch": "20th Century",
+      "birth": "1892-03-10",
+      "death": "1955-11-27",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Danse de la Chèvre", "subtitle": "", "searchterms": "dance goat solo", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Varèse",
+      "complete_name": "Edgard Varèse",
+      "epoch": "20th Century",
+      "birth": "1883-12-22",
+      "death": "1965-11-06",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Density 21.5", "subtitle": "for solo flute", "searchterms": "solo", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Borne",
+      "complete_name": "François Borne",
+      "epoch": "Romantic",
+      "birth": "1840-01-01",
+      "death": "1920-01-01",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Fantaisie brillante sur Carmen", "subtitle": "", "searchterms": "bizet carmen fantasy", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Genin",
+      "complete_name": "Paul Agricole Génin",
+      "epoch": "Romantic",
+      "birth": "1832-01-01",
+      "death": "1903-01-01",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Fantaisie on Rigoletto", "subtitle": "", "searchterms": "verdi fantasy", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Carnaval de Venise", "subtitle": "", "searchterms": "carnival venice variations", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Taktakishvili",
+      "complete_name": "Otar Taktakishvili",
+      "epoch": "20th Century",
+      "birth": "1924-07-27",
+      "death": "1989-02-22",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Flute Sonata in C major", "subtitle": "", "searchterms": "sonata", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Flute Concerto No. 1", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "0", "genre": "Orchestral"},
+        {"title": "Flute Concerto No. 2", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "0", "genre": "Orchestral"}
+      ]
+    },
+    {
+      "name": "Fukushima",
+      "complete_name": "Kazuo Fukushima",
+      "epoch": "20th Century",
+      "birth": "1930-04-11",
+      "death": null,
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Mei", "subtitle": "for solo flute", "searchterms": "solo", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Requiem", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Muczynski",
+      "complete_name": "Robert Muczynski",
+      "epoch": "20th Century",
+      "birth": "1929-03-19",
+      "death": "2010-05-25",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Flute Sonata, Op. 14", "subtitle": "", "searchterms": "sonata", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "3 Preludes for Solo Flute, Op. 18", "subtitle": "", "searchterms": "solo", "popular": "0", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Karg-Elert",
+      "complete_name": "Sigfrid Karg-Elert",
+      "epoch": "20th Century",
+      "birth": "1877-11-21",
+      "death": "1933-04-09",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "30 Caprices, Op. 107", "subtitle": "", "searchterms": "etudes", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Sonata in B-flat major, Op. 121", "subtitle": "", "searchterms": "sonata", "popular": "0", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Fürstenau",
+      "complete_name": "Anton Bernhard Fürstenau",
+      "epoch": "Romantic",
+      "birth": "1792-10-20",
+      "death": "1852-11-18",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "26 Exercises, Op. 107", "subtitle": "", "searchterms": "etudes studies", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "6 Grand Duets, Op. 120", "subtitle": "", "searchterms": "duet", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Bouquet of Tones, Op. 125", "subtitle": "", "searchterms": "exercises", "popular": "0", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Berbiguier",
+      "complete_name": "Benoît Tranquille Berbiguier",
+      "epoch": "Classical",
+      "birth": "1782-12-21",
+      "death": "1838-01-28",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "18 Études, Op. 98", "subtitle": "", "searchterms": "studies etudes", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "10 Études, Op. 104", "subtitle": "", "searchterms": "studies", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Flute Duets, Op. 59", "subtitle": "", "searchterms": "duet", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Drouet",
+      "complete_name": "Louis Drouet",
+      "epoch": "Classical",
+      "birth": "1792-04-14",
+      "death": "1873-09-30",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "72 Études", "subtitle": "", "searchterms": "etudes studies", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Variations on God Save the King", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Flute Concerto No. 7 in E minor", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "0", "genre": "Orchestral"}
+      ]
+    },
+    {
+      "name": "Köhler",
+      "complete_name": "Ernesto Köhler",
+      "epoch": "Romantic",
+      "birth": "1849-12-04",
+      "death": "1907-05-17",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "35 Exercises for Flute, Op. 33", "subtitle": "", "searchterms": "etudes studies", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "30 Virtuoso Studies, Op. 75", "subtitle": "", "searchterms": "etudes", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "25 Romantic Etudes, Op. 66", "subtitle": "", "searchterms": "studies", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "20 Easy Melodic Progressive Exercises, Op. 93", "subtitle": "", "searchterms": "studies", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Flute Duets, Op. 55", "subtitle": "", "searchterms": "duet", "popular": "0", "recommended": "0", "genre": "Chamber"},
+        {"title": "Papillon", "subtitle": "", "searchterms": "butterfly", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Castérède",
+      "complete_name": "Jacques Castérède",
+      "epoch": "20th Century",
+      "birth": "1926-04-10",
+      "death": "2014-04-07",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Flûtes en vacances", "subtitle": "", "searchterms": "flutes on vacation", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Sonatine for Flute and Piano", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Rivier",
+      "complete_name": "Jean Rivier",
+      "epoch": "20th Century",
+      "birth": "1896-07-21",
+      "death": "1987-11-06",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Oiseaux tendres", "subtitle": "", "searchterms": "tender birds", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Flute Concerto", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "0", "genre": "Orchestral"}
+      ]
+    },
+    {
+      "name": "Milhaud",
+      "complete_name": "Darius Milhaud",
+      "epoch": "20th Century",
+      "birth": "1892-09-04",
+      "death": "1974-06-22",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Sonatine for Flute and Piano", "subtitle": "", "searchterms": "sonatina", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Hindemith",
+      "complete_name": "Paul Hindemith",
+      "epoch": "20th Century",
+      "birth": "1895-11-16",
+      "death": "1963-12-28",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "Flute Sonata", "subtitle": "", "searchterms": "sonata", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "8 Pieces for Solo Flute", "subtitle": "", "searchterms": "solo", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Martinu",
+      "complete_name": "Bohuslav Martinů",
+      "epoch": "20th Century",
+      "birth": "1890-12-08",
+      "death": "1959-08-28",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Flute Sonata No. 1, H. 306", "subtitle": "", "searchterms": "sonata", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "First Sonata for Flute and Piano, H. 306", "subtitle": "", "searchterms": "sonata", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Bloch",
+      "complete_name": "Ernest Bloch",
+      "epoch": "20th Century",
+      "birth": "1880-07-24",
+      "death": "1959-07-15",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Suite modale", "subtitle": "", "searchterms": "modal suite", "popular": "0", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Prokofiev",
+      "complete_name": "Sergei Prokofiev",
+      "epoch": "20th Century",
+      "birth": "1891-04-23",
+      "death": "1953-03-05",
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "Flute Sonata in D major, Op. 94", "subtitle": "", "searchterms": "sonata", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Takemitsu",
+      "complete_name": "Tōru Takemitsu",
+      "epoch": "20th Century",
+      "birth": "1930-10-08",
+      "death": "1996-02-20",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Voice", "subtitle": "for solo flute", "searchterms": "solo", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Air", "subtitle": "for solo flute", "searchterms": "solo", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Itinerant", "subtitle": "for solo flute", "searchterms": "solo", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Berio",
+      "complete_name": "Luciano Berio",
+      "epoch": "20th Century",
+      "birth": "1925-10-24",
+      "death": "2003-05-27",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Sequenza I", "subtitle": "for solo flute", "searchterms": "solo", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Genzmer",
+      "complete_name": "Harald Genzmer",
+      "epoch": "20th Century",
+      "birth": "1909-02-09",
+      "death": "2007-12-16",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Flute Sonata No. 2", "subtitle": "", "searchterms": "sonata", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Flute Concerto No. 1", "subtitle": "", "searchterms": "concerto", "popular": "0", "recommended": "0", "genre": "Orchestral"}
+      ]
+    },
+    {
+      "name": "Hüe",
+      "complete_name": "Georges Hüe",
+      "epoch": "Romantic",
+      "birth": "1858-05-06",
+      "death": "1948-06-07",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Fantaisie", "subtitle": "", "searchterms": "fantasy", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Sérénade", "subtitle": "", "searchterms": "", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Griffes",
+      "complete_name": "Charles Tomlinson Griffes",
+      "epoch": "20th Century",
+      "birth": "1884-09-17",
+      "death": "1920-04-08",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Poem for Flute and Orchestra", "subtitle": "", "searchterms": "", "popular": "1", "recommended": "1", "genre": "Orchestral"}
+      ]
+    },
+    {
+      "name": "Burton",
+      "complete_name": "Eldin Burton",
+      "epoch": "20th Century",
+      "birth": "1913-01-01",
+      "death": "1979-12-31",
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Sonatina for Flute and Piano", "subtitle": "", "searchterms": "", "popular": "1", "recommended": "1", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Wye",
+      "complete_name": "Trevor Wye",
+      "epoch": "Contemporary",
+      "birth": "1935-01-01",
+      "death": null,
+      "popular": "1",
+      "recommended": "1",
+      "works": [
+        {"title": "Practice Books for the Flute, Book 1: Tone", "subtitle": "", "searchterms": "exercises method", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Practice Books for the Flute, Book 2: Technique", "subtitle": "", "searchterms": "exercises method", "popular": "1", "recommended": "1", "genre": "Chamber"},
+        {"title": "Practice Books for the Flute, Book 3: Articulation", "subtitle": "", "searchterms": "exercises method", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Practice Books for the Flute, Book 4: Intonation", "subtitle": "", "searchterms": "exercises method", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Practice Books for the Flute, Book 5: Breathing and Scales", "subtitle": "", "searchterms": "exercises method", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Practice Books for the Flute, Book 6: Advanced Practice", "subtitle": "", "searchterms": "exercises method", "popular": "0", "recommended": "0", "genre": "Chamber"}
+      ]
+    },
+    {
+      "name": "Dick",
+      "complete_name": "Robert Dick",
+      "epoch": "Contemporary",
+      "birth": "1950-01-04",
+      "death": null,
+      "popular": "0",
+      "recommended": null,
+      "works": [
+        {"title": "Lookout", "subtitle": "", "searchterms": "solo", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Flying Lessons, Volume 1", "subtitle": "", "searchterms": "extended techniques", "popular": "0", "recommended": "1", "genre": "Chamber"},
+        {"title": "Tone Development Through Extended Techniques", "subtitle": "", "searchterms": "exercises", "popular": "0", "recommended": "1", "genre": "Chamber"}
+      ]
+    }
+  ]
+}
