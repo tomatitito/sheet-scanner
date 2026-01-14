@@ -10,7 +10,11 @@ abstract class ComposerDataSource {
 }
 
 class ComposerDataSourceImpl implements ComposerDataSource {
-  static const String _assetPath = 'lib/data/openopus_dump.json';
+  static const List<String> _sourceFiles = [
+    'lib/data/sources/openopus.json',
+    'lib/data/sources/flute_repertoire.json',
+  ];
+
   List<KnownComposer>? _cachedComposers;
 
   @override
@@ -19,24 +23,38 @@ class ComposerDataSourceImpl implements ComposerDataSource {
       return _cachedComposers!;
     }
 
-    final jsonString = await rootBundle.loadString(_assetPath);
-    final Map<String, dynamic> data = json.decode(jsonString);
-    final List<dynamic> composersJson = data['composers'] ?? [];
+    final composerMap = <String, KnownComposer>{};
 
-    _cachedComposers = composersJson
-        .map((c) => KnownComposer(
-              name: c['name'] ?? '',
-              completeName: c['complete_name'] ?? c['name'] ?? '',
-              epoch: c['epoch'] ?? 'Unknown',
-              birth: c['birth'],
-              death: c['death'],
-              isPopular: c['popular'] == '1',
-              isRecommended: c['recommended'] == '1',
-            ))
-        .toList();
+    for (final assetPath in _sourceFiles) {
+      try {
+        final jsonString = await rootBundle.loadString(assetPath);
+        final Map<String, dynamic> data = json.decode(jsonString);
+        final List<dynamic> composersJson = data['composers'] ?? [];
 
-    _cachedComposers!.sort((a, b) =>
-        a.completeName.toLowerCase().compareTo(b.completeName.toLowerCase()));
+        for (final c in composersJson) {
+          final completeName = c['complete_name'] ?? c['name'] ?? '';
+          if (completeName.isEmpty) continue;
+
+          final composer = KnownComposer(
+            name: c['name'] ?? '',
+            completeName: completeName,
+            epoch: c['epoch'] ?? 'Unknown',
+            birth: c['birth'],
+            death: c['death'],
+            isPopular: c['popular'] == '1',
+            isRecommended: c['recommended'] == '1',
+          );
+
+          composerMap[completeName.toLowerCase()] = composer;
+        }
+      } catch (e) {
+        // Skip missing or malformed source files
+      }
+    }
+
+    _cachedComposers = composerMap.values.toList()
+      ..sort((a, b) =>
+          a.completeName.toLowerCase().compareTo(b.completeName.toLowerCase()));
 
     return _cachedComposers!;
   }

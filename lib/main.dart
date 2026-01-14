@@ -4,12 +4,16 @@ import 'package:sheet_scanner/core/di/injection.dart';
 import 'package:sheet_scanner/core/keyboard/keyboard_shortcuts.dart';
 import 'package:sheet_scanner/core/router/app_router.dart';
 import 'package:sheet_scanner/core/services/speech_recognition_service_factory.dart';
+import 'package:sheet_scanner/data/composers.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize speech recognition factory (loads saved engine preference)
   await SpeechRecognitionServiceFactory.initialize();
+
+  // Load composer data from JSON sources
+  await ComposerLoader.initialize();
 
   // Set up dependency injection
   setupInjection();
