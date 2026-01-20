@@ -10,6 +10,7 @@ class SheetMusic with _$SheetMusic {
     required String composer,
     String? opus,
     String? musicalKey,
+    String? source,
     String? notes,
     @Default([]) List<String> imageUrls,
     @Default([]) List<String> tags,

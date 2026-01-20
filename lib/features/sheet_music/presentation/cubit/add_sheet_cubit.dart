@@ -8,8 +8,7 @@ import 'add_sheet_state.dart';
 class AddSheetCubit extends Cubit<AddSheetState> {
   final AddSheetMusicUseCase addSheetMusicUseCase;
 
-  AddSheetCubit({required this.addSheetMusicUseCase})
-      : super(const AddSheetInitial());
+  AddSheetCubit({required this.addSheetMusicUseCase}) : super(const AddSheetInitial());
 
   /// Validate form fields
   /// Returns a map of field errors if validation fails
@@ -18,6 +17,7 @@ class AddSheetCubit extends Cubit<AddSheetState> {
     required String composer,
     String? opus,
     String? musicalKey,
+    String? source,
     String? notes,
     List<String> tags = const [],
   }) {
@@ -47,6 +47,10 @@ class AddSheetCubit extends Cubit<AddSheetState> {
       errors['musicalKey'] = 'Musical key must not exceed 50 characters';
     }
 
+    if (source != null && source.length > 100) {
+      errors['source'] = 'Source must not exceed 100 characters';
+    }
+
     if (notes != null && notes.length > 1000) {
       errors['notes'] = 'Notes must not exceed 1000 characters';
     }
@@ -60,6 +64,7 @@ class AddSheetCubit extends Cubit<AddSheetState> {
     required String composer,
     String? opus,
     String? musicalKey,
+    String? source,
     String? notes,
     List<String> tags = const [],
   }) {
@@ -70,6 +75,7 @@ class AddSheetCubit extends Cubit<AddSheetState> {
       composer: composer,
       opus: opus,
       musicalKey: musicalKey,
+      source: source,
       notes: notes,
       tags: tags,
     );
@@ -87,6 +93,7 @@ class AddSheetCubit extends Cubit<AddSheetState> {
     required String composer,
     String? opus,
     String? musicalKey,
+    String? source,
     String? notes,
     List<String> tags = const [],
     List<String> imageUrls = const [],
@@ -97,6 +104,7 @@ class AddSheetCubit extends Cubit<AddSheetState> {
       composer: composer,
       opus: opus,
       musicalKey: musicalKey,
+      source: source,
       notes: notes,
       tags: tags,
     );
@@ -114,6 +122,7 @@ class AddSheetCubit extends Cubit<AddSheetState> {
       composer: composer,
       opus: opus,
       musicalKey: musicalKey,
+      source: source,
       notes: notes,
       tags: tags,
       imageUrls: imageUrls,

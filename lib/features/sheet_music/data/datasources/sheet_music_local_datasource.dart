@@ -65,6 +65,9 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
           SheetMusicTableCompanion(
             title: Value(model.title),
             composer: Value(model.composer),
+            opus: Value(model.opus),
+            musicalKey: Value(model.musicalKey),
+            source: Value(model.source),
             notes: Value(model.notes),
             imageUrls: Value(model.imageUrls),
             createdAt: Value(model.createdAt),
@@ -75,18 +78,13 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
 
   @override
   Future<SheetMusicModel?> getSheetMusicById(int id) {
-    return (database.select(database.sheetMusicTable)
-          ..where((s) => s.id.equals(id)))
-        .getSingleOrNull();
+    return (database.select(database.sheetMusicTable)..where((s) => s.id.equals(id))).getSingleOrNull();
   }
 
   @override
   Future<List<SheetMusicModel>> getAllSheetMusic() {
     return (database.select(database.sheetMusicTable)
-          ..orderBy([
-            (s) =>
-                OrderingTerm(expression: s.createdAt, mode: OrderingMode.desc)
-          ]))
+          ..orderBy([(s) => OrderingTerm(expression: s.createdAt, mode: OrderingMode.desc)]))
         .get();
   }
 
@@ -97,6 +95,9 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
             id: Value(model.id),
             title: Value(model.title),
             composer: Value(model.composer),
+            opus: Value(model.opus),
+            musicalKey: Value(model.musicalKey),
+            source: Value(model.source),
             notes: Value(model.notes),
             imageUrls: Value(model.imageUrls),
             createdAt: Value(model.createdAt),
@@ -108,9 +109,7 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
   @override
   Future<bool> deleteSheetMusic(int id) async {
     // FTS index is automatically maintained by database triggers
-    final deleted = await (database.delete(database.sheetMusicTable)
-          ..where((s) => s.id.equals(id)))
-        .go();
+    final deleted = await (database.delete(database.sheetMusicTable)..where((s) => s.id.equals(id))).go();
 
     return deleted > 0;
   }
@@ -123,15 +122,12 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
   @override
   Future<List<SheetMusicModel>> getSheetMusicByTag(String tag) async {
     // Find the tag first
-    final tagModel = await (database.select(database.tagsTable)
-          ..where((t) => t.name.equals(tag)))
-        .getSingleOrNull();
+    final tagModel = await (database.select(database.tagsTable)..where((t) => t.name.equals(tag))).getSingleOrNull();
 
     if (tagModel == null) return [];
 
     // Get sheet music with this tag
-    final sheetIds = await (database.select(database.sheetMusicTagsTable)
-          ..where((t) => t.tagId.equals(tagModel.id)))
+    final sheetIds = await (database.select(database.sheetMusicTagsTable)..where((t) => t.tagId.equals(tagModel.id)))
         .map((row) => row.sheetMusicId)
         .get();
 
@@ -139,10 +135,7 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
 
     return (database.select(database.sheetMusicTable)
           ..where((s) => s.id.isIn(sheetIds))
-          ..orderBy([
-            (s) =>
-                OrderingTerm(expression: s.createdAt, mode: OrderingMode.desc)
-          ]))
+          ..orderBy([(s) => OrderingTerm(expression: s.createdAt, mode: OrderingMode.desc)]))
         .get();
   }
 
@@ -167,9 +160,7 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
     if (ids.isEmpty) return 0;
     // Use a transaction to ensure atomic deletion
     return database.transaction(() async {
-      return await (database.delete(database.sheetMusicTable)
-            ..where((s) => s.id.isIn(ids)))
-          .go();
+      return await (database.delete(database.sheetMusicTable)..where((s) => s.id.isIn(ids))).go();
     });
   }
 
@@ -200,9 +191,7 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
   @override
   Future<void> addTagToSheetMusic(int sheetMusicId, String tagName) async {
     // Get or create tag
-    var tagModel = await (database.select(database.tagsTable)
-          ..where((t) => t.name.equals(tagName)))
-        .getSingleOrNull();
+    var tagModel = await (database.select(database.tagsTable)..where((t) => t.name.equals(tagName))).getSingleOrNull();
 
     if (tagModel == null) {
       final tagId = await database.into(database.tagsTable).insert(
@@ -222,8 +211,7 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
     } catch (e) {
       // Check if this is a unique constraint violation (tag already associated)
       final errorMessage = e.toString();
-      if (errorMessage.contains('UNIQUE constraint failed') ||
-          errorMessage.contains('Unique constraint')) {
+      if (errorMessage.contains('UNIQUE constraint failed') || errorMessage.contains('Unique constraint')) {
         // Tag is already associated with this sheet music, which is fine
         developer.log(
           'Tag already associated with sheet music (expected)',
@@ -244,17 +232,14 @@ class SheetMusicLocalDataSourceImpl implements SheetMusicLocalDataSource {
   @override
   Future<void> removeTagFromSheetMusic(int sheetMusicId, String tagName) async {
     // Find the tag
-    final tagModel = await (database.select(database.tagsTable)
-          ..where((t) => t.name.equals(tagName)))
-        .getSingleOrNull();
+    final tagModel =
+        await (database.select(database.tagsTable)..where((t) => t.name.equals(tagName))).getSingleOrNull();
 
     if (tagModel == null) return;
 
     // Delete the association
     await (database.delete(database.sheetMusicTagsTable)
-          ..where((t) =>
-              t.sheetMusicId.equals(sheetMusicId) &
-              t.tagId.equals(tagModel.id)))
+          ..where((t) => t.sheetMusicId.equals(sheetMusicId) & t.tagId.equals(tagModel.id)))
         .go();
   }
 

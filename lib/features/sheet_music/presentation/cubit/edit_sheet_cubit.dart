@@ -47,6 +47,7 @@ class EditSheetCubit extends Cubit<EditSheetState> {
     required String composer,
     String? opus,
     String? musicalKey,
+    String? source,
     String? notes,
     List<String> tags = const [],
   }) {
@@ -76,6 +77,10 @@ class EditSheetCubit extends Cubit<EditSheetState> {
       errors['musicalKey'] = 'Musical key must not exceed 50 characters';
     }
 
+    if (source != null && source.length > 100) {
+      errors['source'] = 'Source must not exceed 100 characters';
+    }
+
     if (notes != null && notes.length > 1000) {
       errors['notes'] = 'Notes must not exceed 1000 characters';
     }
@@ -89,6 +94,7 @@ class EditSheetCubit extends Cubit<EditSheetState> {
     required String composer,
     String? opus,
     String? musicalKey,
+    String? source,
     String? notes,
     List<String> tags = const [],
   }) {
@@ -99,6 +105,7 @@ class EditSheetCubit extends Cubit<EditSheetState> {
       composer: composer,
       opus: opus,
       musicalKey: musicalKey,
+      source: source,
       notes: notes,
       tags: tags,
     );
@@ -117,6 +124,7 @@ class EditSheetCubit extends Cubit<EditSheetState> {
     required String composer,
     String? opus,
     String? musicalKey,
+    String? source,
     String? notes,
     List<String> tags = const [],
     List<String> imageUrls = const [],
@@ -128,6 +136,7 @@ class EditSheetCubit extends Cubit<EditSheetState> {
       composer: composer,
       opus: opus,
       musicalKey: musicalKey,
+      source: source,
       notes: notes,
       tags: tags,
     );
@@ -145,6 +154,7 @@ class EditSheetCubit extends Cubit<EditSheetState> {
       composer: composer,
       opus: opus,
       musicalKey: musicalKey,
+      source: source,
       notes: notes,
       tags: tags,
       imageUrls: imageUrls,

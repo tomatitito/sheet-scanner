@@ -13,6 +13,7 @@ import 'package:sheet_scanner/features/sheet_music/presentation/widgets/composer
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/title_autocomplete_field.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/voice_input_button.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/musical_key_dropdown.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/source_dropdown.dart';
 
 /// Page for adding a new sheet music entry to the library
 class AddSheetPage extends StatefulWidget {
@@ -35,6 +36,7 @@ class _AddSheetPageState extends State<AddSheetPage> {
   late final TextEditingController _opusController;
   late final TextEditingController _notesController;
   String? _musicalKey;
+  String? _source;
   final List<String> _tags = [];
   final List<String> _selectedFiles = [];
   late final FilePickerService _filePickerService;
@@ -67,8 +69,7 @@ class _AddSheetPageState extends State<AddSheetPage> {
           if (state is AddSheetSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(
-                    'Sheet music "${state.sheetMusic.title}" added successfully'),
+                content: Text('Sheet music "${state.sheetMusic.title}" added successfully'),
                 duration: const Duration(seconds: 2),
               ),
             );
@@ -92,6 +93,8 @@ class _AddSheetPageState extends State<AddSheetPage> {
           notesController: _notesController,
           musicalKey: _musicalKey,
           onMusicalKeyChanged: (value) => setState(() => _musicalKey = value),
+          source: _source,
+          onSourceChanged: (value) => setState(() => _source = value),
           tags: _tags,
           selectedFiles: _selectedFiles,
           filePickerService: _filePickerService,
@@ -109,6 +112,8 @@ class _AddSheetForm extends StatefulWidget {
   final TextEditingController notesController;
   final String? musicalKey;
   final ValueChanged<String?> onMusicalKeyChanged;
+  final String? source;
+  final ValueChanged<String?> onSourceChanged;
   final List<String> tags;
   final List<String> selectedFiles;
   final FilePickerService filePickerService;
@@ -121,6 +126,8 @@ class _AddSheetForm extends StatefulWidget {
     required this.notesController,
     this.musicalKey,
     required this.onMusicalKeyChanged,
+    this.source,
+    required this.onSourceChanged,
     required this.tags,
     required this.selectedFiles,
     required this.filePickerService,
@@ -135,6 +142,7 @@ class _AddSheetFormState extends State<_AddSheetForm> {
   final _formKey = GlobalKey<FormState>();
   String _newTag = '';
   String? _selectedMusicalKey;
+  String? _selectedSource;
 
   /// Track if user has manually edited the opus field.
   /// Once edited, we don't auto-populate anymore to respect user's input.
@@ -145,10 +153,9 @@ class _AddSheetFormState extends State<_AddSheetForm> {
     cubit.validate(
       title: widget.titleController.text,
       composer: widget.composerController.text,
-      opus: widget.opusController.text.isEmpty
-          ? null
-          : widget.opusController.text,
+      opus: widget.opusController.text.isEmpty ? null : widget.opusController.text,
       musicalKey: _selectedMusicalKey,
+      source: _selectedSource,
       notes: widget.notesController.text,
       tags: widget.tags,
     );
@@ -225,17 +232,13 @@ class _AddSheetFormState extends State<_AddSheetForm> {
 
     if (errorString.contains('permission') || errorString.contains('denied')) {
       return 'Permission denied. Please grant file access in settings.';
-    } else if (errorString.contains('cancelled') ||
-        errorString.contains('cancel')) {
+    } else if (errorString.contains('cancelled') || errorString.contains('cancel')) {
       return 'File selection cancelled.';
     } else if (errorString.contains('size') || errorString.contains('large')) {
       return 'File is too large. Please choose a smaller file.';
-    } else if (errorString.contains('type') ||
-        errorString.contains('extension') ||
-        errorString.contains('supported')) {
+    } else if (errorString.contains('type') || errorString.contains('extension') || errorString.contains('supported')) {
       return 'Unsupported file type. Please select PDF, JPG, PNG, or GIF files.';
-    } else if (errorString.contains('storage') ||
-        errorString.contains('disk')) {
+    } else if (errorString.contains('storage') || errorString.contains('disk')) {
       return 'Storage error. Please check your device storage.';
     } else if (errorString.contains('timeout')) {
       return 'File selection took too long. Please try again.';
@@ -254,10 +257,9 @@ class _AddSheetFormState extends State<_AddSheetForm> {
     context.read<AddSheetCubit>().submitForm(
           title: widget.titleController.text,
           composer: widget.composerController.text,
-          opus: widget.opusController.text.isEmpty
-              ? null
-              : widget.opusController.text,
+          opus: widget.opusController.text.isEmpty ? null : widget.opusController.text,
           musicalKey: _selectedMusicalKey,
+          source: _selectedSource,
           notes: widget.notesController.text,
           tags: widget.tags,
         );
@@ -391,9 +393,7 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                     decoration: InputDecoration(
                       labelText: 'Opus/Catalog Number',
                       hintText: 'e.g., Op. 27, BWV 846, K. 331',
-                      helperText: _opusManuallyEdited
-                          ? null
-                          : 'Auto-filled based on composer',
+                      helperText: _opusManuallyEdited ? null : 'Auto-filled based on composer',
                       errorText: errors['opus'],
                       border: const OutlineInputBorder(),
                       prefixIcon: const Icon(Icons.tag),
@@ -410,6 +410,21 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                       setState(() {
                         _selectedMusicalKey = value;
                       });
+                      _validateForm();
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Source dropdown (optional)
+                  SourceDropdown(
+                    selectedValue: _selectedSource,
+                    enabled: !isSubmitting,
+                    errorText: errors['source'],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedSource = value;
+                      });
+                      widget.onSourceChanged(value);
                       _validateForm();
                     },
                   ),
@@ -440,9 +455,7 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                         child: VoiceInputButton(
                           onDictationComplete: (text) {
                             final currentText = widget.notesController.text;
-                            widget.notesController.text = currentText.isEmpty
-                                ? text
-                                : '$currentText $text';
+                            widget.notesController.text = currentText.isEmpty ? text : '$currentText $text';
                             _validateForm();
                           },
                           onError: (error) {
@@ -466,10 +479,7 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                   // Tags section
                   Text(
                     'Tags',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -505,8 +515,7 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                           .map(
                             (tag) => Chip(
                               label: Text(tag),
-                              onDeleted:
-                                  isSubmitting ? null : () => _removeTag(tag),
+                              onDeleted: isSubmitting ? null : () => _removeTag(tag),
                             ),
                           )
                           .toList(),
@@ -519,9 +528,7 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                       // Library button
                       Expanded(
                         child: OutlinedButton.icon(
-                          onPressed: isSubmitting
-                              ? null
-                              : () => context.push('/browse'),
+                          onPressed: isSubmitting ? null : () => context.push('/browse'),
                           icon: const Icon(Icons.library_music),
                           label: const Text('Library'),
                           style: OutlinedButton.styleFrom(
@@ -540,49 +547,35 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                               ? null
                               : () async {
                                   // Navigate to scan camera page for OCR and await result
-                                  debugPrint(
-                                      '[AddSheetPage] Navigating to /scan for OCR');
-                                  final result = await context
-                                      .push<Map<String, dynamic>>('/scan');
+                                  debugPrint('[AddSheetPage] Navigating to /scan for OCR');
+                                  final result = await context.push<Map<String, dynamic>>('/scan');
 
                                   // If OCR data was returned, populate the form
                                   if (result != null) {
-                                    debugPrint(
-                                        '[AddSheetPage] Received OCR data: ${result.keys.join(", ")}');
+                                    debugPrint('[AddSheetPage] Received OCR data: ${result.keys.join(", ")}');
 
                                     if (!mounted) {
-                                      debugPrint(
-                                          '[AddSheetPage] Widget not mounted, cannot update form');
+                                      debugPrint('[AddSheetPage] Widget not mounted, cannot update form');
                                       return;
                                     }
 
                                     setState(() {
                                       if (result['title'] != null) {
-                                        widget.titleController.text =
-                                            result['title'] as String;
-                                        debugPrint(
-                                            '[AddSheetPage] Set title: "${result['title']}"');
+                                        widget.titleController.text = result['title'] as String;
+                                        debugPrint('[AddSheetPage] Set title: "${result['title']}"');
                                       }
                                       if (result['composer'] != null) {
-                                        widget.composerController.text =
-                                            result['composer'] as String;
-                                        debugPrint(
-                                            '[AddSheetPage] Set composer: "${result['composer']}"');
+                                        widget.composerController.text = result['composer'] as String;
+                                        debugPrint('[AddSheetPage] Set composer: "${result['composer']}"');
                                       }
                                       if (result['notes'] != null) {
-                                        widget.notesController.text =
-                                            result['notes'] as String;
-                                        debugPrint(
-                                            '[AddSheetPage] Set notes: "${result['notes']}"');
+                                        widget.notesController.text = result['notes'] as String;
+                                        debugPrint('[AddSheetPage] Set notes: "${result['notes']}"');
                                       }
-                                      if (result['tags'] != null &&
-                                          result['tags'] is List) {
+                                      if (result['tags'] != null && result['tags'] is List) {
                                         widget.tags.clear();
-                                        widget.tags.addAll(
-                                            (result['tags'] as List)
-                                                .cast<String>());
-                                        debugPrint(
-                                            '[AddSheetPage] Set tags: ${widget.tags.join(", ")}');
+                                        widget.tags.addAll((result['tags'] as List).cast<String>());
+                                        debugPrint('[AddSheetPage] Set tags: ${widget.tags.join(", ")}');
                                       }
                                     });
 
@@ -592,18 +585,15 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                                     // Show success message
                                     if (mounted) {
                                       // ignore: use_build_context_synchronously
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
+                                      ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
-                                          content: Text(
-                                              'Form populated with scanned data'),
+                                          content: Text('Form populated with scanned data'),
                                           duration: Duration(seconds: 2),
                                         ),
                                       );
                                     }
                                   } else {
-                                    debugPrint(
-                                        '[AddSheetPage] Scan returned null (user cancelled)');
+                                    debugPrint('[AddSheetPage] Scan returned null (user cancelled)');
                                   }
                                 },
                           icon: const Icon(Icons.camera_alt),
@@ -628,10 +618,9 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
                           'OR',
-                          style:
-                              Theme.of(context).textTheme.labelMedium?.copyWith(
-                                    color: Colors.grey[600],
-                                  ),
+                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                color: Colors.grey[600],
+                              ),
                         ),
                       ),
                       const Expanded(child: Divider()),
@@ -652,11 +641,8 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: (isSubmitting ||
-                              state is AddSheetInvalid ||
-                              state is AddSheetInitial)
-                          ? null
-                          : _submitForm,
+                      onPressed:
+                          (isSubmitting || state is AddSheetInvalid || state is AddSheetInitial) ? null : _submitForm,
                       icon: isSubmitting
                           ? const SizedBox(
                               width: 20,

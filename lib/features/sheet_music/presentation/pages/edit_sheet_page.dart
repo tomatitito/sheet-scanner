@@ -10,6 +10,7 @@ import 'package:sheet_scanner/features/sheet_music/presentation/widgets/composer
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/title_autocomplete_field.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/voice_input_button.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/musical_key_dropdown.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/source_dropdown.dart';
 
 /// Page for editing an existing sheet music entry
 class EditSheetPage extends StatefulWidget {
@@ -35,6 +36,7 @@ class _EditSheetPageState extends State<EditSheetPage> {
   late final TextEditingController _notesController;
   final List<String> _tags = [];
   String? _selectedMusicalKey;
+  String? _selectedSource;
 
   @override
   void initState() {
@@ -60,6 +62,7 @@ class _EditSheetPageState extends State<EditSheetPage> {
           composer: _composerController.text,
           opus: _opusController.text.isEmpty ? null : _opusController.text,
           musicalKey: _selectedMusicalKey,
+          source: _selectedSource,
           notes: _notesController.text,
           tags: _tags,
         );
@@ -79,6 +82,7 @@ class _EditSheetPageState extends State<EditSheetPage> {
           composer: value,
           opus: _opusController.text.isEmpty ? null : _opusController.text,
           musicalKey: _selectedMusicalKey,
+          source: _selectedSource,
           notes: _notesController.text,
           tags: _tags,
         );
@@ -90,6 +94,7 @@ class _EditSheetPageState extends State<EditSheetPage> {
           composer: _composerController.text,
           opus: value.isEmpty ? null : value,
           musicalKey: _selectedMusicalKey,
+          source: _selectedSource,
           notes: _notesController.text,
           tags: _tags,
         );
@@ -104,6 +109,22 @@ class _EditSheetPageState extends State<EditSheetPage> {
           composer: _composerController.text,
           opus: _opusController.text.isEmpty ? null : _opusController.text,
           musicalKey: value,
+          source: _selectedSource,
+          notes: _notesController.text,
+          tags: _tags,
+        );
+  }
+
+  void _onSourceChanged(String? value) {
+    setState(() {
+      _selectedSource = value;
+    });
+    context.read<EditSheetCubit>().validate(
+          title: _titleController.text,
+          composer: _composerController.text,
+          opus: _opusController.text.isEmpty ? null : _opusController.text,
+          musicalKey: _selectedMusicalKey,
+          source: value,
           notes: _notesController.text,
           tags: _tags,
         );
@@ -115,6 +136,7 @@ class _EditSheetPageState extends State<EditSheetPage> {
           composer: _composerController.text,
           opus: _opusController.text.isEmpty ? null : _opusController.text,
           musicalKey: _selectedMusicalKey,
+          source: _selectedSource,
           notes: value,
           tags: _tags,
         );
@@ -130,6 +152,7 @@ class _EditSheetPageState extends State<EditSheetPage> {
             composer: _composerController.text,
             opus: _opusController.text.isEmpty ? null : _opusController.text,
             musicalKey: _selectedMusicalKey,
+            source: _selectedSource,
             notes: _notesController.text,
             tags: _tags,
           );
@@ -145,6 +168,7 @@ class _EditSheetPageState extends State<EditSheetPage> {
           composer: _composerController.text,
           opus: _opusController.text.isEmpty ? null : _opusController.text,
           musicalKey: _selectedMusicalKey,
+          source: _selectedSource,
           notes: _notesController.text,
           tags: _tags,
         );
@@ -157,6 +181,7 @@ class _EditSheetPageState extends State<EditSheetPage> {
           composer: _composerController.text,
           opus: _opusController.text.isEmpty ? null : _opusController.text,
           musicalKey: _selectedMusicalKey,
+          source: _selectedSource,
           notes: _notesController.text,
           tags: _tags,
           createdAt: createdAt,
@@ -166,15 +191,13 @@ class _EditSheetPageState extends State<EditSheetPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          getIt<EditSheetCubit>()..loadSheetMusic(widget.sheetMusicId),
+      create: (context) => getIt<EditSheetCubit>()..loadSheetMusic(widget.sheetMusicId),
       child: BlocListener<EditSheetCubit, EditSheetState>(
         listener: (context, state) {
           if (state is EditSheetSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(
-                    'Sheet music "${state.sheetMusic.title}" updated successfully'),
+                content: Text('Sheet music "${state.sheetMusic.title}" updated successfully'),
                 duration: const Duration(seconds: 2),
               ),
             );
@@ -199,10 +222,12 @@ class _EditSheetPageState extends State<EditSheetPage> {
           notesController: _notesController,
           tags: _tags,
           selectedMusicalKey: _selectedMusicalKey,
+          selectedSource: _selectedSource,
           onTitleChanged: _onTitleChanged,
           onComposerChanged: _onComposerChanged,
           onOpusChanged: _onOpusChanged,
           onMusicalKeyChanged: _onMusicalKeyChanged,
+          onSourceChanged: _onSourceChanged,
           onNotesChanged: _onNotesChanged,
           onAddTag: _addTag,
           onRemoveTag: _removeTag,
@@ -210,6 +235,9 @@ class _EditSheetPageState extends State<EditSheetPage> {
           onClose: widget.onClose,
           onMusicalKeyInitialized: (key) {
             _selectedMusicalKey = key;
+          },
+          onSourceInitialized: (source) {
+            _selectedSource = source;
           },
         ),
       ),
@@ -225,16 +253,19 @@ class _EditSheetForm extends StatefulWidget {
   final TextEditingController notesController;
   final List<String> tags;
   final String? selectedMusicalKey;
+  final String? selectedSource;
   final ValueChanged<String> onTitleChanged;
   final ValueChanged<String> onComposerChanged;
   final ValueChanged<String> onOpusChanged;
   final ValueChanged<String?> onMusicalKeyChanged;
+  final ValueChanged<String?> onSourceChanged;
   final ValueChanged<String> onNotesChanged;
   final Function(String) onAddTag;
   final Function(String) onRemoveTag;
   final Function(int, DateTime) onSubmit;
   final VoidCallback? onClose;
   final ValueChanged<String?> onMusicalKeyInitialized;
+  final ValueChanged<String?> onSourceInitialized;
 
   const _EditSheetForm({
     required this.sheetMusicId,
@@ -244,15 +275,18 @@ class _EditSheetForm extends StatefulWidget {
     required this.notesController,
     required this.tags,
     required this.selectedMusicalKey,
+    required this.selectedSource,
     required this.onTitleChanged,
     required this.onComposerChanged,
     required this.onOpusChanged,
     required this.onMusicalKeyChanged,
+    required this.onSourceChanged,
     required this.onNotesChanged,
     required this.onAddTag,
     required this.onRemoveTag,
     required this.onSubmit,
     required this.onMusicalKeyInitialized,
+    required this.onSourceInitialized,
     this.onClose,
   });
 
@@ -316,9 +350,7 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                   const SizedBox(height: 32),
                   ElevatedButton(
                     onPressed: () {
-                      context
-                          .read<EditSheetCubit>()
-                          .refresh(widget.sheetMusicId);
+                      context.read<EditSheetCubit>().refresh(widget.sheetMusicId);
                     },
                     child: const Text('Retry'),
                   ),
@@ -333,11 +365,8 @@ class _EditSheetFormState extends State<_EditSheetForm> {
             state is EditSheetSubmitting ||
             state is EditSheetSuccess) {
           // Initialize form fields from loaded data
-          final loadedSheet =
-              state is EditSheetLoaded ? state.sheetMusic : null;
-          if (loadedSheet != null &&
-              widget.titleController.text.isEmpty &&
-              widget.composerController.text.isEmpty) {
+          final loadedSheet = state is EditSheetLoaded ? state.sheetMusic : null;
+          if (loadedSheet != null && widget.titleController.text.isEmpty && widget.composerController.text.isEmpty) {
             widget.titleController.text = loadedSheet.title;
             widget.composerController.text = loadedSheet.composer;
             widget.opusController.text = loadedSheet.opus ?? '';
@@ -345,12 +374,12 @@ class _EditSheetFormState extends State<_EditSheetForm> {
             widget.tags.clear();
             widget.tags.addAll(loadedSheet.tags);
             widget.onMusicalKeyInitialized(loadedSheet.musicalKey);
+            widget.onSourceInitialized(loadedSheet.source);
           }
 
           final isSubmitting = state is EditSheetSubmitting;
           final errors = state is EditSheetInvalid ? state.errors : {};
-          final sheetMusic =
-              state is EditSheetLoaded ? state.sheetMusic : loadedSheet;
+          final sheetMusic = state is EditSheetLoaded ? state.sheetMusic : loadedSheet;
 
           if (sheetMusic == null) {
             return const Scaffold(
@@ -491,6 +520,15 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                     ),
                     const SizedBox(height: 16),
 
+                    // Source dropdown (optional)
+                    SourceDropdown(
+                      selectedValue: widget.selectedSource,
+                      enabled: !isSubmitting,
+                      errorText: errors['source'],
+                      onChanged: widget.onSourceChanged,
+                    ),
+                    const SizedBox(height: 16),
+
                     // Notes field with voice input
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -516,11 +554,8 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                           child: VoiceInputButton(
                             onDictationComplete: (text) {
                               final currentText = widget.notesController.text;
-                              widget.notesController.text = currentText.isEmpty
-                                  ? text
-                                  : '$currentText $text';
-                              widget
-                                  .onNotesChanged(widget.notesController.text);
+                              widget.notesController.text = currentText.isEmpty ? text : '$currentText $text';
+                              widget.onNotesChanged(widget.notesController.text);
                             },
                             onError: (error) {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -543,10 +578,7 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                     // Tags section
                     Text(
                       'Tags',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Row(
@@ -589,9 +621,7 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                             .map(
                               (tag) => Chip(
                                 label: Text(tag),
-                                onDeleted: isSubmitting
-                                    ? null
-                                    : () => widget.onRemoveTag(tag),
+                                onDeleted: isSubmitting ? null : () => widget.onRemoveTag(tag),
                               ),
                             )
                             .toList(),
@@ -608,8 +638,7 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                                 state is EditSheetLoading)
                             ? null
                             : () {
-                                widget.onSubmit(
-                                    sheetMusic.id, sheetMusic.createdAt);
+                                widget.onSubmit(sheetMusic.id, sheetMusic.createdAt);
                               },
                         icon: isSubmitting
                             ? const SizedBox(

@@ -14,6 +14,7 @@ class SheetMusicTable extends Table {
   TextColumn get composer => text()();
   TextColumn get opus => text().nullable()();
   TextColumn get musicalKey => text().nullable()();
+  TextColumn get source => text().nullable()();
   TextColumn get notes => text().nullable()();
   TextColumn get imageUrls => text().withDefault(const Constant('[]'))();
   DateTimeColumn get createdAt => dateTime()();
@@ -67,7 +68,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -171,12 +172,9 @@ class AppDatabase extends _$AppDatabase {
             );
 
             // Drop old FTS table and triggers
-            await customStatement(
-                'DROP TRIGGER IF EXISTS sheet_music_fts_insert');
-            await customStatement(
-                'DROP TRIGGER IF EXISTS sheet_music_fts_update');
-            await customStatement(
-                'DROP TRIGGER IF EXISTS sheet_music_fts_delete');
+            await customStatement('DROP TRIGGER IF EXISTS sheet_music_fts_insert');
+            await customStatement('DROP TRIGGER IF EXISTS sheet_music_fts_update');
+            await customStatement('DROP TRIGGER IF EXISTS sheet_music_fts_delete');
             await customStatement('DROP TABLE IF EXISTS sheet_music_fts');
 
             // Recreate FTS5 virtual table with opus column
@@ -226,12 +224,9 @@ class AppDatabase extends _$AppDatabase {
             );
 
             // Drop old FTS table and triggers
-            await customStatement(
-                'DROP TRIGGER IF EXISTS sheet_music_fts_insert');
-            await customStatement(
-                'DROP TRIGGER IF EXISTS sheet_music_fts_update');
-            await customStatement(
-                'DROP TRIGGER IF EXISTS sheet_music_fts_delete');
+            await customStatement('DROP TRIGGER IF EXISTS sheet_music_fts_insert');
+            await customStatement('DROP TRIGGER IF EXISTS sheet_music_fts_update');
+            await customStatement('DROP TRIGGER IF EXISTS sheet_music_fts_delete');
             await customStatement('DROP TABLE IF EXISTS sheet_music_fts');
 
             // Recreate FTS5 virtual table with musical_key column
@@ -275,6 +270,12 @@ class AppDatabase extends _$AppDatabase {
               'END',
             );
           }
+          if (from < 6) {
+            // Migration from v5 to v6: Add source column
+            await customStatement(
+              'ALTER TABLE sheet_music_table ADD COLUMN source TEXT',
+            );
+          }
         },
       );
 
@@ -285,7 +286,7 @@ class AppDatabase extends _$AppDatabase {
     }
     final escapedQuery = query.replaceAll('"', '""');
     final results = await customSelect(
-      'SELECT sm.id, sm.title, sm.composer, sm.opus, sm.musical_key, sm.notes, sm.image_urls, sm.created_at, sm.updated_at '
+      'SELECT sm.id, sm.title, sm.composer, sm.opus, sm.musical_key, sm.source, sm.notes, sm.image_urls, sm.created_at, sm.updated_at '
       'FROM sheet_music sm '
       'WHERE sm.id IN ('
       '  SELECT id FROM sheet_music_fts WHERE sheet_music_fts MATCH ?'
@@ -301,6 +302,7 @@ class AppDatabase extends _$AppDatabase {
         composer: row.read<String>('composer'),
         opus: row.read<String?>('opus'),
         musicalKey: row.read<String?>('musical_key'),
+        source: row.read<String?>('source'),
         notes: row.read<String?>('notes'),
         imageUrls: row.read<String>('image_urls'),
         createdAt: row.read<DateTime>('created_at'),
@@ -311,15 +313,12 @@ class AppDatabase extends _$AppDatabase {
 
   /// Search by title
   Future<List<SheetMusicModel>> searchByTitle(String title) {
-    return (select(sheetMusicTable)..where((s) => s.title.like('%$title%')))
-        .get();
+    return (select(sheetMusicTable)..where((s) => s.title.like('%$title%'))).get();
   }
 
   /// Search by composer
   Future<List<SheetMusicModel>> searchByComposer(String composer) {
-    return (select(sheetMusicTable)
-          ..where((s) => s.composer.like('%$composer%')))
-        .get();
+    return (select(sheetMusicTable)..where((s) => s.composer.like('%$composer%'))).get();
   }
 
   /// Filter sheet music by date range
@@ -328,9 +327,7 @@ class AppDatabase extends _$AppDatabase {
     DateTime endDate,
   ) {
     return (select(sheetMusicTable)
-          ..where((s) =>
-              s.createdAt.isBiggerOrEqualValue(startDate) &
-              s.createdAt.isSmallerOrEqualValue(endDate)))
+          ..where((s) => s.createdAt.isBiggerOrEqualValue(startDate) & s.createdAt.isSmallerOrEqualValue(endDate)))
         .get();
   }
 
@@ -410,10 +407,8 @@ class AppDatabase extends _$AppDatabase {
 
     // Tag filter
     if (tagIds != null && tagIds.isNotEmpty) {
-      final sheetIdsWithTags = await (select(sheetMusicTagsTable)
-            ..where((t) => t.tagId.isIn(tagIds)))
-          .map((row) => row.sheetMusicId)
-          .get();
+      final sheetIdsWithTags =
+          await (select(sheetMusicTagsTable)..where((t) => t.tagId.isIn(tagIds))).map((row) => row.sheetMusicId).get();
 
       if (sheetIdsWithTags.isEmpty) {
         return [];
@@ -426,26 +421,17 @@ class AppDatabase extends _$AppDatabase {
     switch (sortBy) {
       case 'title':
         q = q
-          ..orderBy([
-            (s) => OrderingTerm(
-                expression: s.title,
-                mode: descending ? OrderingMode.desc : OrderingMode.asc)
-          ]);
+          ..orderBy(
+              [(s) => OrderingTerm(expression: s.title, mode: descending ? OrderingMode.desc : OrderingMode.asc)]);
       case 'composer':
         q = q
-          ..orderBy([
-            (s) => OrderingTerm(
-                expression: s.composer,
-                mode: descending ? OrderingMode.desc : OrderingMode.asc)
-          ]);
+          ..orderBy(
+              [(s) => OrderingTerm(expression: s.composer, mode: descending ? OrderingMode.desc : OrderingMode.asc)]);
       case 'createdAt':
       default:
         q = q
-          ..orderBy([
-            (s) => OrderingTerm(
-                expression: s.createdAt,
-                mode: descending ? OrderingMode.desc : OrderingMode.asc)
-          ]);
+          ..orderBy(
+              [(s) => OrderingTerm(expression: s.createdAt, mode: descending ? OrderingMode.desc : OrderingMode.asc)]);
     }
 
     return q.get();
