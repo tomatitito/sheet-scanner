@@ -1,7 +1,7 @@
 {
-  "last_failure": "2026-01-20T13:19:15.361653+01:00",
-  "failure_count": 1,
-  "backoff_until": "2026-01-20T13:19:45.361653+01:00",
+  "last_failure": "2026-02-06T15:32:02.788468+01:00",
+  "failure_count": 2,
+  "backoff_until": "2026-02-06T15:33:02.788468+01:00",
   "needs_manual_sync": false,
-  "failure_reason": "git pull failed in worktree: exit status 128\nFrom github.com:tomatitito/sheet-scanner\n * branch            beads-sync -\u003e FETCH_HEAD\nfatal: Cannot rebase onto multiple branches.\n"
+  "failure_reason": "git pull failed in worktree: exit status 1\nNo user exists for uid 502\r\nfatal: Could not read from remote repository.\n\nPlease make sure you have the correct access rights\nand the repository exists.\n"
 }
