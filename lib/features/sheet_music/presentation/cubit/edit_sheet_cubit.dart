@@ -49,6 +49,9 @@ class EditSheetCubit extends Cubit<EditSheetState> {
     String? musicalKey,
     String? source,
     String? notes,
+    int? difficulty,
+    String? instrumentation,
+    String? epoch,
     List<String> tags = const [],
   }) {
     final errors = <String, String>{};
@@ -85,6 +88,18 @@ class EditSheetCubit extends Cubit<EditSheetState> {
       errors['notes'] = 'Notes must not exceed 1000 characters';
     }
 
+    if (difficulty != null && (difficulty < 1 || difficulty > 5)) {
+      errors['difficulty'] = 'Difficulty must be between 1 and 5';
+    }
+
+    if (instrumentation != null && instrumentation.length > 100) {
+      errors['instrumentation'] = 'Instrumentation must not exceed 100 characters';
+    }
+
+    if (epoch != null && epoch.length > 50) {
+      errors['epoch'] = 'Epoch must not exceed 50 characters';
+    }
+
     return errors;
   }
 
@@ -96,6 +111,9 @@ class EditSheetCubit extends Cubit<EditSheetState> {
     String? musicalKey,
     String? source,
     String? notes,
+    int? difficulty,
+    String? instrumentation,
+    String? epoch,
     List<String> tags = const [],
   }) {
     emit(const EditSheetValidating());
@@ -107,6 +125,9 @@ class EditSheetCubit extends Cubit<EditSheetState> {
       musicalKey: musicalKey,
       source: source,
       notes: notes,
+      difficulty: difficulty,
+      instrumentation: instrumentation,
+      epoch: epoch,
       tags: tags,
     );
 
@@ -126,6 +147,9 @@ class EditSheetCubit extends Cubit<EditSheetState> {
     String? musicalKey,
     String? source,
     String? notes,
+    int? difficulty,
+    String? instrumentation,
+    String? epoch,
     List<String> tags = const [],
     List<String> imageUrls = const [],
     required DateTime createdAt,
@@ -138,6 +162,9 @@ class EditSheetCubit extends Cubit<EditSheetState> {
       musicalKey: musicalKey,
       source: source,
       notes: notes,
+      difficulty: difficulty,
+      instrumentation: instrumentation,
+      epoch: epoch,
       tags: tags,
     );
 
@@ -156,6 +183,9 @@ class EditSheetCubit extends Cubit<EditSheetState> {
       musicalKey: musicalKey,
       source: source,
       notes: notes,
+      difficulty: difficulty,
+      instrumentation: instrumentation,
+      epoch: epoch,
       tags: tags,
       imageUrls: imageUrls,
       createdAt: createdAt,

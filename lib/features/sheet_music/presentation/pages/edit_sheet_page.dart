@@ -11,6 +11,9 @@ import 'package:sheet_scanner/features/sheet_music/presentation/widgets/title_au
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/voice_input_button.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/musical_key_dropdown.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/source_dropdown.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/difficulty_selector.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/instrumentation_field.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/epoch_dropdown.dart';
 
 /// Page for editing an existing sheet music entry
 class EditSheetPage extends StatefulWidget {
@@ -37,6 +40,9 @@ class _EditSheetPageState extends State<EditSheetPage> {
   final List<String> _tags = [];
   String? _selectedMusicalKey;
   String? _selectedSource;
+  int? _selectedDifficulty;
+  String? _selectedInstrumentation;
+  String? _selectedEpoch;
 
   @override
   void initState() {
@@ -56,16 +62,23 @@ class _EditSheetPageState extends State<EditSheetPage> {
     super.dispose();
   }
 
-  void _onTitleChanged(String value) {
+  void _validateForm() {
     context.read<EditSheetCubit>().validate(
-          title: value,
+          title: _titleController.text,
           composer: _composerController.text,
           opus: _opusController.text.isEmpty ? null : _opusController.text,
           musicalKey: _selectedMusicalKey,
           source: _selectedSource,
+          difficulty: _selectedDifficulty,
+          instrumentation: _selectedInstrumentation,
+          epoch: _selectedEpoch,
           notes: _notesController.text,
           tags: _tags,
         );
+  }
+
+  void _onTitleChanged(String value) {
+    _validateForm();
   }
 
   void _onComposerChanged(String value) {
@@ -76,70 +89,50 @@ class _EditSheetPageState extends State<EditSheetPage> {
         _opusController.text = prefix;
       }
     }
-
-    context.read<EditSheetCubit>().validate(
-          title: _titleController.text,
-          composer: value,
-          opus: _opusController.text.isEmpty ? null : _opusController.text,
-          musicalKey: _selectedMusicalKey,
-          source: _selectedSource,
-          notes: _notesController.text,
-          tags: _tags,
-        );
+    _validateForm();
   }
 
   void _onOpusChanged(String value) {
-    context.read<EditSheetCubit>().validate(
-          title: _titleController.text,
-          composer: _composerController.text,
-          opus: value.isEmpty ? null : value,
-          musicalKey: _selectedMusicalKey,
-          source: _selectedSource,
-          notes: _notesController.text,
-          tags: _tags,
-        );
+    _validateForm();
   }
 
   void _onMusicalKeyChanged(String? value) {
     setState(() {
       _selectedMusicalKey = value;
     });
-    context.read<EditSheetCubit>().validate(
-          title: _titleController.text,
-          composer: _composerController.text,
-          opus: _opusController.text.isEmpty ? null : _opusController.text,
-          musicalKey: value,
-          source: _selectedSource,
-          notes: _notesController.text,
-          tags: _tags,
-        );
+    _validateForm();
   }
 
   void _onSourceChanged(String? value) {
     setState(() {
       _selectedSource = value;
     });
-    context.read<EditSheetCubit>().validate(
-          title: _titleController.text,
-          composer: _composerController.text,
-          opus: _opusController.text.isEmpty ? null : _opusController.text,
-          musicalKey: _selectedMusicalKey,
-          source: value,
-          notes: _notesController.text,
-          tags: _tags,
-        );
+    _validateForm();
+  }
+
+  void _onDifficultyChanged(int? value) {
+    setState(() {
+      _selectedDifficulty = value;
+    });
+    _validateForm();
+  }
+
+  void _onInstrumentationChanged(String? value) {
+    setState(() {
+      _selectedInstrumentation = value;
+    });
+    _validateForm();
+  }
+
+  void _onEpochChanged(String? value) {
+    setState(() {
+      _selectedEpoch = value;
+    });
+    _validateForm();
   }
 
   void _onNotesChanged(String value) {
-    context.read<EditSheetCubit>().validate(
-          title: _titleController.text,
-          composer: _composerController.text,
-          opus: _opusController.text.isEmpty ? null : _opusController.text,
-          musicalKey: _selectedMusicalKey,
-          source: _selectedSource,
-          notes: value,
-          tags: _tags,
-        );
+    _validateForm();
   }
 
   void _addTag(String tag) {
@@ -147,15 +140,7 @@ class _EditSheetPageState extends State<EditSheetPage> {
       setState(() {
         _tags.add(tag);
       });
-      context.read<EditSheetCubit>().validate(
-            title: _titleController.text,
-            composer: _composerController.text,
-            opus: _opusController.text.isEmpty ? null : _opusController.text,
-            musicalKey: _selectedMusicalKey,
-            source: _selectedSource,
-            notes: _notesController.text,
-            tags: _tags,
-          );
+      _validateForm();
     }
   }
 
@@ -163,15 +148,7 @@ class _EditSheetPageState extends State<EditSheetPage> {
     setState(() {
       _tags.remove(tag);
     });
-    context.read<EditSheetCubit>().validate(
-          title: _titleController.text,
-          composer: _composerController.text,
-          opus: _opusController.text.isEmpty ? null : _opusController.text,
-          musicalKey: _selectedMusicalKey,
-          source: _selectedSource,
-          notes: _notesController.text,
-          tags: _tags,
-        );
+    _validateForm();
   }
 
   void _submitForm(int id, DateTime createdAt) {
@@ -182,6 +159,9 @@ class _EditSheetPageState extends State<EditSheetPage> {
           opus: _opusController.text.isEmpty ? null : _opusController.text,
           musicalKey: _selectedMusicalKey,
           source: _selectedSource,
+          difficulty: _selectedDifficulty,
+          instrumentation: _selectedInstrumentation,
+          epoch: _selectedEpoch,
           notes: _notesController.text,
           tags: _tags,
           createdAt: createdAt,
@@ -223,11 +203,17 @@ class _EditSheetPageState extends State<EditSheetPage> {
           tags: _tags,
           selectedMusicalKey: _selectedMusicalKey,
           selectedSource: _selectedSource,
+          selectedDifficulty: _selectedDifficulty,
+          selectedInstrumentation: _selectedInstrumentation,
+          selectedEpoch: _selectedEpoch,
           onTitleChanged: _onTitleChanged,
           onComposerChanged: _onComposerChanged,
           onOpusChanged: _onOpusChanged,
           onMusicalKeyChanged: _onMusicalKeyChanged,
           onSourceChanged: _onSourceChanged,
+          onDifficultyChanged: _onDifficultyChanged,
+          onInstrumentationChanged: _onInstrumentationChanged,
+          onEpochChanged: _onEpochChanged,
           onNotesChanged: _onNotesChanged,
           onAddTag: _addTag,
           onRemoveTag: _removeTag,
@@ -238,6 +224,15 @@ class _EditSheetPageState extends State<EditSheetPage> {
           },
           onSourceInitialized: (source) {
             _selectedSource = source;
+          },
+          onDifficultyInitialized: (difficulty) {
+            _selectedDifficulty = difficulty;
+          },
+          onInstrumentationInitialized: (instrumentation) {
+            _selectedInstrumentation = instrumentation;
+          },
+          onEpochInitialized: (epoch) {
+            _selectedEpoch = epoch;
           },
         ),
       ),
@@ -254,11 +249,17 @@ class _EditSheetForm extends StatefulWidget {
   final List<String> tags;
   final String? selectedMusicalKey;
   final String? selectedSource;
+  final int? selectedDifficulty;
+  final String? selectedInstrumentation;
+  final String? selectedEpoch;
   final ValueChanged<String> onTitleChanged;
   final ValueChanged<String> onComposerChanged;
   final ValueChanged<String> onOpusChanged;
   final ValueChanged<String?> onMusicalKeyChanged;
   final ValueChanged<String?> onSourceChanged;
+  final ValueChanged<int?> onDifficultyChanged;
+  final ValueChanged<String?> onInstrumentationChanged;
+  final ValueChanged<String?> onEpochChanged;
   final ValueChanged<String> onNotesChanged;
   final Function(String) onAddTag;
   final Function(String) onRemoveTag;
@@ -266,6 +267,9 @@ class _EditSheetForm extends StatefulWidget {
   final VoidCallback? onClose;
   final ValueChanged<String?> onMusicalKeyInitialized;
   final ValueChanged<String?> onSourceInitialized;
+  final ValueChanged<int?> onDifficultyInitialized;
+  final ValueChanged<String?> onInstrumentationInitialized;
+  final ValueChanged<String?> onEpochInitialized;
 
   const _EditSheetForm({
     required this.sheetMusicId,
@@ -276,17 +280,26 @@ class _EditSheetForm extends StatefulWidget {
     required this.tags,
     required this.selectedMusicalKey,
     required this.selectedSource,
+    required this.selectedDifficulty,
+    required this.selectedInstrumentation,
+    required this.selectedEpoch,
     required this.onTitleChanged,
     required this.onComposerChanged,
     required this.onOpusChanged,
     required this.onMusicalKeyChanged,
     required this.onSourceChanged,
+    required this.onDifficultyChanged,
+    required this.onInstrumentationChanged,
+    required this.onEpochChanged,
     required this.onNotesChanged,
     required this.onAddTag,
     required this.onRemoveTag,
     required this.onSubmit,
     required this.onMusicalKeyInitialized,
     required this.onSourceInitialized,
+    required this.onDifficultyInitialized,
+    required this.onInstrumentationInitialized,
+    required this.onEpochInitialized,
     this.onClose,
   });
 
@@ -375,6 +388,9 @@ class _EditSheetFormState extends State<_EditSheetForm> {
             widget.tags.addAll(loadedSheet.tags);
             widget.onMusicalKeyInitialized(loadedSheet.musicalKey);
             widget.onSourceInitialized(loadedSheet.source);
+            widget.onDifficultyInitialized(loadedSheet.difficulty);
+            widget.onInstrumentationInitialized(loadedSheet.instrumentation);
+            widget.onEpochInitialized(loadedSheet.epoch);
           }
 
           final isSubmitting = state is EditSheetSubmitting;
@@ -526,6 +542,33 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                       enabled: !isSubmitting,
                       errorText: errors['source'],
                       onChanged: widget.onSourceChanged,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Difficulty selector (optional)
+                    DifficultySelector(
+                      selectedValue: widget.selectedDifficulty,
+                      enabled: !isSubmitting,
+                      errorText: errors['difficulty'],
+                      onChanged: widget.onDifficultyChanged,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Instrumentation field (optional)
+                    InstrumentationField(
+                      selectedValue: widget.selectedInstrumentation,
+                      enabled: !isSubmitting,
+                      errorText: errors['instrumentation'],
+                      onChanged: widget.onInstrumentationChanged,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Epoch dropdown (optional)
+                    EpochDropdown(
+                      selectedValue: widget.selectedEpoch,
+                      enabled: !isSubmitting,
+                      errorText: errors['epoch'],
+                      onChanged: widget.onEpochChanged,
                     ),
                     const SizedBox(height: 16),
 

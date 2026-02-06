@@ -23,6 +23,15 @@ mixin _$SheetMusic {
   String? get musicalKey => throw _privateConstructorUsedError;
   String? get source => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
+
+  /// Difficulty level on a scale of 1-5 (from zerluth.de)
+  int? get difficulty => throw _privateConstructorUsedError;
+
+  /// Instrumentation, e.g., "Fl,Pno", "Zwei Flöten" (from zerluth.de)
+  String? get instrumentation => throw _privateConstructorUsedError;
+
+  /// Musical epoch/era, e.g., "Baroque", "Classical", "Romantic"
+  String? get epoch => throw _privateConstructorUsedError;
   List<String> get imageUrls => throw _privateConstructorUsedError;
   List<String> get tags => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
@@ -49,6 +58,9 @@ abstract class $SheetMusicCopyWith<$Res> {
       String? musicalKey,
       String? source,
       String? notes,
+      int? difficulty,
+      String? instrumentation,
+      String? epoch,
       List<String> imageUrls,
       List<String> tags,
       DateTime createdAt,
@@ -77,6 +89,9 @@ class _$SheetMusicCopyWithImpl<$Res, $Val extends SheetMusic>
     Object? musicalKey = freezed,
     Object? source = freezed,
     Object? notes = freezed,
+    Object? difficulty = freezed,
+    Object? instrumentation = freezed,
+    Object? epoch = freezed,
     Object? imageUrls = null,
     Object? tags = null,
     Object? createdAt = null,
@@ -110,6 +125,18 @@ class _$SheetMusicCopyWithImpl<$Res, $Val extends SheetMusic>
       notes: freezed == notes
           ? _value.notes
           : notes // ignore: cast_nullable_to_non_nullable
+              as String?,
+      difficulty: freezed == difficulty
+          ? _value.difficulty
+          : difficulty // ignore: cast_nullable_to_non_nullable
+              as int?,
+      instrumentation: freezed == instrumentation
+          ? _value.instrumentation
+          : instrumentation // ignore: cast_nullable_to_non_nullable
+              as String?,
+      epoch: freezed == epoch
+          ? _value.epoch
+          : epoch // ignore: cast_nullable_to_non_nullable
               as String?,
       imageUrls: null == imageUrls
           ? _value.imageUrls
@@ -147,6 +174,9 @@ abstract class _$$SheetMusicImplCopyWith<$Res>
       String? musicalKey,
       String? source,
       String? notes,
+      int? difficulty,
+      String? instrumentation,
+      String? epoch,
       List<String> imageUrls,
       List<String> tags,
       DateTime createdAt,
@@ -173,6 +203,9 @@ class __$$SheetMusicImplCopyWithImpl<$Res>
     Object? musicalKey = freezed,
     Object? source = freezed,
     Object? notes = freezed,
+    Object? difficulty = freezed,
+    Object? instrumentation = freezed,
+    Object? epoch = freezed,
     Object? imageUrls = null,
     Object? tags = null,
     Object? createdAt = null,
@@ -207,6 +240,18 @@ class __$$SheetMusicImplCopyWithImpl<$Res>
           ? _value.notes
           : notes // ignore: cast_nullable_to_non_nullable
               as String?,
+      difficulty: freezed == difficulty
+          ? _value.difficulty
+          : difficulty // ignore: cast_nullable_to_non_nullable
+              as int?,
+      instrumentation: freezed == instrumentation
+          ? _value.instrumentation
+          : instrumentation // ignore: cast_nullable_to_non_nullable
+              as String?,
+      epoch: freezed == epoch
+          ? _value.epoch
+          : epoch // ignore: cast_nullable_to_non_nullable
+              as String?,
       imageUrls: null == imageUrls
           ? _value._imageUrls
           : imageUrls // ignore: cast_nullable_to_non_nullable
@@ -238,6 +283,9 @@ class _$SheetMusicImpl implements _SheetMusic {
       this.musicalKey,
       this.source,
       this.notes,
+      this.difficulty,
+      this.instrumentation,
+      this.epoch,
       final List<String> imageUrls = const [],
       final List<String> tags = const [],
       required this.createdAt,
@@ -259,6 +307,18 @@ class _$SheetMusicImpl implements _SheetMusic {
   final String? source;
   @override
   final String? notes;
+
+  /// Difficulty level on a scale of 1-5 (from zerluth.de)
+  @override
+  final int? difficulty;
+
+  /// Instrumentation, e.g., "Fl,Pno", "Zwei Flöten" (from zerluth.de)
+  @override
+  final String? instrumentation;
+
+  /// Musical epoch/era, e.g., "Baroque", "Classical", "Romantic"
+  @override
+  final String? epoch;
   final List<String> _imageUrls;
   @override
   @JsonKey()
@@ -284,7 +344,7 @@ class _$SheetMusicImpl implements _SheetMusic {
 
   @override
   String toString() {
-    return 'SheetMusic(id: $id, title: $title, composer: $composer, opus: $opus, musicalKey: $musicalKey, source: $source, notes: $notes, imageUrls: $imageUrls, tags: $tags, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'SheetMusic(id: $id, title: $title, composer: $composer, opus: $opus, musicalKey: $musicalKey, source: $source, notes: $notes, difficulty: $difficulty, instrumentation: $instrumentation, epoch: $epoch, imageUrls: $imageUrls, tags: $tags, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -301,6 +361,11 @@ class _$SheetMusicImpl implements _SheetMusic {
                 other.musicalKey == musicalKey) &&
             (identical(other.source, source) || other.source == source) &&
             (identical(other.notes, notes) || other.notes == notes) &&
+            (identical(other.difficulty, difficulty) ||
+                other.difficulty == difficulty) &&
+            (identical(other.instrumentation, instrumentation) ||
+                other.instrumentation == instrumentation) &&
+            (identical(other.epoch, epoch) || other.epoch == epoch) &&
             const DeepCollectionEquality()
                 .equals(other._imageUrls, _imageUrls) &&
             const DeepCollectionEquality().equals(other._tags, _tags) &&
@@ -320,6 +385,9 @@ class _$SheetMusicImpl implements _SheetMusic {
       musicalKey,
       source,
       notes,
+      difficulty,
+      instrumentation,
+      epoch,
       const DeepCollectionEquality().hash(_imageUrls),
       const DeepCollectionEquality().hash(_tags),
       createdAt,
@@ -343,6 +411,9 @@ abstract class _SheetMusic implements SheetMusic {
       final String? musicalKey,
       final String? source,
       final String? notes,
+      final int? difficulty,
+      final String? instrumentation,
+      final String? epoch,
       final List<String> imageUrls,
       final List<String> tags,
       required final DateTime createdAt,
@@ -362,6 +433,18 @@ abstract class _SheetMusic implements SheetMusic {
   String? get source;
   @override
   String? get notes;
+
+  /// Difficulty level on a scale of 1-5 (from zerluth.de)
+  @override
+  int? get difficulty;
+
+  /// Instrumentation, e.g., "Fl,Pno", "Zwei Flöten" (from zerluth.de)
+  @override
+  String? get instrumentation;
+
+  /// Musical epoch/era, e.g., "Baroque", "Classical", "Romantic"
+  @override
+  String? get epoch;
   @override
   List<String> get imageUrls;
   @override

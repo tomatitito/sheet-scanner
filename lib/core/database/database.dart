@@ -16,6 +16,12 @@ class SheetMusicTable extends Table {
   TextColumn get musicalKey => text().nullable()();
   TextColumn get source => text().nullable()();
   TextColumn get notes => text().nullable()();
+  /// Difficulty level on a scale of 1-5 (from zerluth.de)
+  IntColumn get difficulty => integer().nullable()();
+  /// Instrumentation, e.g., "Fl,Pno", "Zwei Flöten" (from zerluth.de)
+  TextColumn get instrumentation => text().nullable()();
+  /// Musical epoch/era, e.g., "Baroque", "Classical", "Romantic"
+  TextColumn get epoch => text().nullable()();
   TextColumn get imageUrls => text().withDefault(const Constant('[]'))();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
@@ -68,7 +74,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -276,6 +282,18 @@ class AppDatabase extends _$AppDatabase {
               'ALTER TABLE sheet_music_table ADD COLUMN source TEXT',
             );
           }
+          if (from < 7) {
+            // Migration from v6 to v7: Add difficulty, instrumentation, epoch columns
+            await customStatement(
+              'ALTER TABLE sheet_music_table ADD COLUMN difficulty INTEGER',
+            );
+            await customStatement(
+              'ALTER TABLE sheet_music_table ADD COLUMN instrumentation TEXT',
+            );
+            await customStatement(
+              'ALTER TABLE sheet_music_table ADD COLUMN epoch TEXT',
+            );
+          }
         },
       );
 
@@ -286,7 +304,7 @@ class AppDatabase extends _$AppDatabase {
     }
     final escapedQuery = query.replaceAll('"', '""');
     final results = await customSelect(
-      'SELECT sm.id, sm.title, sm.composer, sm.opus, sm.musical_key, sm.source, sm.notes, sm.image_urls, sm.created_at, sm.updated_at '
+      'SELECT sm.id, sm.title, sm.composer, sm.opus, sm.musical_key, sm.source, sm.notes, sm.difficulty, sm.instrumentation, sm.epoch, sm.image_urls, sm.created_at, sm.updated_at '
       'FROM sheet_music sm '
       'WHERE sm.id IN ('
       '  SELECT id FROM sheet_music_fts WHERE sheet_music_fts MATCH ?'
@@ -304,6 +322,9 @@ class AppDatabase extends _$AppDatabase {
         musicalKey: row.read<String?>('musical_key'),
         source: row.read<String?>('source'),
         notes: row.read<String?>('notes'),
+        difficulty: row.read<int?>('difficulty'),
+        instrumentation: row.read<String?>('instrumentation'),
+        epoch: row.read<String?>('epoch'),
         imageUrls: row.read<String>('image_urls'),
         createdAt: row.read<DateTime>('created_at'),
         updatedAt: row.read<DateTime>('updated_at'),

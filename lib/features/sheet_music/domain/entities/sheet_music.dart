@@ -12,6 +12,12 @@ class SheetMusic with _$SheetMusic {
     String? musicalKey,
     String? source,
     String? notes,
+    /// Difficulty level on a scale of 1-5 (from zerluth.de)
+    int? difficulty,
+    /// Instrumentation, e.g., "Fl,Pno", "Zwei Flöten" (from zerluth.de)
+    String? instrumentation,
+    /// Musical epoch/era, e.g., "Baroque", "Classical", "Romantic"
+    String? epoch,
     @Default([]) List<String> imageUrls,
     @Default([]) List<String> tags,
     required DateTime createdAt,

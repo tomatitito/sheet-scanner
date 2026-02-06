@@ -50,6 +50,23 @@ class $SheetMusicTableTable extends SheetMusicTable
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
       'notes', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _difficultyMeta =
+      const VerificationMeta('difficulty');
+  @override
+  late final GeneratedColumn<int> difficulty = GeneratedColumn<int>(
+      'difficulty', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _instrumentationMeta =
+      const VerificationMeta('instrumentation');
+  @override
+  late final GeneratedColumn<String> instrumentation = GeneratedColumn<String>(
+      'instrumentation', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _epochMeta = const VerificationMeta('epoch');
+  @override
+  late final GeneratedColumn<String> epoch = GeneratedColumn<String>(
+      'epoch', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _imageUrlsMeta =
       const VerificationMeta('imageUrls');
   @override
@@ -79,6 +96,9 @@ class $SheetMusicTableTable extends SheetMusicTable
         musicalKey,
         source,
         notes,
+        difficulty,
+        instrumentation,
+        epoch,
         imageUrls,
         createdAt,
         updatedAt
@@ -126,6 +146,22 @@ class $SheetMusicTableTable extends SheetMusicTable
       context.handle(
           _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
     }
+    if (data.containsKey('difficulty')) {
+      context.handle(
+          _difficultyMeta,
+          difficulty.isAcceptableOrUnknown(
+              data['difficulty']!, _difficultyMeta));
+    }
+    if (data.containsKey('instrumentation')) {
+      context.handle(
+          _instrumentationMeta,
+          instrumentation.isAcceptableOrUnknown(
+              data['instrumentation']!, _instrumentationMeta));
+    }
+    if (data.containsKey('epoch')) {
+      context.handle(
+          _epochMeta, epoch.isAcceptableOrUnknown(data['epoch']!, _epochMeta));
+    }
     if (data.containsKey('image_urls')) {
       context.handle(_imageUrlsMeta,
           imageUrls.isAcceptableOrUnknown(data['image_urls']!, _imageUrlsMeta));
@@ -165,6 +201,12 @@ class $SheetMusicTableTable extends SheetMusicTable
           .read(DriftSqlType.string, data['${effectivePrefix}source']),
       notes: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}notes']),
+      difficulty: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}difficulty']),
+      instrumentation: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}instrumentation']),
+      epoch: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}epoch']),
       imageUrls: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}image_urls'])!,
       createdAt: attachedDatabase.typeMapping
@@ -188,6 +230,15 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
   final String? musicalKey;
   final String? source;
   final String? notes;
+
+  /// Difficulty level on a scale of 1-5 (from zerluth.de)
+  final int? difficulty;
+
+  /// Instrumentation, e.g., "Fl,Pno", "Zwei Flöten" (from zerluth.de)
+  final String? instrumentation;
+
+  /// Musical epoch/era, e.g., "Baroque", "Classical", "Romantic"
+  final String? epoch;
   final String imageUrls;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -199,6 +250,9 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
       this.musicalKey,
       this.source,
       this.notes,
+      this.difficulty,
+      this.instrumentation,
+      this.epoch,
       required this.imageUrls,
       required this.createdAt,
       required this.updatedAt});
@@ -220,6 +274,15 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
+    if (!nullToAbsent || difficulty != null) {
+      map['difficulty'] = Variable<int>(difficulty);
+    }
+    if (!nullToAbsent || instrumentation != null) {
+      map['instrumentation'] = Variable<String>(instrumentation);
+    }
+    if (!nullToAbsent || epoch != null) {
+      map['epoch'] = Variable<String>(epoch);
+    }
     map['image_urls'] = Variable<String>(imageUrls);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
@@ -239,6 +302,14 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
           source == null && nullToAbsent ? const Value.absent() : Value(source),
       notes:
           notes == null && nullToAbsent ? const Value.absent() : Value(notes),
+      difficulty: difficulty == null && nullToAbsent
+          ? const Value.absent()
+          : Value(difficulty),
+      instrumentation: instrumentation == null && nullToAbsent
+          ? const Value.absent()
+          : Value(instrumentation),
+      epoch:
+          epoch == null && nullToAbsent ? const Value.absent() : Value(epoch),
       imageUrls: Value(imageUrls),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
@@ -256,6 +327,9 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
       musicalKey: serializer.fromJson<String?>(json['musicalKey']),
       source: serializer.fromJson<String?>(json['source']),
       notes: serializer.fromJson<String?>(json['notes']),
+      difficulty: serializer.fromJson<int?>(json['difficulty']),
+      instrumentation: serializer.fromJson<String?>(json['instrumentation']),
+      epoch: serializer.fromJson<String?>(json['epoch']),
       imageUrls: serializer.fromJson<String>(json['imageUrls']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
@@ -272,6 +346,9 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
       'musicalKey': serializer.toJson<String?>(musicalKey),
       'source': serializer.toJson<String?>(source),
       'notes': serializer.toJson<String?>(notes),
+      'difficulty': serializer.toJson<int?>(difficulty),
+      'instrumentation': serializer.toJson<String?>(instrumentation),
+      'epoch': serializer.toJson<String?>(epoch),
       'imageUrls': serializer.toJson<String>(imageUrls),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
@@ -286,6 +363,9 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
           Value<String?> musicalKey = const Value.absent(),
           Value<String?> source = const Value.absent(),
           Value<String?> notes = const Value.absent(),
+          Value<int?> difficulty = const Value.absent(),
+          Value<String?> instrumentation = const Value.absent(),
+          Value<String?> epoch = const Value.absent(),
           String? imageUrls,
           DateTime? createdAt,
           DateTime? updatedAt}) =>
@@ -297,6 +377,11 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
         musicalKey: musicalKey.present ? musicalKey.value : this.musicalKey,
         source: source.present ? source.value : this.source,
         notes: notes.present ? notes.value : this.notes,
+        difficulty: difficulty.present ? difficulty.value : this.difficulty,
+        instrumentation: instrumentation.present
+            ? instrumentation.value
+            : this.instrumentation,
+        epoch: epoch.present ? epoch.value : this.epoch,
         imageUrls: imageUrls ?? this.imageUrls,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
@@ -311,6 +396,12 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
           data.musicalKey.present ? data.musicalKey.value : this.musicalKey,
       source: data.source.present ? data.source.value : this.source,
       notes: data.notes.present ? data.notes.value : this.notes,
+      difficulty:
+          data.difficulty.present ? data.difficulty.value : this.difficulty,
+      instrumentation: data.instrumentation.present
+          ? data.instrumentation.value
+          : this.instrumentation,
+      epoch: data.epoch.present ? data.epoch.value : this.epoch,
       imageUrls: data.imageUrls.present ? data.imageUrls.value : this.imageUrls,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
@@ -327,6 +418,9 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
           ..write('musicalKey: $musicalKey, ')
           ..write('source: $source, ')
           ..write('notes: $notes, ')
+          ..write('difficulty: $difficulty, ')
+          ..write('instrumentation: $instrumentation, ')
+          ..write('epoch: $epoch, ')
           ..write('imageUrls: $imageUrls, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -335,8 +429,20 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
   }
 
   @override
-  int get hashCode => Object.hash(id, title, composer, opus, musicalKey, source,
-      notes, imageUrls, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+      id,
+      title,
+      composer,
+      opus,
+      musicalKey,
+      source,
+      notes,
+      difficulty,
+      instrumentation,
+      epoch,
+      imageUrls,
+      createdAt,
+      updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -348,6 +454,9 @@ class SheetMusicModel extends DataClass implements Insertable<SheetMusicModel> {
           other.musicalKey == this.musicalKey &&
           other.source == this.source &&
           other.notes == this.notes &&
+          other.difficulty == this.difficulty &&
+          other.instrumentation == this.instrumentation &&
+          other.epoch == this.epoch &&
           other.imageUrls == this.imageUrls &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
@@ -361,6 +470,9 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
   final Value<String?> musicalKey;
   final Value<String?> source;
   final Value<String?> notes;
+  final Value<int?> difficulty;
+  final Value<String?> instrumentation;
+  final Value<String?> epoch;
   final Value<String> imageUrls;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
@@ -372,6 +484,9 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
     this.musicalKey = const Value.absent(),
     this.source = const Value.absent(),
     this.notes = const Value.absent(),
+    this.difficulty = const Value.absent(),
+    this.instrumentation = const Value.absent(),
+    this.epoch = const Value.absent(),
     this.imageUrls = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -384,6 +499,9 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
     this.musicalKey = const Value.absent(),
     this.source = const Value.absent(),
     this.notes = const Value.absent(),
+    this.difficulty = const Value.absent(),
+    this.instrumentation = const Value.absent(),
+    this.epoch = const Value.absent(),
     this.imageUrls = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
@@ -399,6 +517,9 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
     Expression<String>? musicalKey,
     Expression<String>? source,
     Expression<String>? notes,
+    Expression<int>? difficulty,
+    Expression<String>? instrumentation,
+    Expression<String>? epoch,
     Expression<String>? imageUrls,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
@@ -411,6 +532,9 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
       if (musicalKey != null) 'musical_key': musicalKey,
       if (source != null) 'source': source,
       if (notes != null) 'notes': notes,
+      if (difficulty != null) 'difficulty': difficulty,
+      if (instrumentation != null) 'instrumentation': instrumentation,
+      if (epoch != null) 'epoch': epoch,
       if (imageUrls != null) 'image_urls': imageUrls,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -425,6 +549,9 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
       Value<String?>? musicalKey,
       Value<String?>? source,
       Value<String?>? notes,
+      Value<int?>? difficulty,
+      Value<String?>? instrumentation,
+      Value<String?>? epoch,
       Value<String>? imageUrls,
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt}) {
@@ -436,6 +563,9 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
       musicalKey: musicalKey ?? this.musicalKey,
       source: source ?? this.source,
       notes: notes ?? this.notes,
+      difficulty: difficulty ?? this.difficulty,
+      instrumentation: instrumentation ?? this.instrumentation,
+      epoch: epoch ?? this.epoch,
       imageUrls: imageUrls ?? this.imageUrls,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -466,6 +596,15 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
+    if (difficulty.present) {
+      map['difficulty'] = Variable<int>(difficulty.value);
+    }
+    if (instrumentation.present) {
+      map['instrumentation'] = Variable<String>(instrumentation.value);
+    }
+    if (epoch.present) {
+      map['epoch'] = Variable<String>(epoch.value);
+    }
     if (imageUrls.present) {
       map['image_urls'] = Variable<String>(imageUrls.value);
     }
@@ -488,6 +627,9 @@ class SheetMusicTableCompanion extends UpdateCompanion<SheetMusicModel> {
           ..write('musicalKey: $musicalKey, ')
           ..write('source: $source, ')
           ..write('notes: $notes, ')
+          ..write('difficulty: $difficulty, ')
+          ..write('instrumentation: $instrumentation, ')
+          ..write('epoch: $epoch, ')
           ..write('imageUrls: $imageUrls, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -901,6 +1043,9 @@ typedef $$SheetMusicTableTableCreateCompanionBuilder = SheetMusicTableCompanion
   Value<String?> musicalKey,
   Value<String?> source,
   Value<String?> notes,
+  Value<int?> difficulty,
+  Value<String?> instrumentation,
+  Value<String?> epoch,
   Value<String> imageUrls,
   required DateTime createdAt,
   required DateTime updatedAt,
@@ -914,6 +1059,9 @@ typedef $$SheetMusicTableTableUpdateCompanionBuilder = SheetMusicTableCompanion
   Value<String?> musicalKey,
   Value<String?> source,
   Value<String?> notes,
+  Value<int?> difficulty,
+  Value<String?> instrumentation,
+  Value<String?> epoch,
   Value<String> imageUrls,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
@@ -948,6 +1096,16 @@ class $$SheetMusicTableTableFilterComposer
 
   ColumnFilters<String> get notes => $composableBuilder(
       column: $table.notes, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get difficulty => $composableBuilder(
+      column: $table.difficulty, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get instrumentation => $composableBuilder(
+      column: $table.instrumentation,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get epoch => $composableBuilder(
+      column: $table.epoch, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get imageUrls => $composableBuilder(
       column: $table.imageUrls, builder: (column) => ColumnFilters(column));
@@ -989,6 +1147,16 @@ class $$SheetMusicTableTableOrderingComposer
   ColumnOrderings<String> get notes => $composableBuilder(
       column: $table.notes, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get difficulty => $composableBuilder(
+      column: $table.difficulty, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get instrumentation => $composableBuilder(
+      column: $table.instrumentation,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get epoch => $composableBuilder(
+      column: $table.epoch, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get imageUrls => $composableBuilder(
       column: $table.imageUrls, builder: (column) => ColumnOrderings(column));
 
@@ -1028,6 +1196,15 @@ class $$SheetMusicTableTableAnnotationComposer
 
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<int> get difficulty => $composableBuilder(
+      column: $table.difficulty, builder: (column) => column);
+
+  GeneratedColumn<String> get instrumentation => $composableBuilder(
+      column: $table.instrumentation, builder: (column) => column);
+
+  GeneratedColumn<String> get epoch =>
+      $composableBuilder(column: $table.epoch, builder: (column) => column);
 
   GeneratedColumn<String> get imageUrls =>
       $composableBuilder(column: $table.imageUrls, builder: (column) => column);
@@ -1073,6 +1250,9 @@ class $$SheetMusicTableTableTableManager extends RootTableManager<
             Value<String?> musicalKey = const Value.absent(),
             Value<String?> source = const Value.absent(),
             Value<String?> notes = const Value.absent(),
+            Value<int?> difficulty = const Value.absent(),
+            Value<String?> instrumentation = const Value.absent(),
+            Value<String?> epoch = const Value.absent(),
             Value<String> imageUrls = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
@@ -1085,6 +1265,9 @@ class $$SheetMusicTableTableTableManager extends RootTableManager<
             musicalKey: musicalKey,
             source: source,
             notes: notes,
+            difficulty: difficulty,
+            instrumentation: instrumentation,
+            epoch: epoch,
             imageUrls: imageUrls,
             createdAt: createdAt,
             updatedAt: updatedAt,
@@ -1097,6 +1280,9 @@ class $$SheetMusicTableTableTableManager extends RootTableManager<
             Value<String?> musicalKey = const Value.absent(),
             Value<String?> source = const Value.absent(),
             Value<String?> notes = const Value.absent(),
+            Value<int?> difficulty = const Value.absent(),
+            Value<String?> instrumentation = const Value.absent(),
+            Value<String?> epoch = const Value.absent(),
             Value<String> imageUrls = const Value.absent(),
             required DateTime createdAt,
             required DateTime updatedAt,
@@ -1109,6 +1295,9 @@ class $$SheetMusicTableTableTableManager extends RootTableManager<
             musicalKey: musicalKey,
             source: source,
             notes: notes,
+            difficulty: difficulty,
+            instrumentation: instrumentation,
+            epoch: epoch,
             imageUrls: imageUrls,
             createdAt: createdAt,
             updatedAt: updatedAt,

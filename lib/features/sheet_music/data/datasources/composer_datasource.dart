@@ -15,6 +15,11 @@ class ComposerDataSourceImpl implements ComposerDataSource {
     'lib/data/sources/flute_repertoire.json',
   ];
 
+  // Flat data files (crawled data with composer/title pairs)
+  static const List<String> _flatSourceFiles = [
+    'lib/data/sources/zerluth_flute.json',
+  ];
+
   List<KnownComposer>? _cachedComposers;
 
   @override
@@ -25,6 +30,7 @@ class ComposerDataSourceImpl implements ComposerDataSource {
 
     final composerMap = <String, KnownComposer>{};
 
+    // Load grouped data files (composers with works)
     for (final assetPath in _sourceFiles) {
       try {
         final jsonString = await rootBundle.loadString(assetPath);
@@ -52,11 +58,62 @@ class ComposerDataSourceImpl implements ComposerDataSource {
       }
     }
 
+    // Load flat data files (crawled items with composer field)
+    for (final assetPath in _flatSourceFiles) {
+      try {
+        final jsonString = await rootBundle.loadString(assetPath);
+        final dynamic data = json.decode(jsonString);
+
+        // Handle flat list format
+        if (data is List) {
+          for (final item in data) {
+            final composerRaw = item['composer'] as String?;
+            if (composerRaw == null || composerRaw.isEmpty) continue;
+
+            // Clean the composer name
+            final cleanName = _cleanComposerName(composerRaw);
+            final key = cleanName.toLowerCase();
+
+            if (!composerMap.containsKey(key)) {
+              composerMap[key] = KnownComposer(
+                name: _extractShortName(cleanName),
+                completeName: cleanName,
+                epoch: 'Unknown',
+                birth: null,
+                death: null,
+                isPopular: false,
+                isRecommended: false,
+              );
+            }
+          }
+        }
+      } catch (e) {
+        // Skip missing or malformed source files
+      }
+    }
+
     _cachedComposers = composerMap.values.toList()
       ..sort((a, b) =>
           a.completeName.toLowerCase().compareTo(b.completeName.toLowerCase()));
 
     return _cachedComposers!;
+  }
+
+  /// Clean composer name by removing common suffixes
+  String _cleanComposerName(String raw) {
+    var name = raw.replaceAll(RegExp(r'\s*\(Arr[^\)]*\)', caseSensitive: false), '');
+    name = name.replaceAll(RegExp(r'\s*\(Hrsg[^\)]*\)', caseSensitive: false), '');
+    name = name.replaceAll(RegExp(r'\s*/\s*.*$'), '');
+    return name.trim().replaceAll(RegExp(r'\s+'), ' ');
+  }
+
+  /// Extract short name from complete name
+  String _extractShortName(String completeName) {
+    final parts = completeName.split(',');
+    if (parts.isNotEmpty) {
+      return parts.first.trim();
+    }
+    return completeName.split(' ').last;
   }
 
   @override

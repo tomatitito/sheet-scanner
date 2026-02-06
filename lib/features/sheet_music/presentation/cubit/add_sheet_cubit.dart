@@ -19,6 +19,9 @@ class AddSheetCubit extends Cubit<AddSheetState> {
     String? musicalKey,
     String? source,
     String? notes,
+    int? difficulty,
+    String? instrumentation,
+    String? epoch,
     List<String> tags = const [],
   }) {
     final errors = <String, String>{};
@@ -55,6 +58,18 @@ class AddSheetCubit extends Cubit<AddSheetState> {
       errors['notes'] = 'Notes must not exceed 1000 characters';
     }
 
+    if (difficulty != null && (difficulty < 1 || difficulty > 5)) {
+      errors['difficulty'] = 'Difficulty must be between 1 and 5';
+    }
+
+    if (instrumentation != null && instrumentation.length > 100) {
+      errors['instrumentation'] = 'Instrumentation must not exceed 100 characters';
+    }
+
+    if (epoch != null && epoch.length > 50) {
+      errors['epoch'] = 'Epoch must not exceed 50 characters';
+    }
+
     return errors;
   }
 
@@ -66,6 +81,9 @@ class AddSheetCubit extends Cubit<AddSheetState> {
     String? musicalKey,
     String? source,
     String? notes,
+    int? difficulty,
+    String? instrumentation,
+    String? epoch,
     List<String> tags = const [],
   }) {
     emit(const AddSheetValidating());
@@ -77,6 +95,9 @@ class AddSheetCubit extends Cubit<AddSheetState> {
       musicalKey: musicalKey,
       source: source,
       notes: notes,
+      difficulty: difficulty,
+      instrumentation: instrumentation,
+      epoch: epoch,
       tags: tags,
     );
 
@@ -95,6 +116,9 @@ class AddSheetCubit extends Cubit<AddSheetState> {
     String? musicalKey,
     String? source,
     String? notes,
+    int? difficulty,
+    String? instrumentation,
+    String? epoch,
     List<String> tags = const [],
     List<String> imageUrls = const [],
   }) async {
@@ -106,6 +130,9 @@ class AddSheetCubit extends Cubit<AddSheetState> {
       musicalKey: musicalKey,
       source: source,
       notes: notes,
+      difficulty: difficulty,
+      instrumentation: instrumentation,
+      epoch: epoch,
       tags: tags,
     );
 
@@ -124,6 +151,9 @@ class AddSheetCubit extends Cubit<AddSheetState> {
       musicalKey: musicalKey,
       source: source,
       notes: notes,
+      difficulty: difficulty,
+      instrumentation: instrumentation,
+      epoch: epoch,
       tags: tags,
       imageUrls: imageUrls,
       createdAt: DateTime.now(),

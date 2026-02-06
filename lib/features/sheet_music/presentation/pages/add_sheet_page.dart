@@ -14,6 +14,9 @@ import 'package:sheet_scanner/features/sheet_music/presentation/widgets/title_au
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/voice_input_button.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/musical_key_dropdown.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/widgets/source_dropdown.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/difficulty_selector.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/instrumentation_field.dart';
+import 'package:sheet_scanner/features/sheet_music/presentation/widgets/epoch_dropdown.dart';
 
 /// Page for adding a new sheet music entry to the library
 class AddSheetPage extends StatefulWidget {
@@ -37,6 +40,9 @@ class _AddSheetPageState extends State<AddSheetPage> {
   late final TextEditingController _notesController;
   String? _musicalKey;
   String? _source;
+  int? _difficulty;
+  String? _instrumentation;
+  String? _epoch;
   final List<String> _tags = [];
   final List<String> _selectedFiles = [];
   late final FilePickerService _filePickerService;
@@ -95,6 +101,12 @@ class _AddSheetPageState extends State<AddSheetPage> {
           onMusicalKeyChanged: (value) => setState(() => _musicalKey = value),
           source: _source,
           onSourceChanged: (value) => setState(() => _source = value),
+          difficulty: _difficulty,
+          onDifficultyChanged: (value) => setState(() => _difficulty = value),
+          instrumentation: _instrumentation,
+          onInstrumentationChanged: (value) => setState(() => _instrumentation = value),
+          epoch: _epoch,
+          onEpochChanged: (value) => setState(() => _epoch = value),
           tags: _tags,
           selectedFiles: _selectedFiles,
           filePickerService: _filePickerService,
@@ -114,6 +126,12 @@ class _AddSheetForm extends StatefulWidget {
   final ValueChanged<String?> onMusicalKeyChanged;
   final String? source;
   final ValueChanged<String?> onSourceChanged;
+  final int? difficulty;
+  final ValueChanged<int?> onDifficultyChanged;
+  final String? instrumentation;
+  final ValueChanged<String?> onInstrumentationChanged;
+  final String? epoch;
+  final ValueChanged<String?> onEpochChanged;
   final List<String> tags;
   final List<String> selectedFiles;
   final FilePickerService filePickerService;
@@ -128,6 +146,12 @@ class _AddSheetForm extends StatefulWidget {
     required this.onMusicalKeyChanged,
     this.source,
     required this.onSourceChanged,
+    this.difficulty,
+    required this.onDifficultyChanged,
+    this.instrumentation,
+    required this.onInstrumentationChanged,
+    this.epoch,
+    required this.onEpochChanged,
     required this.tags,
     required this.selectedFiles,
     required this.filePickerService,
@@ -143,6 +167,9 @@ class _AddSheetFormState extends State<_AddSheetForm> {
   String _newTag = '';
   String? _selectedMusicalKey;
   String? _selectedSource;
+  int? _selectedDifficulty;
+  String? _selectedInstrumentation;
+  String? _selectedEpoch;
 
   /// Track if user has manually edited the opus field.
   /// Once edited, we don't auto-populate anymore to respect user's input.
@@ -156,6 +183,9 @@ class _AddSheetFormState extends State<_AddSheetForm> {
       opus: widget.opusController.text.isEmpty ? null : widget.opusController.text,
       musicalKey: _selectedMusicalKey,
       source: _selectedSource,
+      difficulty: _selectedDifficulty,
+      instrumentation: _selectedInstrumentation,
+      epoch: _selectedEpoch,
       notes: widget.notesController.text,
       tags: widget.tags,
     );
@@ -260,6 +290,9 @@ class _AddSheetFormState extends State<_AddSheetForm> {
           opus: widget.opusController.text.isEmpty ? null : widget.opusController.text,
           musicalKey: _selectedMusicalKey,
           source: _selectedSource,
+          difficulty: _selectedDifficulty,
+          instrumentation: _selectedInstrumentation,
+          epoch: _selectedEpoch,
           notes: widget.notesController.text,
           tags: widget.tags,
         );
@@ -425,6 +458,51 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                         _selectedSource = value;
                       });
                       widget.onSourceChanged(value);
+                      _validateForm();
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Difficulty selector (optional)
+                  DifficultySelector(
+                    selectedValue: _selectedDifficulty,
+                    enabled: !isSubmitting,
+                    errorText: errors['difficulty'],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedDifficulty = value;
+                      });
+                      widget.onDifficultyChanged(value);
+                      _validateForm();
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Instrumentation field (optional)
+                  InstrumentationField(
+                    selectedValue: _selectedInstrumentation,
+                    enabled: !isSubmitting,
+                    errorText: errors['instrumentation'],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedInstrumentation = value;
+                      });
+                      widget.onInstrumentationChanged(value);
+                      _validateForm();
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Epoch dropdown (optional)
+                  EpochDropdown(
+                    selectedValue: _selectedEpoch,
+                    enabled: !isSubmitting,
+                    errorText: errors['epoch'],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedEpoch = value;
+                      });
+                      widget.onEpochChanged(value);
                       _validateForm();
                     },
                   ),
