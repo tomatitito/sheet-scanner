@@ -351,6 +351,18 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                           enabled: !isSubmitting,
                           errorText: errors['title'],
                           onChanged: (_) => _validateForm(),
+                          onWorkSelected: (title, difficulty, instrumentation) {
+                            // Auto-fill difficulty and instrumentation from Zerluth data
+                            if (difficulty != null && _selectedDifficulty == null) {
+                              setState(() => _selectedDifficulty = difficulty);
+                              widget.onDifficultyChanged(difficulty);
+                            }
+                            if (instrumentation != null && _selectedInstrumentation == null) {
+                              setState(() => _selectedInstrumentation = instrumentation);
+                              widget.onInstrumentationChanged(instrumentation);
+                            }
+                            _validateForm();
+                          },
                         ),
                       ),
                       const SizedBox(width: 12),

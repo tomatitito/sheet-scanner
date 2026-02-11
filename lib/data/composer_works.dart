@@ -1,15 +1,54 @@
 /// Provides well-known works (pieces) for each composer for autocomplete suggestions.
-/// Data sourced from OpenOpus - only popular and recommended works included.
+/// Data sourced from OpenOpus and Zerluth (for flute repertoire).
 library;
 
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
+import 'composers.dart';
+
+/// Extended work info for autocomplete, combining title with metadata.
+class WorkInfo {
+  final String title;
+  final int? difficulty;
+  final String? instrumentation;
+  final String? genre;
+
+  const WorkInfo({
+    required this.title,
+    this.difficulty,
+    this.instrumentation,
+    this.genre,
+  });
+
+  /// Creates from a WorkData instance.
+  factory WorkInfo.fromWorkData(WorkData data) {
+    return WorkInfo(
+      title: data.title,
+      difficulty: data.difficulty,
+      instrumentation: data.instrumentation,
+      genre: data.genre,
+    );
+  }
+
+  /// Creates with just a title (legacy data).
+  factory WorkInfo.titleOnly(String title) {
+    return WorkInfo(title: title);
+  }
+
+  /// Display string showing difficulty indicator.
+  String get difficultyDisplay {
+    if (difficulty == null) return '';
+    return '★' * difficulty! + '☆' * (5 - difficulty!);
+  }
+}
+
 /// Singleton cache for composer works data.
 class ComposerWorksData {
   static ComposerWorksData? _instance;
-  static Map<String, List<String>>? _worksCache;
+  static Map<String, List<WorkInfo>>? _worksCache;
+  static bool _legacyLoaded = false;
 
   ComposerWorksData._();
 
@@ -19,27 +58,74 @@ class ComposerWorksData {
   /// Whether the data has been loaded.
   bool get isLoaded => _worksCache != null;
 
-  /// Loads the composer works from the bundled JSON asset.
-  /// Call this during app initialization or lazily before first use.
+  /// Loads the composer works from bundled assets.
+  /// Prioritizes Zerluth data (with metadata), falls back to legacy JSON.
   Future<void> load() async {
     if (_worksCache != null) return;
 
-    final jsonString =
-        await rootBundle.loadString('lib/data/composer_works.json');
-    final List<dynamic> data = json.decode(jsonString) as List<dynamic>;
-
     _worksCache = {};
-    for (final item in data) {
-      final composerName = item['composer'] as String;
-      final works = (item['works'] as List<dynamic>).cast<String>();
-      _worksCache![composerName] = works;
+
+    // First, ensure ComposerLoader is initialized (has Zerluth data)
+    await ComposerLoader.initialize();
+
+    // Load works from ComposerLoader (includes Zerluth data with metadata)
+    for (final composer in ComposerLoader.composers) {
+      if (composer.works.isEmpty) continue;
+
+      final key = composer.name.toLowerCase();
+      final workInfos =
+          composer.works.map((w) => WorkInfo.fromWorkData(w)).toList();
+
+      if (_worksCache!.containsKey(key)) {
+        _worksCache![key]!.addAll(workInfos);
+      } else {
+        _worksCache![key] = workInfos;
+      }
+    }
+
+    // Load legacy composer_works.json for additional titles
+    if (!_legacyLoaded) {
+      try {
+        final jsonString =
+            await rootBundle.loadString('lib/data/composer_works.json');
+        final List<dynamic> data = json.decode(jsonString) as List<dynamic>;
+
+        for (final item in data) {
+          final composerName = (item['composer'] as String).toLowerCase();
+          final works = (item['works'] as List<dynamic>)
+              .cast<String>()
+              .map((title) => WorkInfo.titleOnly(title))
+              .toList();
+
+          if (_worksCache!.containsKey(composerName)) {
+            // Add only titles not already present
+            final existingTitles =
+                _worksCache![composerName]!.map((w) => w.title.toLowerCase()).toSet();
+            for (final work in works) {
+              if (!existingTitles.contains(work.title.toLowerCase())) {
+                _worksCache![composerName]!.add(work);
+              }
+            }
+          } else {
+            _worksCache![composerName] = works;
+          }
+        }
+        _legacyLoaded = true;
+      } catch (e) {
+        // Legacy data is optional
+      }
     }
   }
 
   /// Gets works for a specific composer (exact match).
+  List<WorkInfo> getWorksInfoForComposer(String composerName) {
+    return _worksCache?[composerName.toLowerCase()] ?? const [];
+  }
+
+  /// Gets work titles for a specific composer (exact match).
   /// Returns empty list if composer not found or data not loaded.
   List<String> getWorksForComposer(String composerName) {
-    return _worksCache?[composerName] ?? const [];
+    return getWorksInfoForComposer(composerName).map((w) => w.title).toList();
   }
 
   /// Gets works for a composer (case-insensitive partial match).
@@ -48,18 +134,53 @@ class ComposerWorksData {
     if (_worksCache == null) return const [];
 
     final lowerQuery = composerName.toLowerCase();
-    for (final entry in _worksCache!.entries) {
-      if (entry.key.toLowerCase() == lowerQuery) {
-        return entry.value;
-      }
+    // Exact match first
+    if (_worksCache!.containsKey(lowerQuery)) {
+      return _worksCache![lowerQuery]!.map((w) => w.title).toList();
     }
     // Fallback to partial match
     for (final entry in _worksCache!.entries) {
-      if (entry.key.toLowerCase().contains(lowerQuery)) {
+      if (entry.key.contains(lowerQuery) || lowerQuery.contains(entry.key)) {
+        return entry.value.map((w) => w.title).toList();
+      }
+    }
+    return const [];
+  }
+
+  /// Gets works with full metadata for a composer (fuzzy match).
+  List<WorkInfo> getWorksInfoFuzzy(String composerName) {
+    if (_worksCache == null) return const [];
+
+    final lowerQuery = composerName.toLowerCase();
+    // Exact match first
+    if (_worksCache!.containsKey(lowerQuery)) {
+      return _worksCache![lowerQuery]!;
+    }
+    // Fallback to partial match
+    for (final entry in _worksCache!.entries) {
+      if (entry.key.contains(lowerQuery) || lowerQuery.contains(entry.key)) {
         return entry.value;
       }
     }
     return const [];
+  }
+
+  /// Gets a specific work by title for a composer.
+  WorkInfo? getWork(String composerName, String title) {
+    final works = getWorksInfoFuzzy(composerName);
+    final lowerTitle = title.toLowerCase();
+    for (final work in works) {
+      if (work.title.toLowerCase() == lowerTitle) {
+        return work;
+      }
+    }
+    // Partial match
+    for (final work in works) {
+      if (work.title.toLowerCase().contains(lowerTitle)) {
+        return work;
+      }
+    }
+    return null;
   }
 
   /// Filters works matching a query string.
@@ -69,6 +190,15 @@ class ComposerWorksData {
 
     final lowerQuery = query.toLowerCase();
     return works.where((w) => w.toLowerCase().contains(lowerQuery)).toList();
+  }
+
+  /// Filters works with metadata matching a query string.
+  List<WorkInfo> filterWorksInfo(String composerName, String query) {
+    final works = getWorksInfoFuzzy(composerName);
+    if (query.isEmpty) return works;
+
+    final lowerQuery = query.toLowerCase();
+    return works.where((w) => w.title.toLowerCase().contains(lowerQuery)).toList();
   }
 
   /// Gets all composer names that have works data.

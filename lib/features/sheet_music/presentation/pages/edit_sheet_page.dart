@@ -446,6 +446,16 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                             enabled: !isSubmitting,
                             errorText: errors['title'],
                             onChanged: widget.onTitleChanged,
+                            onWorkSelected: (title, difficulty, instrumentation) {
+                              // Auto-fill difficulty and instrumentation from Zerluth data
+                              // Only fill if the current value is null (not yet set)
+                              if (difficulty != null && widget.selectedDifficulty == null) {
+                                widget.onDifficultyChanged(difficulty);
+                              }
+                              if (instrumentation != null && widget.selectedInstrumentation == null) {
+                                widget.onInstrumentationChanged(instrumentation);
+                              }
+                            },
                           ),
                         ),
                         const SizedBox(width: 12),

@@ -2,15 +2,24 @@ import 'package:flutter/material.dart';
 
 import '../../../../data/composer_works.dart';
 
+/// Callback for when a work is selected with its metadata.
+typedef OnWorkSelected = void Function(
+  String title,
+  int? difficulty,
+  String? instrumentation,
+);
+
 /// A text field with autocomplete suggestions for piece titles based on selected composer.
 ///
 /// Provides suggestions from the [ComposerWorksData] when the user types,
 /// filtered to match the currently selected composer.
+/// Shows difficulty and instrumentation for Zerluth data.
 class TitleAutocompleteField extends StatefulWidget {
   const TitleAutocompleteField({
     required this.controller,
     required this.composerName,
     required this.onChanged,
+    this.onWorkSelected,
     this.enabled = true,
     this.errorText,
     this.focusNode,
@@ -23,6 +32,10 @@ class TitleAutocompleteField extends StatefulWidget {
   final String composerName;
 
   final ValueChanged<String> onChanged;
+
+  /// Callback when a work is selected, provides metadata for auto-fill.
+  final OnWorkSelected? onWorkSelected;
+
   final bool enabled;
   final String? errorText;
   final FocusNode? focusNode;
@@ -32,7 +45,7 @@ class TitleAutocompleteField extends StatefulWidget {
 }
 
 class _TitleAutocompleteFieldState extends State<TitleAutocompleteField> {
-  List<String> _availableWorks = const [];
+  List<WorkInfo> _availableWorks = const [];
 
   @override
   void initState() {
@@ -55,13 +68,12 @@ class _TitleAutocompleteFieldState extends State<TitleAutocompleteField> {
       data.load().then((_) {
         if (mounted) {
           setState(() {
-            _availableWorks =
-                data.getWorksForComposerFuzzy(widget.composerName);
+            _availableWorks = data.getWorksInfoFuzzy(widget.composerName);
           });
         }
       });
     } else {
-      _availableWorks = data.getWorksForComposerFuzzy(widget.composerName);
+      _availableWorks = data.getWorksInfoFuzzy(widget.composerName);
     }
   }
 
@@ -86,21 +98,27 @@ class _TitleAutocompleteFieldState extends State<TitleAutocompleteField> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Autocomplete<String>(
+        return Autocomplete<WorkInfo>(
           optionsBuilder: (textEditingValue) {
             final query = textEditingValue.text.toLowerCase().trim();
             if (query.isEmpty) {
               // Show all works for composer when field is empty but focused
-              return _availableWorks.take(10);
+              return _availableWorks.take(15);
             }
             return _availableWorks
-                .where((work) => work.toLowerCase().contains(query))
-                .take(15);
+                .where((work) => work.title.toLowerCase().contains(query))
+                .take(20);
           },
-          displayStringForOption: (option) => option,
+          displayStringForOption: (option) => option.title,
           onSelected: (selection) {
-            widget.controller.text = selection;
-            widget.onChanged(selection);
+            widget.controller.text = selection.title;
+            widget.onChanged(selection.title);
+            // Call auto-fill callback with metadata
+            widget.onWorkSelected?.call(
+              selection.title,
+              selection.difficulty,
+              selection.instrumentation,
+            );
           },
           optionsViewBuilder: (context, onSelected, options) {
             return Align(
@@ -110,7 +128,7 @@ class _TitleAutocompleteFieldState extends State<TitleAutocompleteField> {
                 borderRadius: BorderRadius.circular(8),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
-                    maxHeight: 300,
+                    maxHeight: 350,
                     maxWidth: constraints.maxWidth,
                   ),
                   child: ListView.builder(
@@ -118,20 +136,44 @@ class _TitleAutocompleteFieldState extends State<TitleAutocompleteField> {
                     shrinkWrap: true,
                     itemCount: options.length,
                     itemBuilder: (context, index) {
-                      final option = options.elementAt(index);
+                      final work = options.elementAt(index);
                       final isHighlighted =
                           AutocompleteHighlightedOption.of(context) == index;
+
+                      // Build subtitle with instrumentation
+                      String? subtitle;
+                      if (work.instrumentation != null &&
+                          work.instrumentation!.isNotEmpty) {
+                        subtitle = work.instrumentation;
+                        if (work.genre != null && work.genre!.isNotEmpty) {
+                          subtitle = '$subtitle • ${work.genre}';
+                        }
+                      } else if (work.genre != null && work.genre!.isNotEmpty) {
+                        subtitle = work.genre;
+                      }
+
                       return ListTile(
                         tileColor: isHighlighted
                             ? Theme.of(context).colorScheme.primaryContainer
                             : null,
                         title: Text(
-                          option,
+                          work.title,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
+                        subtitle: subtitle != null
+                            ? Text(
+                                subtitle,
+                                style: Theme.of(context).textTheme.bodySmall,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              )
+                            : null,
+                        trailing: work.difficulty != null
+                            ? _buildDifficultyIndicator(context, work.difficulty!)
+                            : null,
                         dense: true,
-                        onTap: () => onSelected(option),
+                        onTap: () => onSelected(work),
                       );
                     },
                   ),
@@ -184,6 +226,23 @@ class _TitleAutocompleteFieldState extends State<TitleAutocompleteField> {
           },
         );
       },
+    );
+  }
+
+  Widget _buildDifficultyIndicator(BuildContext context, int difficulty) {
+    // Show difficulty as filled/unfilled stars (1-5 scale)
+    final clampedDifficulty = difficulty.clamp(1, 5);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(5, (i) {
+        return Icon(
+          i < clampedDifficulty ? Icons.star : Icons.star_border,
+          size: 14,
+          color: i < clampedDifficulty
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.outline,
+        );
+      }),
     );
   }
 }
