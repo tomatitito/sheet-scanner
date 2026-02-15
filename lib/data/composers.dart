@@ -85,15 +85,16 @@ class ComposerData {
     return '($birthYear–$deathYear)';
   }
 
-  String get displayName => deathYear != null || birthYear != null
-      ? '$name $lifeYears'
-      : name;
+  String get displayName =>
+      deathYear != null || birthYear != null ? '$name $lifeYears' : name;
 
   /// Average difficulty of all works (1-5 scale, null if no works with difficulty).
   double? get averageDifficulty {
     final worksWithDifficulty = works.where((w) => w.difficulty != null);
     if (worksWithDifficulty.isEmpty) return null;
-    return worksWithDifficulty.map((w) => w.difficulty!).reduce((a, b) => a + b) /
+    return worksWithDifficulty
+            .map((w) => w.difficulty!)
+            .reduce((a, b) => a + b) /
         worksWithDifficulty.length;
   }
 
@@ -184,7 +185,8 @@ class ComposerLoader {
     'lib/data/sources/flute_repertoire.json',
   ];
 
-  static const String _zerluthSource = 'lib/data/sources/zerluth_composers.json';
+  static const String _zerluthSource =
+      'lib/data/sources/zerluth_composers.json';
 
   static List<ComposerData>? _cachedComposers;
   static List<String>? _cachedNames;
@@ -232,7 +234,9 @@ class ComposerLoader {
 
         final key = normalizeComposerKey(composer.name);
         if (composerMap.containsKey(key)) {
-          composerMap[key] = composerMap[key]!.merge(composer);
+          // Zerluth is the receiver so its fields take priority;
+          // OpenOpus fills gaps (birth/death years, popularity flags)
+          composerMap[key] = composer.merge(composerMap[key]!);
         } else {
           composerMap[key] = composer;
         }

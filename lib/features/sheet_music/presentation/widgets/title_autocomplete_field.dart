@@ -47,6 +47,10 @@ class TitleAutocompleteField extends StatefulWidget {
 class _TitleAutocompleteFieldState extends State<TitleAutocompleteField> {
   List<WorkInfo> _availableWorks = const [];
 
+  /// Shared group ID for TapRegion so that tapping inside either the field
+  /// or the dropdown doesn't dismiss the dropdown.
+  final _tapRegionGroupId = Object();
+
   @override
   void initState() {
     super.initState();
@@ -121,61 +125,66 @@ class _TitleAutocompleteFieldState extends State<TitleAutocompleteField> {
             );
           },
           optionsViewBuilder: (context, onSelected, options) {
-            return Align(
-              alignment: Alignment.topLeft,
-              child: Material(
-                elevation: 4,
-                borderRadius: BorderRadius.circular(8),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: 350,
-                    maxWidth: constraints.maxWidth,
-                  ),
-                  child: ListView.builder(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    itemCount: options.length,
-                    itemBuilder: (context, index) {
-                      final work = options.elementAt(index);
-                      final isHighlighted =
-                          AutocompleteHighlightedOption.of(context) == index;
+            return TapRegion(
+              groupId: _tapRegionGroupId,
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(8),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: 350,
+                      maxWidth: constraints.maxWidth,
+                    ),
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      itemCount: options.length,
+                      itemBuilder: (context, index) {
+                        final work = options.elementAt(index);
+                        final isHighlighted =
+                            AutocompleteHighlightedOption.of(context) == index;
 
-                      // Build subtitle with instrumentation
-                      String? subtitle;
-                      if (work.instrumentation != null &&
-                          work.instrumentation!.isNotEmpty) {
-                        subtitle = work.instrumentation;
-                        if (work.genre != null && work.genre!.isNotEmpty) {
-                          subtitle = '$subtitle • ${work.genre}';
+                        // Build subtitle with instrumentation
+                        String? subtitle;
+                        if (work.instrumentation != null &&
+                            work.instrumentation!.isNotEmpty) {
+                          subtitle = work.instrumentation;
+                          if (work.genre != null && work.genre!.isNotEmpty) {
+                            subtitle = '$subtitle • ${work.genre}';
+                          }
+                        } else if (work.genre != null &&
+                            work.genre!.isNotEmpty) {
+                          subtitle = work.genre;
                         }
-                      } else if (work.genre != null && work.genre!.isNotEmpty) {
-                        subtitle = work.genre;
-                      }
 
-                      return ListTile(
-                        tileColor: isHighlighted
-                            ? Theme.of(context).colorScheme.primaryContainer
-                            : null,
-                        title: Text(
-                          work.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        subtitle: subtitle != null
-                            ? Text(
-                                subtitle,
-                                style: Theme.of(context).textTheme.bodySmall,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              )
-                            : null,
-                        trailing: work.difficulty != null
-                            ? _buildDifficultyIndicator(context, work.difficulty!)
-                            : null,
-                        dense: true,
-                        onTap: () => onSelected(work),
-                      );
-                    },
+                        return ListTile(
+                          tileColor: isHighlighted
+                              ? Theme.of(context).colorScheme.primaryContainer
+                              : null,
+                          title: Text(
+                            work.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          subtitle: subtitle != null
+                              ? Text(
+                                  subtitle,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                )
+                              : null,
+                          trailing: work.difficulty != null
+                              ? _buildDifficultyIndicator(
+                                  context, work.difficulty!)
+                              : null,
+                          dense: true,
+                          onTap: () => onSelected(work),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -194,33 +203,37 @@ class _TitleAutocompleteFieldState extends State<TitleAutocompleteField> {
               }
             });
 
-            return TextFormField(
-              controller: textEditingController,
-              focusNode: widget.focusNode ?? fieldFocusNode,
-              enabled: widget.enabled,
-              onChanged: (value) {
-                widget.controller.text = value;
-                widget.onChanged(value);
-              },
-              onFieldSubmitted: (_) => onFieldSubmitted(),
-              decoration: InputDecoration(
-                labelText: 'Title *',
-                hintText: _availableWorks.isNotEmpty
-                    ? 'Start typing or select from ${_availableWorks.length} works...'
-                    : 'Enter piece title',
-                errorText: widget.errorText,
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.music_note),
-                suffixIcon: widget.controller.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          textEditingController.clear();
-                          widget.controller.clear();
-                          widget.onChanged('');
-                        },
-                      )
-                    : null,
+            return TapRegion(
+              groupId: _tapRegionGroupId,
+              onTapOutside: (_) => fieldFocusNode.unfocus(),
+              child: TextFormField(
+                controller: textEditingController,
+                focusNode: widget.focusNode ?? fieldFocusNode,
+                enabled: widget.enabled,
+                onChanged: (value) {
+                  widget.controller.text = value;
+                  widget.onChanged(value);
+                },
+                onFieldSubmitted: (_) => onFieldSubmitted(),
+                decoration: InputDecoration(
+                  labelText: 'Title *',
+                  hintText: _availableWorks.isNotEmpty
+                      ? 'Start typing or select from ${_availableWorks.length} works...'
+                      : 'Enter piece title',
+                  errorText: widget.errorText,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.music_note),
+                  suffixIcon: widget.controller.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            textEditingController.clear();
+                            widget.controller.clear();
+                            widget.onChanged('');
+                          },
+                        )
+                      : null,
+                ),
               ),
             );
           },

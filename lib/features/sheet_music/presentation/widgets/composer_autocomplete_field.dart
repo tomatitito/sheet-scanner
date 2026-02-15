@@ -7,7 +7,8 @@ import '../../../../data/composers.dart';
 /// Uses the curated list from [kComposerNames] to provide suggestions
 /// as the user types. Supports both keyboard navigation and tap selection.
 /// Shows Zerluth metadata including works count and average difficulty.
-class ComposerAutocompleteField extends StatelessWidget {
+/// Dismisses the dropdown when tapping outside the field and dropdown area.
+class ComposerAutocompleteField extends StatefulWidget {
   const ComposerAutocompleteField({
     required this.controller,
     required this.onChanged,
@@ -22,6 +23,16 @@ class ComposerAutocompleteField extends StatelessWidget {
   final bool enabled;
   final String? errorText;
   final FocusNode? focusNode;
+
+  @override
+  State<ComposerAutocompleteField> createState() =>
+      _ComposerAutocompleteFieldState();
+}
+
+class _ComposerAutocompleteFieldState extends State<ComposerAutocompleteField> {
+  /// Shared group ID for TapRegion so that tapping inside either the field
+  /// or the dropdown doesn't dismiss the dropdown.
+  final _tapRegionGroupId = Object();
 
   @override
   Widget build(BuildContext context) {
@@ -42,75 +53,78 @@ class ComposerAutocompleteField extends StatelessWidget {
           },
           displayStringForOption: (option) => option.name,
           onSelected: (selection) {
-            controller.text = selection.name;
-            onChanged(selection.name);
+            widget.controller.text = selection.name;
+            widget.onChanged(selection.name);
           },
           optionsViewBuilder: (context, onSelected, options) {
-            return Align(
-              alignment: Alignment.topLeft,
-              child: Material(
-                elevation: 4,
-                borderRadius: BorderRadius.circular(8),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: 300,
-                    maxWidth: constraints.maxWidth,
-                  ),
-                  child: ListView.builder(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    itemCount: options.length,
-                    itemBuilder: (context, index) {
-                      final composer = options.elementAt(index);
-                      final isHighlighted =
-                          AutocompleteHighlightedOption.of(context) == index;
+            return TapRegion(
+              groupId: _tapRegionGroupId,
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(8),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: 300,
+                      maxWidth: constraints.maxWidth,
+                    ),
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      itemCount: options.length,
+                      itemBuilder: (context, index) {
+                        final composer = options.elementAt(index);
+                        final isHighlighted =
+                            AutocompleteHighlightedOption.of(context) == index;
 
-                      // Build subtitle with epoch, life years, and works info
-                      final subtitleParts = <String>[];
-                      if (composer.epoch.isNotEmpty &&
-                          composer.epoch != 'Unknown') {
-                        subtitleParts.add(composer.epoch);
-                      }
-                      if (composer.lifeYears.isNotEmpty) {
-                        subtitleParts.add(composer.lifeYears);
-                      }
-                      if (composer.worksCount > 0) {
-                        subtitleParts.add('${composer.worksCount} works');
-                      }
+                        // Build subtitle with epoch, life years, and works info
+                        final subtitleParts = <String>[];
+                        if (composer.epoch.isNotEmpty &&
+                            composer.epoch != 'Unknown') {
+                          subtitleParts.add(composer.epoch);
+                        }
+                        if (composer.lifeYears.isNotEmpty) {
+                          subtitleParts.add(composer.lifeYears);
+                        }
+                        if (composer.worksCount > 0) {
+                          subtitleParts.add('${composer.worksCount} works');
+                        }
 
-                      // Build trailing with difficulty and badges
-                      Widget? trailing;
-                      final badges = <Widget>[];
-                      if (composer.isPopular) {
-                        badges.add(_buildBadge(context, '★', Colors.amber));
-                      }
-                      if (composer.averageDifficulty != null) {
-                        badges.add(_buildDifficultyIndicator(
-                            context, composer.averageDifficulty!));
-                      }
-                      if (badges.isNotEmpty) {
-                        trailing = Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: badges,
+                        // Build trailing with difficulty and badges
+                        Widget? trailing;
+                        final badges = <Widget>[];
+                        if (composer.isPopular) {
+                          badges.add(_buildBadge(context, '★', Colors.amber));
+                        }
+                        if (composer.averageDifficulty != null) {
+                          badges.add(_buildDifficultyIndicator(
+                              context, composer.averageDifficulty!));
+                        }
+                        if (badges.isNotEmpty) {
+                          trailing = Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: badges,
+                          );
+                        }
+
+                        return ListTile(
+                          tileColor: isHighlighted
+                              ? Theme.of(context).colorScheme.primaryContainer
+                              : null,
+                          title: Text(composer.name),
+                          subtitle: subtitleParts.isNotEmpty
+                              ? Text(
+                                  subtitleParts.join(' • '),
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                )
+                              : null,
+                          trailing: trailing,
+                          dense: true,
+                          onTap: () => onSelected(composer),
                         );
-                      }
-
-                      return ListTile(
-                        tileColor: isHighlighted
-                            ? Theme.of(context).colorScheme.primaryContainer
-                            : null,
-                        title: Text(composer.name),
-                        subtitle: subtitleParts.isNotEmpty
-                            ? Text(
-                                subtitleParts.join(' • '),
-                                style: Theme.of(context).textTheme.bodySmall,
-                              )
-                            : null,
-                        trailing: trailing,
-                        dense: true,
-                        onTap: () => onSelected(composer),
-                      );
-                    },
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -124,36 +138,40 @@ class ComposerAutocompleteField extends StatelessWidget {
           ) {
             // Sync the external controller with the autocomplete's internal one
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (textEditingController.text != controller.text) {
-                textEditingController.text = controller.text;
+              if (textEditingController.text != widget.controller.text) {
+                textEditingController.text = widget.controller.text;
               }
             });
 
-            return TextFormField(
-              controller: textEditingController,
-              focusNode: focusNode ?? fieldFocusNode,
-              enabled: enabled,
-              onChanged: (value) {
-                controller.text = value;
-                onChanged(value);
-              },
-              onFieldSubmitted: (_) => onFieldSubmitted(),
-              decoration: InputDecoration(
-                labelText: 'Composer *',
-                hintText: 'Start typing a composer name...',
-                errorText: errorText,
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.person),
-                suffixIcon: controller.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          textEditingController.clear();
-                          controller.clear();
-                          onChanged('');
-                        },
-                      )
-                    : null,
+            return TapRegion(
+              groupId: _tapRegionGroupId,
+              onTapOutside: (_) => fieldFocusNode.unfocus(),
+              child: TextFormField(
+                controller: textEditingController,
+                focusNode: widget.focusNode ?? fieldFocusNode,
+                enabled: widget.enabled,
+                onChanged: (value) {
+                  widget.controller.text = value;
+                  widget.onChanged(value);
+                },
+                onFieldSubmitted: (_) => onFieldSubmitted(),
+                decoration: InputDecoration(
+                  labelText: 'Composer *',
+                  hintText: 'Start typing a composer name...',
+                  errorText: widget.errorText,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.person),
+                  suffixIcon: widget.controller.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            textEditingController.clear();
+                            widget.controller.clear();
+                            widget.onChanged('');
+                          },
+                        )
+                      : null,
+                ),
               ),
             );
           },
