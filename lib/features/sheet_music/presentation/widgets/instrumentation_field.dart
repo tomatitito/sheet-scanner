@@ -21,6 +21,7 @@ class InstrumentationField extends StatefulWidget {
   final ValueChanged<String?>? onChanged;
   final bool enabled;
   final String? errorText;
+  final bool isAutoFilled;
 
   const InstrumentationField({
     super.key,
@@ -28,6 +29,7 @@ class InstrumentationField extends StatefulWidget {
     this.onChanged,
     this.enabled = true,
     this.errorText,
+    this.isAutoFilled = false,
   });
 
   @override
@@ -146,7 +148,15 @@ class _InstrumentationFieldState extends State<InstrumentationField> {
           decoration: InputDecoration(
             labelText: 'Instrumentation',
             hintText: 'e.g., Fl,Pno, Zwei Flöten',
-            helperText: 'Type or select from suggestions',
+            helperText: widget.isAutoFilled
+                ? 'Auto-filled from reference data'
+                : 'Type or select from suggestions',
+            helperStyle: widget.isAutoFilled
+                ? TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontStyle: FontStyle.italic,
+                  )
+                : null,
             errorText: widget.errorText,
             border: const OutlineInputBorder(),
             prefixIcon: const Icon(Icons.group),

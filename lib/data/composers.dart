@@ -2,6 +2,30 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
+/// Normalizes a composer name into a canonical "last, first" lowercase key.
+///
+/// Handles three transformations:
+/// 1. Strips parenthetical annotations: "Popp, Wilhelm (Kossack)" -> "Popp, Wilhelm"
+/// 2. Converts "First Last" to "Last, First": "Philippe Gaubert" -> "Gaubert, Philippe"
+/// 3. Lowercases and trims
+String normalizeComposerKey(String name) {
+  // 1. Strip parenthetical annotations
+  var normalized = name.replaceAll(RegExp(r'\s*\([^)]*\)\s*'), '').trim();
+
+  // 2. If no comma, assume "First Last" format -> convert to "Last, First"
+  if (!normalized.contains(',')) {
+    final parts = normalized.split(RegExp(r'\s+'));
+    if (parts.length >= 2) {
+      final lastName = parts.last;
+      final firstNames = parts.sublist(0, parts.length - 1).join(' ');
+      normalized = '$lastName, $firstNames';
+    }
+  }
+
+  // 3. Lowercase
+  return normalized.toLowerCase().trim();
+}
+
 /// Represents work metadata including difficulty and instrumentation.
 class WorkData {
   final String title;
@@ -112,13 +136,42 @@ class ComposerData {
   }
 
   /// Merges this composer with another, preferring non-null values.
+  ///
+  /// For works, deduplicates by normalized title. When a work exists in both,
+  /// prefers the version with more metadata (difficulty/instrumentation).
   ComposerData merge(ComposerData other) {
+    // Deduplicate works by normalized title, preferring versions with metadata
+    final mergedWorks = <String, WorkData>{};
+    for (final work in works) {
+      mergedWorks[work.title.toLowerCase().trim()] = work;
+    }
+    for (final work in other.works) {
+      final key = work.title.toLowerCase().trim();
+      final existing = mergedWorks[key];
+      if (existing == null) {
+        mergedWorks[key] = work;
+      } else {
+        // Prefer the version with more metadata (new data wins on conflict)
+        final existingHasMetadata =
+            existing.difficulty != null || existing.instrumentation != null;
+        final otherHasMetadata =
+            work.difficulty != null || work.instrumentation != null;
+        if (otherHasMetadata && !existingHasMetadata) {
+          mergedWorks[key] = work;
+        } else if (otherHasMetadata && existingHasMetadata) {
+          // Both have metadata — new data takes priority
+          mergedWorks[key] = work;
+        }
+        // If only existing has metadata, keep existing
+      }
+    }
+
     return ComposerData(
       name: name.isNotEmpty ? name : other.name,
       epoch: epoch != 'Unknown' ? epoch : other.epoch,
       birthYear: birthYear ?? other.birthYear,
       deathYear: deathYear ?? other.deathYear,
-      works: [...works, ...other.works],
+      works: mergedWorks.values.toList(),
       isPopular: isPopular || other.isPopular,
       isRecommended: isRecommended || other.isRecommended,
     );
@@ -154,7 +207,7 @@ class ComposerLoader {
           final composer = ComposerData.fromJson(c as Map<String, dynamic>);
           if (composer.name.isEmpty) continue;
 
-          final key = composer.name.toLowerCase();
+          final key = normalizeComposerKey(composer.name);
           if (composerMap.containsKey(key)) {
             composerMap[key] = composerMap[key]!.merge(composer);
           } else {
@@ -177,7 +230,7 @@ class ComposerLoader {
             ComposerData.fromZerluthJson(c as Map<String, dynamic>);
         if (composer.name.isEmpty) continue;
 
-        final key = composer.name.toLowerCase();
+        final key = normalizeComposerKey(composer.name);
         if (composerMap.containsKey(key)) {
           composerMap[key] = composerMap[key]!.merge(composer);
         } else {
@@ -210,23 +263,27 @@ class ComposerLoader {
 
   static bool get isInitialized => _cachedComposers != null;
 
-  /// Get composer by name (case-insensitive).
+  /// Get composer by name (uses normalized key for matching).
   static ComposerData? getComposer(String name) {
-    return _composerMap?[name.toLowerCase()];
+    return _composerMap?[normalizeComposerKey(name)];
   }
 
-  /// Get works for a composer by name (case-insensitive).
+  /// Get works for a composer by name (uses normalized key for matching).
   static List<WorkData> getWorksForComposer(String name) {
-    return _composerMap?[name.toLowerCase()]?.works ?? const [];
+    return _composerMap?[normalizeComposerKey(name)]?.works ?? const [];
   }
 
   /// Search composers with fuzzy matching.
+  /// Matches against both the display name and the normalized key.
   static List<ComposerData> searchComposers(String query) {
     if (query.isEmpty) return composers.take(50).toList();
 
     final lowerQuery = query.toLowerCase();
+    final normalizedQuery = normalizeComposerKey(query);
     return composers
-        .where((c) => c.name.toLowerCase().contains(lowerQuery))
+        .where((c) =>
+            c.name.toLowerCase().contains(lowerQuery) ||
+            normalizeComposerKey(c.name).contains(normalizedQuery))
         .toList();
   }
 }

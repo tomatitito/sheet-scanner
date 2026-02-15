@@ -7,6 +7,7 @@ class DifficultySelector extends StatelessWidget {
   final ValueChanged<int?>? onChanged;
   final bool enabled;
   final String? errorText;
+  final bool isAutoFilled;
 
   const DifficultySelector({
     super.key,
@@ -14,6 +15,7 @@ class DifficultySelector extends StatelessWidget {
     this.onChanged,
     this.enabled = true,
     this.errorText,
+    this.isAutoFilled = false,
   });
 
   @override
@@ -93,9 +95,14 @@ class DifficultySelector extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 12, top: 4),
             child: Text(
-              _getDifficultyLabel(selectedValue),
+              isAutoFilled
+                  ? '${_getDifficultyLabel(selectedValue)} (auto-filled)'
+                  : _getDifficultyLabel(selectedValue),
               style: theme.textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
+                color: isAutoFilled
+                    ? colorScheme.primary
+                    : colorScheme.onSurfaceVariant,
+                fontStyle: isAutoFilled ? FontStyle.italic : null,
               ),
             ),
           ),

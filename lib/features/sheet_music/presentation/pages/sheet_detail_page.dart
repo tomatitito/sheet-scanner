@@ -177,6 +177,64 @@ class _SheetDetailView extends StatelessWidget {
                     _DetailSection(
                         label: 'Composer', value: sheetMusic.composer),
 
+                    if (sheetMusic.opus != null &&
+                        sheetMusic.opus!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 24.0),
+                        child: _DetailSection(
+                          label: 'Opus / Catalog Number',
+                          value: sheetMusic.opus!,
+                        ),
+                      ),
+
+                    if (sheetMusic.musicalKey != null &&
+                        sheetMusic.musicalKey!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 24.0),
+                        child: _DetailSection(
+                          label: 'Musical Key',
+                          value: sheetMusic.musicalKey!,
+                        ),
+                      ),
+
+                    if (sheetMusic.difficulty != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 24.0),
+                        child: _DifficultyDisplay(
+                          difficulty: sheetMusic.difficulty!,
+                        ),
+                      ),
+
+                    if (sheetMusic.instrumentation != null &&
+                        sheetMusic.instrumentation!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 24.0),
+                        child: _DetailSection(
+                          label: 'Instrumentation',
+                          value: sheetMusic.instrumentation!,
+                        ),
+                      ),
+
+                    if (sheetMusic.epoch != null &&
+                        sheetMusic.epoch!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 24.0),
+                        child: _DetailSection(
+                          label: 'Epoch / Era',
+                          value: _formatEpoch(sheetMusic.epoch!),
+                        ),
+                      ),
+
+                    if (sheetMusic.source != null &&
+                        sheetMusic.source!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 24.0),
+                        child: _DetailSection(
+                          label: 'Source',
+                          value: sheetMusic.source!,
+                        ),
+                      ),
+
                     if (sheetMusic.notes != null &&
                         sheetMusic.notes!.isNotEmpty)
                       Padding(
@@ -374,6 +432,21 @@ class _SheetDetailView extends StatelessWidget {
   }
 }
 
+/// Formats an epoch value to a display-friendly string.
+String _formatEpoch(String epoch) {
+  const epochDisplayNames = {
+    'medieval': 'Medieval (before 1400)',
+    'renaissance': 'Renaissance (1400-1600)',
+    'baroque': 'Baroque (1600-1750)',
+    'classical': 'Classical (1750-1820)',
+    'romantic': 'Romantic (1820-1900)',
+    '20th_century': '20th Century (1900-2000)',
+    'contemporary': 'Contemporary (2000+)',
+  };
+  return epochDisplayNames[epoch.toLowerCase()] ??
+      epoch[0].toUpperCase() + epoch.substring(1);
+}
+
 /// Helper widget for displaying detail fields
 class _DetailSection extends StatelessWidget {
   final String label;
@@ -400,6 +473,109 @@ class _DetailSection extends StatelessWidget {
         Text(
           value,
           style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      ],
+    );
+  }
+}
+
+/// Visual display for difficulty level using colored indicators.
+class _DifficultyDisplay extends StatelessWidget {
+  final int difficulty;
+
+  const _DifficultyDisplay({required this.difficulty});
+
+  static Color _getDifficultyColor(int level) {
+    switch (level) {
+      case 1:
+        return Colors.green;
+      case 2:
+        return Colors.lightGreen;
+      case 3:
+        return Colors.amber;
+      case 4:
+        return Colors.orange;
+      case 5:
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  static String _getDifficultyLabel(int level) {
+    switch (level) {
+      case 1:
+        return 'Very Easy';
+      case 2:
+        return 'Easy';
+      case 3:
+        return 'Moderate';
+      case 4:
+        return 'Difficult';
+      case 5:
+        return 'Very Difficult';
+      default:
+        return 'Unknown';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Difficulty Level',
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium
+              ?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            ...List.generate(5, (index) {
+              final level = index + 1;
+              final isActive = level <= difficulty;
+              return Padding(
+                padding: const EdgeInsets.only(right: 4),
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: isActive
+                        ? _getDifficultyColor(level)
+                        : Colors.grey[200],
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: isActive
+                          ? _getDifficultyColor(level).withValues(alpha: 0.8)
+                          : Colors.grey[300]!,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '$level',
+                      style: TextStyle(
+                        color: isActive ? Colors.white : Colors.grey[500],
+                        fontWeight:
+                            isActive ? FontWeight.bold : FontWeight.normal,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+            const SizedBox(width: 12),
+            Text(
+              _getDifficultyLabel(difficulty),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: _getDifficultyColor(difficulty),
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
+          ],
         ),
       ],
     );

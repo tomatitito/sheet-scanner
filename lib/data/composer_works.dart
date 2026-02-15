@@ -72,7 +72,7 @@ class ComposerWorksData {
     for (final composer in ComposerLoader.composers) {
       if (composer.works.isEmpty) continue;
 
-      final key = composer.name.toLowerCase();
+      final key = normalizeComposerKey(composer.name);
       final workInfos =
           composer.works.map((w) => WorkInfo.fromWorkData(w)).toList();
 
@@ -91,7 +91,7 @@ class ComposerWorksData {
         final List<dynamic> data = json.decode(jsonString) as List<dynamic>;
 
         for (final item in data) {
-          final composerName = (item['composer'] as String).toLowerCase();
+          final composerName = normalizeComposerKey(item['composer'] as String);
           final works = (item['works'] as List<dynamic>)
               .cast<String>()
               .map((title) => WorkInfo.titleOnly(title))
@@ -117,9 +117,9 @@ class ComposerWorksData {
     }
   }
 
-  /// Gets works for a specific composer (exact match).
+  /// Gets works for a specific composer (normalized key match).
   List<WorkInfo> getWorksInfoForComposer(String composerName) {
-    return _worksCache?[composerName.toLowerCase()] ?? const [];
+    return _worksCache?[normalizeComposerKey(composerName)] ?? const [];
   }
 
   /// Gets work titles for a specific composer (exact match).
@@ -128,37 +128,39 @@ class ComposerWorksData {
     return getWorksInfoForComposer(composerName).map((w) => w.title).toList();
   }
 
-  /// Gets works for a composer (case-insensitive partial match).
+  /// Gets works for a composer (normalized key match with fuzzy fallback).
   /// Returns the first matching composer's works.
   List<String> getWorksForComposerFuzzy(String composerName) {
     if (_worksCache == null) return const [];
 
-    final lowerQuery = composerName.toLowerCase();
-    // Exact match first
-    if (_worksCache!.containsKey(lowerQuery)) {
-      return _worksCache![lowerQuery]!.map((w) => w.title).toList();
+    final normalizedQuery = normalizeComposerKey(composerName);
+    // Exact normalized match first
+    if (_worksCache!.containsKey(normalizedQuery)) {
+      return _worksCache![normalizedQuery]!.map((w) => w.title).toList();
     }
-    // Fallback to partial match
+    // Fallback to partial match on normalized keys
     for (final entry in _worksCache!.entries) {
-      if (entry.key.contains(lowerQuery) || lowerQuery.contains(entry.key)) {
+      if (entry.key.contains(normalizedQuery) ||
+          normalizedQuery.contains(entry.key)) {
         return entry.value.map((w) => w.title).toList();
       }
     }
     return const [];
   }
 
-  /// Gets works with full metadata for a composer (fuzzy match).
+  /// Gets works with full metadata for a composer (normalized key match with fuzzy fallback).
   List<WorkInfo> getWorksInfoFuzzy(String composerName) {
     if (_worksCache == null) return const [];
 
-    final lowerQuery = composerName.toLowerCase();
-    // Exact match first
-    if (_worksCache!.containsKey(lowerQuery)) {
-      return _worksCache![lowerQuery]!;
+    final normalizedQuery = normalizeComposerKey(composerName);
+    // Exact normalized match first
+    if (_worksCache!.containsKey(normalizedQuery)) {
+      return _worksCache![normalizedQuery]!;
     }
-    // Fallback to partial match
+    // Fallback to partial match on normalized keys
     for (final entry in _worksCache!.entries) {
-      if (entry.key.contains(lowerQuery) || lowerQuery.contains(entry.key)) {
+      if (entry.key.contains(normalizedQuery) ||
+          normalizedQuery.contains(entry.key)) {
         return entry.value;
       }
     }

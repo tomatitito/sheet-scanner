@@ -67,6 +67,7 @@ class EpochDropdown extends StatelessWidget {
   final ValueChanged<String?>? onChanged;
   final bool enabled;
   final String? errorText;
+  final bool isAutoFilled;
 
   const EpochDropdown({
     super.key,
@@ -74,6 +75,7 @@ class EpochDropdown extends StatelessWidget {
     this.onChanged,
     this.enabled = true,
     this.errorText,
+    this.isAutoFilled = false,
   });
 
   @override
@@ -84,6 +86,13 @@ class EpochDropdown extends StatelessWidget {
       decoration: InputDecoration(
         labelText: 'Epoch / Era',
         hintText: 'Select musical period (optional)',
+        helperText: isAutoFilled ? 'Auto-filled from reference data' : null,
+        helperStyle: isAutoFilled
+            ? TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontStyle: FontStyle.italic,
+              )
+            : null,
         errorText: errorText,
         border: const OutlineInputBorder(),
         prefixIcon: const Icon(Icons.history),

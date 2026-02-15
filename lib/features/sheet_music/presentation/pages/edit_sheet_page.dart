@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
+import 'package:sheet_scanner/data/auto_fill_matcher.dart';
 import 'package:sheet_scanner/data/catalog_prefixes.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/edit_sheet_cubit.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/edit_sheet_state.dart';
@@ -44,6 +47,19 @@ class _EditSheetPageState extends State<EditSheetPage> {
   String? _selectedInstrumentation;
   String? _selectedEpoch;
 
+  /// Auto-fill matcher for cross-field auto-fill from reference data.
+  final AutoFillMatcher _autoFillMatcher = AutoFillMatcher();
+
+  /// Provenance tracking for auto-fillable fields.
+  final Map<String, FieldProvenance> _provenance = {
+    'difficulty': FieldProvenance.empty,
+    'instrumentation': FieldProvenance.empty,
+    'epoch': FieldProvenance.empty,
+  };
+
+  /// Debounce timer for auto-fill matching.
+  Timer? _autoFillDebounce;
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +71,7 @@ class _EditSheetPageState extends State<EditSheetPage> {
 
   @override
   void dispose() {
+    _autoFillDebounce?.cancel();
     _titleController.dispose();
     _composerController.dispose();
     _opusController.dispose();
@@ -77,8 +94,77 @@ class _EditSheetPageState extends State<EditSheetPage> {
         );
   }
 
+  /// Triggers debounced auto-fill matching.
+  void _triggerAutoFill() {
+    _autoFillDebounce?.cancel();
+    _autoFillDebounce = Timer(const Duration(milliseconds: 200), () {
+      if (!mounted) return;
+      _runAutoFill();
+    });
+  }
+
+  /// Runs the auto-fill matcher and updates fields.
+  void _runAutoFill() {
+    final criteria = MatchCriteria(
+      composer: _composerController.text.isNotEmpty
+          ? _composerController.text
+          : null,
+      title: _titleController.text.isNotEmpty ? _titleController.text : null,
+      difficulty: _provenance['difficulty'] == FieldProvenance.manual
+          ? _selectedDifficulty
+          : null,
+      instrumentation:
+          _provenance['instrumentation'] == FieldProvenance.manual
+              ? _selectedInstrumentation
+              : null,
+      epoch: _provenance['epoch'] == FieldProvenance.manual
+          ? _selectedEpoch
+          : null,
+    );
+
+    final result = _autoFillMatcher.findMatch(criteria);
+
+    if (result.hasUniqueMatch) {
+      final match = result.uniqueMatch!;
+      setState(() {
+        if (_provenance['difficulty'] != FieldProvenance.manual &&
+            match.difficulty != null) {
+          _selectedDifficulty = match.difficulty;
+          _provenance['difficulty'] = FieldProvenance.autoFilled;
+        }
+        if (_provenance['instrumentation'] != FieldProvenance.manual &&
+            match.instrumentation != null) {
+          _selectedInstrumentation = match.instrumentation;
+          _provenance['instrumentation'] = FieldProvenance.autoFilled;
+        }
+        if (_provenance['epoch'] != FieldProvenance.manual &&
+            match.epoch != null) {
+          _selectedEpoch = match.epoch;
+          _provenance['epoch'] = FieldProvenance.autoFilled;
+        }
+      });
+    } else {
+      setState(() {
+        if (_provenance['difficulty'] == FieldProvenance.autoFilled) {
+          _selectedDifficulty = null;
+          _provenance['difficulty'] = FieldProvenance.empty;
+        }
+        if (_provenance['instrumentation'] == FieldProvenance.autoFilled) {
+          _selectedInstrumentation = null;
+          _provenance['instrumentation'] = FieldProvenance.empty;
+        }
+        if (_provenance['epoch'] == FieldProvenance.autoFilled) {
+          _selectedEpoch = null;
+          _provenance['epoch'] = FieldProvenance.empty;
+        }
+      });
+    }
+    _validateForm();
+  }
+
   void _onTitleChanged(String value) {
     _validateForm();
+    _triggerAutoFill();
   }
 
   void _onComposerChanged(String value) {
@@ -90,6 +176,7 @@ class _EditSheetPageState extends State<EditSheetPage> {
       }
     }
     _validateForm();
+    _triggerAutoFill();
   }
 
   void _onOpusChanged(String value) {
@@ -113,22 +200,31 @@ class _EditSheetPageState extends State<EditSheetPage> {
   void _onDifficultyChanged(int? value) {
     setState(() {
       _selectedDifficulty = value;
+      _provenance['difficulty'] =
+          value != null ? FieldProvenance.manual : FieldProvenance.empty;
     });
     _validateForm();
+    _triggerAutoFill();
   }
 
   void _onInstrumentationChanged(String? value) {
     setState(() {
       _selectedInstrumentation = value;
+      _provenance['instrumentation'] =
+          value != null ? FieldProvenance.manual : FieldProvenance.empty;
     });
     _validateForm();
+    _triggerAutoFill();
   }
 
   void _onEpochChanged(String? value) {
     setState(() {
       _selectedEpoch = value;
+      _provenance['epoch'] =
+          value != null ? FieldProvenance.manual : FieldProvenance.empty;
     });
     _validateForm();
+    _triggerAutoFill();
   }
 
   void _onNotesChanged(String value) {
@@ -206,6 +302,12 @@ class _EditSheetPageState extends State<EditSheetPage> {
           selectedDifficulty: _selectedDifficulty,
           selectedInstrumentation: _selectedInstrumentation,
           selectedEpoch: _selectedEpoch,
+          isDifficultyAutoFilled:
+              _provenance['difficulty'] == FieldProvenance.autoFilled,
+          isInstrumentationAutoFilled:
+              _provenance['instrumentation'] == FieldProvenance.autoFilled,
+          isEpochAutoFilled:
+              _provenance['epoch'] == FieldProvenance.autoFilled,
           onTitleChanged: _onTitleChanged,
           onComposerChanged: _onComposerChanged,
           onOpusChanged: _onOpusChanged,
@@ -252,6 +354,9 @@ class _EditSheetForm extends StatefulWidget {
   final int? selectedDifficulty;
   final String? selectedInstrumentation;
   final String? selectedEpoch;
+  final bool isDifficultyAutoFilled;
+  final bool isInstrumentationAutoFilled;
+  final bool isEpochAutoFilled;
   final ValueChanged<String> onTitleChanged;
   final ValueChanged<String> onComposerChanged;
   final ValueChanged<String> onOpusChanged;
@@ -283,6 +388,9 @@ class _EditSheetForm extends StatefulWidget {
     required this.selectedDifficulty,
     required this.selectedInstrumentation,
     required this.selectedEpoch,
+    this.isDifficultyAutoFilled = false,
+    this.isInstrumentationAutoFilled = false,
+    this.isEpochAutoFilled = false,
     required this.onTitleChanged,
     required this.onComposerChanged,
     required this.onOpusChanged,
@@ -560,6 +668,7 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                       selectedValue: widget.selectedDifficulty,
                       enabled: !isSubmitting,
                       errorText: errors['difficulty'],
+                      isAutoFilled: widget.isDifficultyAutoFilled,
                       onChanged: widget.onDifficultyChanged,
                     ),
                     const SizedBox(height: 16),
@@ -569,6 +678,7 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                       selectedValue: widget.selectedInstrumentation,
                       enabled: !isSubmitting,
                       errorText: errors['instrumentation'],
+                      isAutoFilled: widget.isInstrumentationAutoFilled,
                       onChanged: widget.onInstrumentationChanged,
                     ),
                     const SizedBox(height: 16),
@@ -578,6 +688,7 @@ class _EditSheetFormState extends State<_EditSheetForm> {
                       selectedValue: widget.selectedEpoch,
                       enabled: !isSubmitting,
                       errorText: errors['epoch'],
+                      isAutoFilled: widget.isEpochAutoFilled,
                       onChanged: widget.onEpochChanged,
                     ),
                     const SizedBox(height: 16),

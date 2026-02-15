@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sheet_scanner/core/accessibility/semantic_widgets.dart';
 import 'package:sheet_scanner/core/di/injection.dart';
+import 'package:sheet_scanner/data/auto_fill_matcher.dart';
 import 'package:sheet_scanner/data/catalog_prefixes.dart';
 import 'package:sheet_scanner/features/sheet_music/data/services/file_picker_service.dart';
 import 'package:sheet_scanner/features/sheet_music/presentation/cubit/add_sheet_cubit.dart';
@@ -175,6 +178,25 @@ class _AddSheetFormState extends State<_AddSheetForm> {
   /// Once edited, we don't auto-populate anymore to respect user's input.
   bool _opusManuallyEdited = false;
 
+  /// Auto-fill matcher for cross-field auto-fill from reference data.
+  final AutoFillMatcher _autoFillMatcher = AutoFillMatcher();
+
+  /// Provenance tracking for auto-fillable fields.
+  final Map<String, FieldProvenance> _provenance = {
+    'difficulty': FieldProvenance.empty,
+    'instrumentation': FieldProvenance.empty,
+    'epoch': FieldProvenance.empty,
+  };
+
+  /// Debounce timer for auto-fill matching.
+  Timer? _autoFillDebounce;
+
+  @override
+  void dispose() {
+    _autoFillDebounce?.cancel();
+    super.dispose();
+  }
+
   void _validateForm() {
     final cubit = context.read<AddSheetCubit>();
     cubit.validate(
@@ -191,6 +213,86 @@ class _AddSheetFormState extends State<_AddSheetForm> {
     );
   }
 
+  /// Triggers debounced auto-fill matching.
+  void _triggerAutoFill() {
+    _autoFillDebounce?.cancel();
+    _autoFillDebounce = Timer(const Duration(milliseconds: 200), () {
+      if (!mounted) return;
+      _runAutoFill();
+    });
+  }
+
+  /// Runs the auto-fill matcher and updates fields.
+  void _runAutoFill() {
+    final criteria = MatchCriteria(
+      composer: widget.composerController.text.isNotEmpty
+          ? widget.composerController.text
+          : null,
+      title: widget.titleController.text.isNotEmpty
+          ? widget.titleController.text
+          : null,
+      difficulty: _provenance['difficulty'] == FieldProvenance.manual
+          ? _selectedDifficulty
+          : null,
+      instrumentation:
+          _provenance['instrumentation'] == FieldProvenance.manual
+              ? _selectedInstrumentation
+              : null,
+      epoch: _provenance['epoch'] == FieldProvenance.manual
+          ? _selectedEpoch
+          : null,
+    );
+
+    final result = _autoFillMatcher.findMatch(criteria);
+
+    if (result.hasUniqueMatch) {
+      final match = result.uniqueMatch!;
+      setState(() {
+        // Auto-fill difficulty if empty or previously auto-filled
+        if (_provenance['difficulty'] != FieldProvenance.manual &&
+            match.difficulty != null) {
+          _selectedDifficulty = match.difficulty;
+          _provenance['difficulty'] = FieldProvenance.autoFilled;
+          widget.onDifficultyChanged(match.difficulty);
+        }
+        // Auto-fill instrumentation if empty or previously auto-filled
+        if (_provenance['instrumentation'] != FieldProvenance.manual &&
+            match.instrumentation != null) {
+          _selectedInstrumentation = match.instrumentation;
+          _provenance['instrumentation'] = FieldProvenance.autoFilled;
+          widget.onInstrumentationChanged(match.instrumentation);
+        }
+        // Auto-fill epoch if empty or previously auto-filled
+        if (_provenance['epoch'] != FieldProvenance.manual &&
+            match.epoch != null) {
+          _selectedEpoch = match.epoch;
+          _provenance['epoch'] = FieldProvenance.autoFilled;
+          widget.onEpochChanged(match.epoch);
+        }
+      });
+    } else {
+      // Clear any auto-filled fields when no unique match
+      setState(() {
+        if (_provenance['difficulty'] == FieldProvenance.autoFilled) {
+          _selectedDifficulty = null;
+          _provenance['difficulty'] = FieldProvenance.empty;
+          widget.onDifficultyChanged(null);
+        }
+        if (_provenance['instrumentation'] == FieldProvenance.autoFilled) {
+          _selectedInstrumentation = null;
+          _provenance['instrumentation'] = FieldProvenance.empty;
+          widget.onInstrumentationChanged(null);
+        }
+        if (_provenance['epoch'] == FieldProvenance.autoFilled) {
+          _selectedEpoch = null;
+          _provenance['epoch'] = FieldProvenance.empty;
+          widget.onEpochChanged(null);
+        }
+      });
+    }
+    _validateForm();
+  }
+
   /// Auto-populate opus field based on composer, unless user has edited it.
   void _onComposerChanged(String composer) {
     _validateForm();
@@ -202,6 +304,8 @@ class _AddSheetFormState extends State<_AddSheetForm> {
         widget.opusController.text = prefix;
       }
     }
+
+    _triggerAutoFill();
   }
 
   /// Mark opus as manually edited when user types in it.
@@ -350,18 +454,30 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                           composerName: widget.composerController.text,
                           enabled: !isSubmitting,
                           errorText: errors['title'],
-                          onChanged: (_) => _validateForm(),
+                          onChanged: (_) {
+                            _validateForm();
+                            _triggerAutoFill();
+                          },
                           onWorkSelected: (title, difficulty, instrumentation) {
-                            // Auto-fill difficulty and instrumentation from Zerluth data
-                            if (difficulty != null && _selectedDifficulty == null) {
-                              setState(() => _selectedDifficulty = difficulty);
+                            // Auto-fill difficulty and instrumentation from explicit selection
+                            if (difficulty != null &&
+                                _provenance['difficulty'] != FieldProvenance.manual) {
+                              setState(() {
+                                _selectedDifficulty = difficulty;
+                                _provenance['difficulty'] = FieldProvenance.autoFilled;
+                              });
                               widget.onDifficultyChanged(difficulty);
                             }
-                            if (instrumentation != null && _selectedInstrumentation == null) {
-                              setState(() => _selectedInstrumentation = instrumentation);
+                            if (instrumentation != null &&
+                                _provenance['instrumentation'] != FieldProvenance.manual) {
+                              setState(() {
+                                _selectedInstrumentation = instrumentation;
+                                _provenance['instrumentation'] = FieldProvenance.autoFilled;
+                              });
                               widget.onInstrumentationChanged(instrumentation);
                             }
                             _validateForm();
+                            _triggerAutoFill();
                           },
                         ),
                       ),
@@ -480,12 +596,17 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                     selectedValue: _selectedDifficulty,
                     enabled: !isSubmitting,
                     errorText: errors['difficulty'],
+                    isAutoFilled: _provenance['difficulty'] == FieldProvenance.autoFilled,
                     onChanged: (value) {
                       setState(() {
                         _selectedDifficulty = value;
+                        _provenance['difficulty'] = value != null
+                            ? FieldProvenance.manual
+                            : FieldProvenance.empty;
                       });
                       widget.onDifficultyChanged(value);
                       _validateForm();
+                      _triggerAutoFill();
                     },
                   ),
                   const SizedBox(height: 16),
@@ -495,12 +616,17 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                     selectedValue: _selectedInstrumentation,
                     enabled: !isSubmitting,
                     errorText: errors['instrumentation'],
+                    isAutoFilled: _provenance['instrumentation'] == FieldProvenance.autoFilled,
                     onChanged: (value) {
                       setState(() {
                         _selectedInstrumentation = value;
+                        _provenance['instrumentation'] = value != null
+                            ? FieldProvenance.manual
+                            : FieldProvenance.empty;
                       });
                       widget.onInstrumentationChanged(value);
                       _validateForm();
+                      _triggerAutoFill();
                     },
                   ),
                   const SizedBox(height: 16),
@@ -510,12 +636,17 @@ class _AddSheetFormState extends State<_AddSheetForm> {
                     selectedValue: _selectedEpoch,
                     enabled: !isSubmitting,
                     errorText: errors['epoch'],
+                    isAutoFilled: _provenance['epoch'] == FieldProvenance.autoFilled,
                     onChanged: (value) {
                       setState(() {
                         _selectedEpoch = value;
+                        _provenance['epoch'] = value != null
+                            ? FieldProvenance.manual
+                            : FieldProvenance.empty;
                       });
                       widget.onEpochChanged(value);
                       _validateForm();
+                      _triggerAutoFill();
                     },
                   ),
                   const SizedBox(height: 16),
