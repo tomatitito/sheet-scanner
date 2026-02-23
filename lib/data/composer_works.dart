@@ -14,12 +14,16 @@ class WorkInfo {
   final int? difficulty;
   final String? instrumentation;
   final String? genre;
+  final String? catalogNumber;
+  final String? musicalKey;
 
   const WorkInfo({
     required this.title,
     this.difficulty,
     this.instrumentation,
     this.genre,
+    this.catalogNumber,
+    this.musicalKey,
   });
 
   /// Creates from a WorkData instance.
@@ -29,6 +33,8 @@ class WorkInfo {
       difficulty: data.difficulty,
       instrumentation: data.instrumentation,
       genre: data.genre,
+      catalogNumber: data.catalogNumber,
+      musicalKey: data.musicalKey,
     );
   }
 
@@ -195,12 +201,27 @@ class ComposerWorksData {
   }
 
   /// Filters works with metadata matching a query string.
+  ///
+  /// Searches across title, catalog number, and musical key fields.
   List<WorkInfo> filterWorksInfo(String composerName, String query) {
     final works = getWorksInfoFuzzy(composerName);
     if (query.isEmpty) return works;
 
     final lowerQuery = query.toLowerCase();
-    return works.where((w) => w.title.toLowerCase().contains(lowerQuery)).toList();
+    return works.where((w) {
+      if (w.title.toLowerCase().contains(lowerQuery)) {
+        return true;
+      }
+      if (w.catalogNumber != null &&
+          w.catalogNumber!.toLowerCase().contains(lowerQuery)) {
+        return true;
+      }
+      if (w.musicalKey != null &&
+          w.musicalKey!.toLowerCase().contains(lowerQuery)) {
+        return true;
+      }
+      return false;
+    }).toList();
   }
 
   /// Gets all composer names that have works data.

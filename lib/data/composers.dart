@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
+import 'catalog_number_extractor.dart';
+import 'key_signature_extractor.dart';
+
 /// Normalizes a composer name into a canonical "last, first" lowercase key.
 ///
 /// Handles three transformations:
@@ -33,6 +36,8 @@ class WorkData {
   final int? difficulty;
   final String? instrumentation;
   final String? genre;
+  final String? catalogNumber;
+  final String? musicalKey;
 
   const WorkData({
     required this.title,
@@ -40,15 +45,20 @@ class WorkData {
     this.difficulty,
     this.instrumentation,
     this.genre,
+    this.catalogNumber,
+    this.musicalKey,
   });
 
   factory WorkData.fromJson(Map<String, dynamic> json) {
+    final title = json['title'] as String? ?? '';
     return WorkData(
-      title: json['title'] ?? '',
+      title: title,
       subtitle: json['subtitle'] as String?,
       difficulty: json['difficulty'] as int?,
       instrumentation: json['instrumentation'] as String?,
       genre: json['genre'] as String?,
+      catalogNumber: extractCatalogNumber(title),
+      musicalKey: extractKeySignature(title),
     );
   }
 
@@ -110,11 +120,18 @@ class ComposerData {
       return int.tryParse(parts[0]);
     }
 
+    // Parse works if present (OpenOpus includes works with opus info in titles)
+    final worksList = (json['works'] as List<dynamic>?)
+            ?.map((w) => WorkData.fromJson(w as Map<String, dynamic>))
+            .toList() ??
+        [];
+
     return ComposerData(
       name: json['complete_name'] ?? json['name'] ?? '',
       epoch: json['epoch'] ?? 'Unknown',
       birthYear: parseYear(json['birth']),
       deathYear: parseYear(json['death']),
+      works: worksList,
       isPopular: json['popular'] == '1' || json['popular'] == true,
       isRecommended: json['recommended'] == '1' || json['recommended'] == true,
     );

@@ -19,6 +19,31 @@ void main() {
       expect(work.difficulty, 4);
       expect(work.instrumentation, 'Fl,Pno');
       expect(work.genre, 'Chamber');
+      expect(work.musicalKey, 'G major');
+      expect(work.catalogNumber, isNull);
+    });
+
+    test('extracts catalog number from title', () {
+      final json = {
+        'title': 'Piano Concerto No. 21, K.467',
+        'difficulty': 5,
+      };
+
+      final work = WorkData.fromJson(json);
+
+      expect(work.title, 'Piano Concerto No. 21, K.467');
+      expect(work.catalogNumber, 'K. 467');
+    });
+
+    test('extracts both catalog number and key from title', () {
+      final json = {
+        'title': 'Symphony No. 40 in G minor, K.550',
+      };
+
+      final work = WorkData.fromJson(json);
+
+      expect(work.catalogNumber, 'K. 550');
+      expect(work.musicalKey, 'G minor');
     });
 
     test('handles missing fields gracefully', () {
@@ -31,6 +56,8 @@ void main() {
       expect(work.difficulty, isNull);
       expect(work.instrumentation, isNull);
       expect(work.genre, isNull);
+      expect(work.catalogNumber, isNull);
+      expect(work.musicalKey, isNull);
     });
 
     test('difficultyDisplay shows correct stars', () {

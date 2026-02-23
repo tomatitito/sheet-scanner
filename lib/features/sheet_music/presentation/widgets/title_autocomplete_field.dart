@@ -110,7 +110,12 @@ class _TitleAutocompleteFieldState extends State<TitleAutocompleteField> {
               return _availableWorks.take(15);
             }
             return _availableWorks
-                .where((work) => work.title.toLowerCase().contains(query))
+                .where((work) =>
+                    work.title.toLowerCase().contains(query) ||
+                    (work.catalogNumber != null &&
+                        work.catalogNumber!.toLowerCase().contains(query)) ||
+                    (work.musicalKey != null &&
+                        work.musicalKey!.toLowerCase().contains(query)))
                 .take(20);
           },
           displayStringForOption: (option) => option.title,
@@ -146,18 +151,26 @@ class _TitleAutocompleteFieldState extends State<TitleAutocompleteField> {
                         final isHighlighted =
                             AutocompleteHighlightedOption.of(context) == index;
 
-                        // Build subtitle with instrumentation
-                        String? subtitle;
+                        // Build subtitle with metadata
+                        final subtitleParts = <String>[];
+                        if (work.catalogNumber != null &&
+                            work.catalogNumber!.isNotEmpty) {
+                          subtitleParts.add(work.catalogNumber!);
+                        }
+                        if (work.musicalKey != null &&
+                            work.musicalKey!.isNotEmpty) {
+                          subtitleParts.add(work.musicalKey!);
+                        }
                         if (work.instrumentation != null &&
                             work.instrumentation!.isNotEmpty) {
-                          subtitle = work.instrumentation;
-                          if (work.genre != null && work.genre!.isNotEmpty) {
-                            subtitle = '$subtitle • ${work.genre}';
-                          }
-                        } else if (work.genre != null &&
-                            work.genre!.isNotEmpty) {
-                          subtitle = work.genre;
+                          subtitleParts.add(work.instrumentation!);
                         }
+                        if (work.genre != null && work.genre!.isNotEmpty) {
+                          subtitleParts.add(work.genre!);
+                        }
+                        final subtitle = subtitleParts.isNotEmpty
+                            ? subtitleParts.join(' • ')
+                            : null;
 
                         return ListTile(
                           tileColor: isHighlighted
