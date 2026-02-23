@@ -13,7 +13,7 @@ typedef OnWorkSelected = void Function(
 ///
 /// Provides suggestions from the [ComposerWorksData] when the user types,
 /// filtered to match the currently selected composer.
-/// Shows difficulty and instrumentation for Zerluth data.
+/// Shows difficulty, catalog number, key signature, and instrumentation for enriched data.
 class TitleAutocompleteField extends StatefulWidget {
   const TitleAutocompleteField({
     required this.controller,
@@ -46,6 +46,7 @@ class TitleAutocompleteField extends StatefulWidget {
 
 class _TitleAutocompleteFieldState extends State<TitleAutocompleteField> {
   List<WorkInfo> _availableWorks = const [];
+  bool _isLoading = false;
 
   /// Shared group ID for TapRegion so that tapping inside either the field
   /// or the dropdown doesn't dismiss the dropdown.
@@ -68,38 +69,88 @@ class _TitleAutocompleteFieldState extends State<TitleAutocompleteField> {
   void _loadWorks() {
     final data = ComposerWorksData.instance;
     if (!data.isLoaded) {
-      // Data not loaded yet - try loading
+      // Data not loaded yet — show loading indicator
+      setState(() => _isLoading = true);
       data.load().then((_) {
         if (mounted) {
           setState(() {
             _availableWorks = data.getWorksInfoFuzzy(widget.composerName);
+            _isLoading = false;
           });
         }
       });
     } else {
-      _availableWorks = data.getWorksInfoFuzzy(widget.composerName);
+      setState(() {
+        _availableWorks = data.getWorksInfoFuzzy(widget.composerName);
+        _isLoading = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // If no composer selected or no works available, show simple text field
-    if (widget.composerName.isEmpty || _availableWorks.isEmpty) {
-      return TextFormField(
-        controller: widget.controller,
-        focusNode: widget.focusNode,
-        enabled: widget.enabled,
-        onChanged: widget.onChanged,
-        decoration: InputDecoration(
-          labelText: 'Title *',
-          hintText: 'Enter piece title',
-          errorText: widget.errorText,
-          border: const OutlineInputBorder(),
-          prefixIcon: const Icon(Icons.music_note),
-        ),
-      );
+    // If no composer selected, show simple text field
+    if (widget.composerName.isEmpty) {
+      return _buildPlainField();
     }
 
+    // Loading state: show field with a loading indicator in the suffix
+    if (_isLoading) {
+      return _buildLoadingField();
+    }
+
+    // No works available for this composer — plain field
+    if (_availableWorks.isEmpty) {
+      return _buildPlainField();
+    }
+
+    return _buildAutocompleteField();
+  }
+
+  /// Plain text field without autocomplete suggestions.
+  Widget _buildPlainField() {
+    return TextFormField(
+      controller: widget.controller,
+      focusNode: widget.focusNode,
+      enabled: widget.enabled,
+      onChanged: widget.onChanged,
+      decoration: InputDecoration(
+        labelText: 'Title *',
+        hintText: 'Enter piece title',
+        errorText: widget.errorText,
+        border: const OutlineInputBorder(),
+        prefixIcon: const Icon(Icons.music_note),
+      ),
+    );
+  }
+
+  /// Text field showing a loading indicator while suggestion data is being fetched.
+  Widget _buildLoadingField() {
+    return TextFormField(
+      controller: widget.controller,
+      focusNode: widget.focusNode,
+      enabled: widget.enabled,
+      onChanged: widget.onChanged,
+      decoration: InputDecoration(
+        labelText: 'Title *',
+        hintText: 'Loading suggestions…',
+        errorText: widget.errorText,
+        border: const OutlineInputBorder(),
+        prefixIcon: const Icon(Icons.music_note),
+        suffixIcon: const Padding(
+          padding: EdgeInsets.all(12.0),
+          child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Full autocomplete field with dropdown suggestions.
+  Widget _buildAutocompleteField() {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Autocomplete<WorkInfo>(
@@ -137,7 +188,9 @@ class _TitleAutocompleteFieldState extends State<TitleAutocompleteField> {
                 child: Material(
                   elevation: 4,
                   borderRadius: BorderRadius.circular(8),
-                  child: ConstrainedBox(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOut,
                     constraints: BoxConstraints(
                       maxHeight: 350,
                       maxWidth: constraints.maxWidth,
@@ -172,29 +225,34 @@ class _TitleAutocompleteFieldState extends State<TitleAutocompleteField> {
                             ? subtitleParts.join(' • ')
                             : null;
 
-                        return ListTile(
-                          tileColor: isHighlighted
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          curve: Curves.easeInOut,
+                          color: isHighlighted
                               ? Theme.of(context).colorScheme.primaryContainer
-                              : null,
-                          title: Text(
-                            work.title,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                              : Colors.transparent,
+                          child: ListTile(
+                            title: Text(
+                              work.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            subtitle: subtitle != null
+                                ? Text(
+                                    subtitle,
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  )
+                                : null,
+                            trailing: work.difficulty != null
+                                ? _buildDifficultyIndicator(
+                                    context, work.difficulty!)
+                                : null,
+                            dense: true,
+                            onTap: () => onSelected(work),
                           ),
-                          subtitle: subtitle != null
-                              ? Text(
-                                  subtitle,
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                )
-                              : null,
-                          trailing: work.difficulty != null
-                              ? _buildDifficultyIndicator(
-                                  context, work.difficulty!)
-                              : null,
-                          dense: true,
-                          onTap: () => onSelected(work),
                         );
                       },
                     ),

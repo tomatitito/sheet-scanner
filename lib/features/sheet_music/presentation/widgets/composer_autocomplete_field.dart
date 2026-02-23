@@ -64,7 +64,9 @@ class _ComposerAutocompleteFieldState extends State<ComposerAutocompleteField> {
                 child: Material(
                   elevation: 4,
                   borderRadius: BorderRadius.circular(8),
-                  child: ConstrainedBox(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOut,
                     constraints: BoxConstraints(
                       maxHeight: 300,
                       maxWidth: constraints.maxWidth,
@@ -108,20 +110,25 @@ class _ComposerAutocompleteFieldState extends State<ComposerAutocompleteField> {
                           );
                         }
 
-                        return ListTile(
-                          tileColor: isHighlighted
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          curve: Curves.easeInOut,
+                          color: isHighlighted
                               ? Theme.of(context).colorScheme.primaryContainer
-                              : null,
-                          title: Text(composer.name),
-                          subtitle: subtitleParts.isNotEmpty
-                              ? Text(
-                                  subtitleParts.join(' • '),
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                )
-                              : null,
-                          trailing: trailing,
-                          dense: true,
-                          onTap: () => onSelected(composer),
+                              : Colors.transparent,
+                          child: ListTile(
+                            title: Text(composer.name),
+                            subtitle: subtitleParts.isNotEmpty
+                                ? Text(
+                                    subtitleParts.join(' • '),
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
+                                  )
+                                : null,
+                            trailing: trailing,
+                            dense: true,
+                            onTap: () => onSelected(composer),
+                          ),
                         );
                       },
                     ),
