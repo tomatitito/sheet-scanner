@@ -1,0 +1,23 @@
+{
+  "run_id": "20260223-230107-0adee79a",
+  "status": "completed",
+  "started_at": "2026-02-23T23:01:07.940874Z",
+  "completed_at": "2026-02-23T23:18:56.731649Z",
+  "project_path": "/Volumes/sourcecode/personal/sheet-scanner",
+  "prompt_preview": "Pick the next bead and work on it. When you finished working on the bead, commit and push.\n\nComplete...",
+  "completion_promise": "COMPLETE",
+  "exit_reason": "promise_fulfilled",
+  "iterations": [
+    {
+      "iteration": 1,
+      "session_id": "abc8dbdb-073d-46f1-96d7-f95425632ac1",
+      "started_at": "2026-02-23T23:01:07.941077Z",
+      "ended_at": "2026-02-23T23:18:56.731556Z",
+      "end_reason": "promise_found",
+      "tokens": {
+        "input": 650,
+        "output": 35174
+      }
+    }
+  ]
+}

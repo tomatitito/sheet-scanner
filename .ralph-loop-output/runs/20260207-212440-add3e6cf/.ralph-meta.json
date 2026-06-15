@@ -1,0 +1,147 @@
+{
+  "run_id": "20260207-212440-add3e6cf",
+  "status": "running",
+  "started_at": "2026-02-07T21:24:40.256027Z",
+  "project_path": "/Volumes/sourcecode/personal/sheet-scanner",
+  "prompt_preview": "Pick the next bead related to crawling and incorporating data about sheet music for flute and work o...",
+  "completion_promise": "COMPLETE",
+  "iterations": [
+    {
+      "iteration": 1,
+      "session_id": "0839cf15-9b5b-4667-b44b-7b9dff7ab5cf",
+      "started_at": "2026-02-07T21:24:40.256423Z",
+      "ended_at": "2026-02-07T21:25:10.772454Z",
+      "end_reason": "normal",
+      "tokens": {
+        "input": 0,
+        "output": 0
+      }
+    },
+    {
+      "iteration": 2,
+      "session_id": "169fde5b-e69a-41d3-b75f-19c33569f694",
+      "started_at": "2026-02-07T21:25:10.772657Z",
+      "ended_at": "2026-02-07T21:25:41.263700Z",
+      "end_reason": "normal",
+      "tokens": {
+        "input": 0,
+        "output": 0
+      }
+    },
+    {
+      "iteration": 3,
+      "session_id": "2dd2304e-fce5-4018-9916-4be88d977027",
+      "started_at": "2026-02-07T21:25:41.263784Z",
+      "ended_at": "2026-02-07T21:26:11.747869Z",
+      "end_reason": "normal",
+      "tokens": {
+        "input": 0,
+        "output": 0
+      }
+    },
+    {
+      "iteration": 4,
+      "session_id": "cdd04707-5be2-4119-be38-68d6417ce04a",
+      "started_at": "2026-02-07T21:26:11.747921Z",
+      "ended_at": "2026-02-07T21:26:42.248445Z",
+      "end_reason": "normal",
+      "tokens": {
+        "input": 0,
+        "output": 0
+      }
+    },
+    {
+      "iteration": 5,
+      "session_id": "f30801e5-2eb7-4de4-ac6c-664f27daa01b",
+      "started_at": "2026-02-07T21:26:42.248514Z",
+      "ended_at": "2026-02-07T21:27:12.747946Z",
+      "end_reason": "normal",
+      "tokens": {
+        "input": 0,
+        "output": 0
+      }
+    },
+    {
+      "iteration": 6,
+      "session_id": "6d319bce-b0e7-4552-a242-e2b488722e9f",
+      "started_at": "2026-02-07T21:27:12.748024Z",
+      "ended_at": "2026-02-07T21:27:43.237816Z",
+      "end_reason": "normal",
+      "tokens": {
+        "input": 0,
+        "output": 0
+      }
+    },
+    {
+      "iteration": 7,
+      "session_id": "65712dab-e01c-4209-bf6b-02f2c2384eb9",
+      "started_at": "2026-02-07T21:27:43.237884Z",
+      "ended_at": "2026-02-07T21:28:13.735108Z",
+      "end_reason": "normal",
+      "tokens": {
+        "input": 0,
+        "output": 0
+      }
+    },
+    {
+      "iteration": 8,
+      "session_id": "9212d461-a11f-445e-b4a8-a85f11b977e2",
+      "started_at": "2026-02-07T21:28:13.735178Z",
+      "ended_at": "2026-02-07T21:28:44.221123Z",
+      "end_reason": "normal",
+      "tokens": {
+        "input": 0,
+        "output": 0
+      }
+    },
+    {
+      "iteration": 9,
+      "session_id": "90c25100-ea5b-405b-a504-80975c4e92a5",
+      "started_at": "2026-02-07T21:28:44.221206Z",
+      "ended_at": "2026-02-07T21:29:14.710231Z",
+      "end_reason": "normal",
+      "tokens": {
+        "input": 0,
+        "output": 0
+      }
+    },
+    {
+      "iteration": 10,
+      "session_id": "dd36aaee-3252-498e-9174-63d9d381abb9",
+      "started_at": "2026-02-07T21:29:14.710294Z",
+      "ended_at": "2026-02-07T21:29:45.211372Z",
+      "end_reason": "normal",
+      "tokens": {
+        "input": 0,
+        "output": 0
+      }
+    },
+    {
+      "iteration": 11,
+      "session_id": "4d99f0d2-4e52-4e8f-be6b-889760afe8c8",
+      "started_at": "2026-02-07T21:29:45.211433Z",
+      "ended_at": "2026-02-07T21:30:15.697940Z",
+      "end_reason": "normal",
+      "tokens": {
+        "input": 0,
+        "output": 0
+      }
+    },
+    {
+      "iteration": 12,
+      "session_id": "b3232b11-2184-4f10-b879-e77074ab203c",
+      "started_at": "2026-02-07T21:30:15.698004Z",
+      "ended_at": "2026-02-07T21:30:46.207475Z",
+      "end_reason": "normal",
+      "tokens": {
+        "input": 0,
+        "output": 0
+      }
+    },
+    {
+      "iteration": 13,
+      "session_id": null,
+      "started_at": "2026-02-07T21:30:46.207541Z"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "run_id": "20260211-213543-34b824b3",
+  "status": "completed",
+  "started_at": "2026-02-11T21:35:43.125651Z",
+  "completed_at": "2026-02-11T21:45:21.939003Z",
+  "project_path": "/Volumes/sourcecode/personal/sheet-scanner",
+  "prompt_preview": "Pick the next bead related to crawling and incorporating data about sheet music for flute and work o...",
+  "completion_promise": "COMPLETE",
+  "exit_reason": "promise_fulfilled",
+  "iterations": [
+    {
+      "iteration": 1,
+      "session_id": "9422acd2-0bbd-4939-9db2-f916ac053f74",
+      "started_at": "2026-02-11T21:35:43.126216Z",
+      "ended_at": "2026-02-11T21:45:21.938711Z",
+      "end_reason": "promise_found",
+      "tokens": {
+        "input": 3322,
+        "output": 27173
+      }
+    }
+  ]
+}
