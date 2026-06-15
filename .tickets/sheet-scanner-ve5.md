@@ -1,6 +1,6 @@
 ---
 id: sheet-scanner-ve5
-status: open
+status: closed
 deps: [sheet-scanner-vlc0]
 links: []
 created: 2026-02-21T09:19:55.117634+01:00
@@ -44,3 +44,9 @@ Extract opus and catalog numbers from work title strings into a discrete `catalo
 - [ ] Multiple catalog numbers handled (e.g., 'K.467, H.263')
 
 
+
+## Notes
+
+**2026-06-15T19:05:22Z**
+
+Reconciled against code/tests: WorkData and WorkInfo include catalogNumber, CatalogNumberExtractor supports Op/K/BWV/etc. including multiple numbers, WorkData.fromJson applies extraction, TitleAutocompleteField displays/searches catalog numbers, and focused catalog/field/performance tests pass. Closing as already implemented.

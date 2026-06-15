@@ -1,6 +1,6 @@
 ---
 id: sheet-scanner-dsjb
-status: open
+status: closed
 deps: [sheet-scanner-vlc0]
 links: []
 created: 2026-02-21T09:20:06.493057+01:00
@@ -62,3 +62,9 @@ Store in standardized format: `{note}{accidental} {mode}`
 - [ ] Filtering by key works in search
 
 
+
+## Notes
+
+**2026-06-15T19:05:22Z**
+
+Reconciled against code/tests: WorkData and WorkInfo include musicalKey, KeySignatureExtractor supports English and German notation with normalized output, WorkData.fromJson applies extraction, TitleAutocompleteField displays/searches keys, DB/FTS has musical_key support, and focused key/field/performance tests pass. Closing as already implemented.

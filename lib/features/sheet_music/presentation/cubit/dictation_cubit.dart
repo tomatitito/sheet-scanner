@@ -50,15 +50,14 @@ class DictationCubit extends Cubit<DictationState> {
     String language = 'en_US',
     Duration listenFor = const Duration(seconds: 30),
   }) async {
-    debugPrint('[CUBIT-TRACE] startDictation called with listenFor=${listenFor.inSeconds}s, language=$language');
-    
     // If already listening, ignore
     final isListening = state.whenOrNull(
           listening: (_, __) => true,
         ) ??
         false;
     if (isListening) {
-      debugPrint('[CUBIT-WARN] Already listening, ignoring startDictation call');
+      debugPrint(
+          '[CUBIT-WARN] Already listening, ignoring startDictation call');
       return;
     }
 
@@ -67,7 +66,6 @@ class DictationCubit extends Cubit<DictationState> {
     _listeningStartTime = DateTime.now();
 
     // Emit listening state
-    debugPrint('[CUBIT-TRACE] Emitting listening state');
     emit(const DictationState.listening(
       currentTranscription: '',
       elapsedTime: Duration.zero,
@@ -77,23 +75,18 @@ class DictationCubit extends Cubit<DictationState> {
     _startElapsedTimer();
 
     // Start voice transcription
-    debugPrint('[CUBIT-TRACE] Calling _transcribeVoiceUseCase.call()...');
-    final useCaseStartTime = DateTime.now();
     final params = TranscribeVoiceParams(
       language: language,
       listenFor: listenFor,
     );
 
     final result = await _transcribeVoiceUseCase.call(params);
-    final useCaseDuration = DateTime.now().difference(useCaseStartTime);
-    debugPrint('[CUBIT-TRACE] _transcribeVoiceUseCase.call() returned after ${useCaseDuration.inSeconds}s');
 
     // Stop the elapsed timer
     _stopElapsedTimer();
 
     // If cancellation was requested, don't emit a result
     if (_cancelRequested) {
-      debugPrint('[CUBIT-TRACE] Cancellation was requested, returning without emitting result');
       _cancelRequested = false;
       return;
     }
@@ -104,15 +97,11 @@ class DictationCubit extends Cubit<DictationState> {
         emit(DictationState.error(failure: failure));
       },
       (dictationResult) async {
-        debugPrint('[CUBIT-TRACE] Got success result: "${dictationResult.text}"');
-
         // Apply post-processing if available
         String finalText = dictationResult.text;
         if (_postProcessor != null && finalText.isNotEmpty) {
           try {
-            debugPrint('[CUBIT-TRACE] Applying post-processing...');
             finalText = await _postProcessor!.processText(finalText);
-            debugPrint('[CUBIT-TRACE] Post-processed result: "$finalText"');
           } catch (e) {
             debugPrint('[CUBIT-WARN] Post-processing failed: $e');
           }

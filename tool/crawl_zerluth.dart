@@ -287,10 +287,8 @@ class ZerluthCrawler {
 
       // Calculate progress
       final progress = (page / maxPages * 100).toStringAsFixed(1);
-      final withDifficulty =
-          items.where((i) => i.difficulty != null).length;
-      final withInstr =
-          items.where((i) => i.instrumentation != null).length;
+      final withDifficulty = items.where((i) => i.difficulty != null).length;
+      final withInstr = items.where((i) => i.instrumentation != null).length;
 
       if (verbose) {
         _log(
@@ -318,13 +316,17 @@ class ZerluthCrawler {
     final withComposer = allItems.where((i) => i.composer != null).length;
     final withTitle = allItems.where((i) => i.title != null).length;
 
-    _log('Items with difficulty: $withDiff (${(withDiff / allItems.length * 100).toStringAsFixed(1)}%)',
+    _log(
+        'Items with difficulty: $withDiff (${(withDiff / allItems.length * 100).toStringAsFixed(1)}%)',
         color: TerminalColors.yellow);
-    _log('Items with instrumentation: $withInstr (${(withInstr / allItems.length * 100).toStringAsFixed(1)}%)',
+    _log(
+        'Items with instrumentation: $withInstr (${(withInstr / allItems.length * 100).toStringAsFixed(1)}%)',
         color: TerminalColors.yellow);
-    _log('Items with composer: $withComposer (${(withComposer / allItems.length * 100).toStringAsFixed(1)}%)',
+    _log(
+        'Items with composer: $withComposer (${(withComposer / allItems.length * 100).toStringAsFixed(1)}%)',
         color: TerminalColors.yellow);
-    _log('Items with title: $withTitle (${(withTitle / allItems.length * 100).toStringAsFixed(1)}%)',
+    _log(
+        'Items with title: $withTitle (${(withTitle / allItems.length * 100).toStringAsFixed(1)}%)',
         color: TerminalColors.yellow);
     _log('${'=' * 60}\n', color: TerminalColors.magenta);
 
@@ -337,9 +339,9 @@ class ZerluthCrawler {
 
   void _log(String message, {String color = ''}) {
     if (color.isNotEmpty) {
-      print('$color$message${TerminalColors.reset}');
+      stdout.writeln('$color$message${TerminalColors.reset}');
     } else {
-      print(message);
+      stdout.writeln(message);
     }
   }
 }
@@ -357,15 +359,16 @@ Future<void> saveToJson(List<ZerluthItem> items, String filePath) async {
 
   await file.writeAsString(jsonString);
 
-  print('${TerminalColors.green}Saved ${items.length} items to $filePath${TerminalColors.reset}');
+  stdout.writeln(
+      '${TerminalColors.green}Saved ${items.length} items to $filePath${TerminalColors.reset}');
 }
 
 Future<void> main(List<String> args) async {
-  print('''
+  stdout.writeln('''
 ${TerminalColors.bold}${TerminalColors.cyan}
   ____          _       _   _       ____                    _
  |__  | ___ _ _| | _ _ | |_| |_    / ___|_ __ __ ___      _| | ___ _ __
-   / / / _ \\ '_| || | ||  _|   \\  | |   | '__/ _\` \\ \\ /\\ / / |/ _ \\ '__|
+   / / / _ \\ '_| || | ||  _|   \\  | |   | '__/ _` \\ \\ /\\ / / |/ _ \\ '__|
   / /__  __/ | | || |_|| |_| | | | | |___| | | (_| |\\ V  V /| |  __/ |
  /____|\\___|_| |_|\\__,_|\\__|_| |_|  \\____|_|  \\__,_| \\_/\\_/ |_|\\___|_|
 ${TerminalColors.reset}
@@ -376,7 +379,8 @@ ${TerminalColors.reset}
   final maxPages = testMode ? 1 : 35;
 
   if (testMode) {
-    print('${TerminalColors.yellow}Running in TEST mode (1 page only)${TerminalColors.reset}\n');
+    stdout.writeln(
+        '${TerminalColors.yellow}Running in TEST mode (1 page only)${TerminalColors.reset}\n');
   }
 
   final crawler = ZerluthCrawler();
@@ -385,18 +389,22 @@ ${TerminalColors.reset}
     final items = await crawler.crawlAll(maxPages: maxPages);
 
     if (items.isNotEmpty) {
-      final outputPath = 'lib/data/sources/zerluth_flute.json';
+      const outputPath = 'lib/data/sources/zerluth_flute.json';
       await saveToJson(items, outputPath);
 
       // Print some sample data
-      print('\n${TerminalColors.cyan}Sample data (first 5 items):${TerminalColors.reset}');
+      stdout.writeln(
+          '\n${TerminalColors.cyan}Sample data (first 5 items):${TerminalColors.reset}');
       for (var i = 0; i < 5 && i < items.length; i++) {
         final item = items[i];
-        print('  ${i + 1}. ${item.title ?? "Unknown"} by ${item.composer ?? "Unknown"}');
-        print('     Difficulty: ${item.difficulty ?? "N/A"}, Instrumentation: ${item.instrumentation ?? "N/A"}');
+        stdout.writeln(
+            '  ${i + 1}. ${item.title ?? "Unknown"} by ${item.composer ?? "Unknown"}');
+        stdout.writeln(
+            '     Difficulty: ${item.difficulty ?? "N/A"}, Instrumentation: ${item.instrumentation ?? "N/A"}');
       }
     } else {
-      print('${TerminalColors.red}No items crawled.${TerminalColors.reset}');
+      stdout.writeln(
+          '${TerminalColors.red}No items crawled.${TerminalColors.reset}');
     }
   } finally {
     crawler.close();

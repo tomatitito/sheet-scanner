@@ -62,15 +62,15 @@ void main() {
 
     test('difficultyDisplay shows correct stars', () {
       expect(
-        WorkData(title: 't', difficulty: 1).difficultyDisplay,
+        const WorkData(title: 't', difficulty: 1).difficultyDisplay,
         '★☆☆☆☆',
       );
       expect(
-        WorkData(title: 't', difficulty: 3).difficultyDisplay,
+        const WorkData(title: 't', difficulty: 3).difficultyDisplay,
         '★★★☆☆',
       );
       expect(
-        WorkData(title: 't', difficulty: 5).difficultyDisplay,
+        const WorkData(title: 't', difficulty: 5).difficultyDisplay,
         '★★★★★',
       );
       expect(
@@ -181,13 +181,13 @@ void main() {
     });
 
     test('averageDifficulty calculates correctly', () {
-      final composer = ComposerData(
+      const composer = ComposerData(
         name: 'Test',
         epoch: 'Test',
         works: [
-          const WorkData(title: 'A', difficulty: 2),
-          const WorkData(title: 'B', difficulty: 4),
-          const WorkData(title: 'C', difficulty: 3),
+          WorkData(title: 'A', difficulty: 2),
+          WorkData(title: 'B', difficulty: 4),
+          WorkData(title: 'C', difficulty: 3),
         ],
       );
 
@@ -195,13 +195,13 @@ void main() {
     });
 
     test('averageDifficulty ignores works without difficulty', () {
-      final composer = ComposerData(
+      const composer = ComposerData(
         name: 'Test',
         epoch: 'Test',
         works: [
-          const WorkData(title: 'A', difficulty: 2),
-          const WorkData(title: 'B'), // No difficulty
-          const WorkData(title: 'C', difficulty: 4),
+          WorkData(title: 'A', difficulty: 2),
+          WorkData(title: 'B'), // No difficulty
+          WorkData(title: 'C', difficulty: 4),
         ],
       );
 
@@ -209,12 +209,12 @@ void main() {
     });
 
     test('averageDifficulty returns null when no works have difficulty', () {
-      final composer = ComposerData(
+      const composer = ComposerData(
         name: 'Test',
         epoch: 'Test',
         works: [
-          const WorkData(title: 'A'),
-          const WorkData(title: 'B'),
+          WorkData(title: 'A'),
+          WorkData(title: 'B'),
         ],
       );
 
@@ -222,13 +222,13 @@ void main() {
     });
 
     test('worksCount returns correct count', () {
-      final composer = ComposerData(
+      const composer = ComposerData(
         name: 'Test',
         epoch: 'Test',
         works: [
-          const WorkData(title: 'A'),
-          const WorkData(title: 'B'),
-          const WorkData(title: 'C'),
+          WorkData(title: 'A'),
+          WorkData(title: 'B'),
+          WorkData(title: 'C'),
         ],
       );
 
@@ -245,11 +245,11 @@ void main() {
         works: [WorkData(title: 'Work 1')],
       );
 
-      final composer2 = ComposerData(
+      const composer2 = ComposerData(
         name: 'Johann Sebastian Bach',
         epoch: 'Unknown', // Should be ignored
         isRecommended: true,
-        works: [const WorkData(title: 'Work 2')],
+        works: [WorkData(title: 'Work 2')],
       );
 
       final merged = composer1.merge(composer2);

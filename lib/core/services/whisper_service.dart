@@ -18,7 +18,7 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
   late final AudioRecorder _audioRecorder;
   bool _isListening = false;
   String? _currentAudioPath;
-  
+
   /// Completer to track the ongoing transcription operation.
   /// This ensures we can await the full operation and properly handle errors.
   Completer<void>? _transcriptionCompleter;
@@ -69,49 +69,43 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
     Duration listenFor = const Duration(seconds: 30),
   }) async {
     try {
-      debugPrint('[TRACE] startListening called with listenFor=${listenFor.inSeconds}s');
-      
-      debugPrint('[TRACE] Checking microphone availability...');
       if (!await isAvailable()) {
         debugPrint('ERROR: Microphone not available');
         onError('Microphone permission not granted');
         return;
       }
-      debugPrint('[TRACE] Microphone available');
 
       _isListening = true;
-      
+
       // Create a completer to track this transcription session
       _transcriptionCompleter = Completer<void>();
 
-      debugPrint('[TRACE] Emitting listening started event');
       onResult('', false);
 
-      debugPrint('[TRACE] Starting audio recording...');
       final audioPath = await _startAudioRecording();
       if (audioPath == null) {
         _isListening = false;
-        _transcriptionCompleter?.completeError(Exception('Failed to start audio recording'));
+        _transcriptionCompleter
+            ?.completeError(Exception('Failed to start audio recording'));
         debugPrint('ERROR: _startAudioRecording returned null');
         onError('Failed to start audio recording');
         return;
       }
 
       // CRITICAL FIX: Verify recording actually started
-      debugPrint('[TRACE] Verifying recording is active...');
       final isRecording = await _audioRecorder.isRecording();
       if (!isRecording) {
         _isListening = false;
         await _cleanupAudioFile();
-        _transcriptionCompleter?.completeError(Exception('Audio recorder failed to start'));
-        debugPrint('ERROR: Audio recorder is not recording despite start() returning');
+        _transcriptionCompleter
+            ?.completeError(Exception('Audio recorder failed to start'));
+        debugPrint(
+            'ERROR: Audio recorder is not recording despite start() returning');
         onError('Audio recording failed to start - microphone may be in use');
         return;
       }
-      debugPrint('[TRACE] Recording verified active');
 
       _currentAudioPath = audioPath;
-      debugPrint('[TRACE] Audio recording started, will auto-stop after ${listenFor.inSeconds}s');
 
       // CRITICAL FIX: Schedule auto-stop and track the Future
       // We no longer fire-and-forget - the caller should await startListening()
@@ -134,42 +128,36 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
     Function(String text, bool isFinal) onResult,
     Function(String error) onError,
   ) {
-    debugPrint('[TRACE] Scheduling auto-stop in ${listenFor.inSeconds}s');
-    final startTime = DateTime.now();
-    
     Future.delayed(listenFor).then((_) async {
-      final elapsed = DateTime.now().difference(startTime);
-      debugPrint('[TRACE] Auto-stop firing after ${elapsed.inMilliseconds}ms');
-      
       try {
         if (!_isListening) {
-          debugPrint('[TRACE] Listening already stopped, skipping auto-transcribe');
-          if (_transcriptionCompleter != null && !_transcriptionCompleter!.isCompleted) {
+          if (_transcriptionCompleter != null &&
+              !_transcriptionCompleter!.isCompleted) {
             _transcriptionCompleter!.complete();
           }
           return;
         }
 
-        debugPrint('[TRACE] Stopping audio recorder...');
         _isListening = false;
 
         final recordingPath = await _audioRecorder.stop();
         if (recordingPath == null) {
           debugPrint('ERROR: Audio recorder stop() returned null');
           onError('Failed to stop audio recording');
-          if (_transcriptionCompleter != null && !_transcriptionCompleter!.isCompleted) {
-            _transcriptionCompleter!.completeError(Exception('Stop returned null'));
+          if (_transcriptionCompleter != null &&
+              !_transcriptionCompleter!.isCompleted) {
+            _transcriptionCompleter!
+                .completeError(Exception('Stop returned null'));
           }
           await _cleanupAudioFile();
           return;
         }
 
-        debugPrint('[TRACE] Audio recording stopped at: $recordingPath');
-
         // Transcribe the recorded audio
         await _transcribeRecordedAudio(onResult, onError);
-        
-        if (_transcriptionCompleter != null && !_transcriptionCompleter!.isCompleted) {
+
+        if (_transcriptionCompleter != null &&
+            !_transcriptionCompleter!.isCompleted) {
           _transcriptionCompleter!.complete();
         }
       } catch (e) {
@@ -177,7 +165,8 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
         debugPrint('[STACK] Stack trace: ${StackTrace.current}');
         onError('Transcription error: ${e.toString()}');
         _isListening = false;
-        if (_transcriptionCompleter != null && !_transcriptionCompleter!.isCompleted) {
+        if (_transcriptionCompleter != null &&
+            !_transcriptionCompleter!.isCompleted) {
           _transcriptionCompleter!.completeError(e);
         }
         await _cleanupAudioFile();
@@ -199,33 +188,30 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
         bitRate: 16000,
       );
 
-      debugPrint('[TRACE] Starting audio recording to: $audioPath');
-      debugPrint('[TRACE] Config: encoder=WAV, sampleRate=16000Hz, channels=1');
-
-      debugPrint('[TRACE] Calling _audioRecorder.start()...');
       final recordingStartTime = DateTime.now();
-      
+
       // CRITICAL: Timeout on start() to catch Android audio system hangs
       try {
         await _audioRecorder.start(config, path: audioPath).timeout(
           const Duration(seconds: 5),
           onTimeout: () {
-            throw TimeoutException('Audio recorder start() timed out after 5 seconds');
+            throw TimeoutException(
+                'Audio recorder start() timed out after 5 seconds');
           },
         );
       } on TimeoutException catch (e) {
         debugPrint('ERROR: ${e.message}');
         return null;
       }
-      
-      final recordingStartDuration = DateTime.now().difference(recordingStartTime);
-      debugPrint('[TRACE] _audioRecorder.start() completed in ${recordingStartDuration.inMilliseconds}ms');
+
+      final recordingStartDuration =
+          DateTime.now().difference(recordingStartTime);
 
       if (recordingStartDuration.inSeconds > 2) {
-        debugPrint('[WARNING] Audio start took ${recordingStartDuration.inSeconds}s - may indicate device issues');
+        debugPrint(
+            '[WARNING] Audio start took ${recordingStartDuration.inSeconds}s - may indicate device issues');
       }
 
-      debugPrint('[TRACE] Audio recording initiated at: $audioPath');
       return audioPath;
     } catch (e) {
       debugPrint('ERROR: Exception starting audio recording: $e');
@@ -247,7 +233,6 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
       }
 
       final audioPath = _currentAudioPath!;
-      debugPrint('[TRACE] Transcribing recorded audio: $audioPath');
 
       final audioFile = File(audioPath);
       if (!await audioFile.exists()) {
@@ -257,7 +242,6 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
       }
 
       final fileSize = await audioFile.length();
-      debugPrint('[TRACE] Audio file size: $fileSize bytes');
 
       if (fileSize < 1000) {
         debugPrint('ERROR: Audio file too small ($fileSize bytes)');
@@ -266,12 +250,9 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
         return;
       }
 
-      debugPrint('[TRACE] Starting Whisper transcription of $fileSize byte audio file');
-
       final transcription = await transcribeAudioFile(audioPath);
 
       if (transcription.isNotEmpty) {
-        debugPrint('✓ Transcription successful: "$transcription"');
         onResult(transcription, true);
       } else {
         debugPrint('ERROR: Whisper returned empty transcription');
@@ -293,7 +274,6 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
       final file = File(_currentAudioPath!);
       if (await file.exists()) {
         await file.delete();
-        debugPrint('[TRACE] Cleaned up audio file: $_currentAudioPath');
       }
     } catch (e) {
       debugPrint('Error cleaning up audio file: $e');
@@ -311,7 +291,6 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
       }
 
       _isListening = false;
-      debugPrint('[TRACE] Manual stop requested: stopping audio recorder');
 
       final recordingPath = await _audioRecorder.stop();
       if (recordingPath == null) {
@@ -320,8 +299,6 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
         return null;
       }
 
-      debugPrint('[TRACE] Audio recording stopped at: $recordingPath');
-
       final audioFile = File(recordingPath);
       if (!await audioFile.exists()) {
         debugPrint('ERROR: Audio file does not exist after recording');
@@ -329,7 +306,6 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
       }
 
       final fileSize = await audioFile.length();
-      debugPrint('[TRACE] Audio file size: $fileSize bytes');
 
       if (fileSize < 1000) {
         debugPrint('ERROR: Audio recording too short ($fileSize bytes)');
@@ -338,9 +314,7 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
       }
 
       try {
-        debugPrint('[TRACE] Starting transcription of manually stopped recording');
         final transcription = await transcribeAudioFile(recordingPath);
-        debugPrint('✓ Transcription result: "$transcription"');
         await _cleanupAudioFile();
         return transcription;
       } catch (e) {
@@ -361,9 +335,9 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
       _isListening = false;
       await _audioRecorder.cancel();
       await _cleanupAudioFile();
-      debugPrint('[TRACE] Audio recording canceled');
-      
-      if (_transcriptionCompleter != null && !_transcriptionCompleter!.isCompleted) {
+
+      if (_transcriptionCompleter != null &&
+          !_transcriptionCompleter!.isCompleted) {
         _transcriptionCompleter!.completeError(Exception('Cancelled'));
       }
     } catch (e) {
@@ -393,33 +367,25 @@ class WhisperRecognitionServiceImpl implements SpeechRecognitionService {
   /// Transcribe an audio file using Whisper.
   Future<String> transcribeAudioFile(String audioPath) async {
     try {
-      debugPrint('[TRACE] Calling Whisper transcribe on: $audioPath');
-      debugPrint('[TRACE] File exists: ${await File(audioPath).exists()}');
-      
-      final transcribeStartTime = DateTime.now();
-      debugPrint('[TRACE] Calling _whisper.transcribe()...');
-      
       // CRITICAL: Timeout to catch Whisper hanging during model loading
       // Reduced from 2 minutes to 90 seconds for better UX
-      final result = await _whisper.transcribe(
+      final result = await _whisper
+          .transcribe(
         transcribeRequest: TranscribeRequest(
           audio: audioPath,
           isTranslate: false,
           isNoTimestamps: true,
         ),
-      ).timeout(
+      )
+          .timeout(
         const Duration(seconds: 90),
         onTimeout: () {
-          throw TimeoutException('Whisper transcription timed out after 90 seconds');
+          throw TimeoutException(
+              'Whisper transcription timed out after 90 seconds');
         },
       );
-      
-      final transcribeDuration = DateTime.now().difference(transcribeStartTime);
-      debugPrint('[TRACE] _whisper.transcribe() completed in ${transcribeDuration.inSeconds}s');
 
       final transcribedText = result.text.trim();
-      debugPrint('[TRACE] Transcription result length: ${transcribedText.length} chars');
-      debugPrint('✓ Whisper transcription complete: "$transcribedText"');
       return transcribedText;
     } catch (e) {
       debugPrint('ERROR: Whisper transcription failed: $e');

@@ -104,9 +104,12 @@ class Composer {
 /// Extract a clean composer name from various formats
 String cleanComposerName(String raw) {
   // Remove common suffixes like (Arr), (Hrsg), (Arr/Hrsg)
-  var name = raw.replaceAll(RegExp(r'\s*\(Arr[^\)]*\)', caseSensitive: false), '');
-  name = name.replaceAll(RegExp(r'\s*\(Hrsg[^\)]*\)', caseSensitive: false), '');
-  name = name.replaceAll(RegExp(r'\s*/\s*.*$'), ''); // Remove co-authors after /
+  var name =
+      raw.replaceAll(RegExp(r'\s*\(Arr[^\)]*\)', caseSensitive: false), '');
+  name =
+      name.replaceAll(RegExp(r'\s*\(Hrsg[^\)]*\)', caseSensitive: false), '');
+  name =
+      name.replaceAll(RegExp(r'\s*/\s*.*$'), ''); // Remove co-authors after /
 
   // Trim and normalize whitespace
   name = name.trim().replaceAll(RegExp(r'\s+'), ' ');
@@ -117,7 +120,7 @@ String cleanComposerName(String raw) {
 /// Extract short name from complete name
 String extractShortName(String completeName) {
   final parts = completeName.split(',');
-  if (parts.length >= 1) {
+  if (parts.isNotEmpty) {
     return parts.first.trim();
   }
   return completeName.split(' ').last;
@@ -131,12 +134,20 @@ String guessGenre(String? instrumentation, String title) {
   if (lowerTitle.contains('symphony')) return 'Orchestral';
   if (lowerTitle.contains('opera')) return 'Stage';
   if (lowerTitle.contains('sonata')) return 'Chamber';
-  if (lowerTitle.contains('solo') || lowerTitle.contains('flöte-solo')) return 'Solo';
-  if (lowerTitle.contains('duet') || lowerTitle.contains('zwei')) return 'Chamber';
-  if (lowerTitle.contains('trio') || lowerTitle.contains('drei')) return 'Chamber';
+  if (lowerTitle.contains('solo') || lowerTitle.contains('flöte-solo')) {
+    return 'Solo';
+  }
+  if (lowerTitle.contains('duet') || lowerTitle.contains('zwei')) {
+    return 'Chamber';
+  }
+  if (lowerTitle.contains('trio') || lowerTitle.contains('drei')) {
+    return 'Chamber';
+  }
   if (lowerTitle.contains('quartet')) return 'Chamber';
   if (lowerTitle.contains('quintet')) return 'Chamber';
-  if (lowerTitle.contains('etüden') || lowerTitle.contains('studies')) return 'Educational';
+  if (lowerTitle.contains('etüden') || lowerTitle.contains('studies')) {
+    return 'Educational';
+  }
 
   if (instrumentation != null) {
     final lowerInstr = instrumentation.toLowerCase();
@@ -159,11 +170,15 @@ String generateSearchTerms(String title) {
   if (lowerTitle.contains('suite')) terms.add('suite');
   if (lowerTitle.contains('variations')) terms.add('variations');
   if (lowerTitle.contains('fantasi')) terms.add('fantasy fantasia');
-  if (lowerTitle.contains('duet') || lowerTitle.contains('duo')) terms.add('duet');
+  if (lowerTitle.contains('duet') || lowerTitle.contains('duo')) {
+    terms.add('duet');
+  }
   if (lowerTitle.contains('trio')) terms.add('trio');
   if (lowerTitle.contains('quartet')) terms.add('quartet');
   if (lowerTitle.contains('quintet')) terms.add('quintet');
-  if (lowerTitle.contains('etüden') || lowerTitle.contains('stud')) terms.add('etude study');
+  if (lowerTitle.contains('etüden') || lowerTitle.contains('stud')) {
+    terms.add('etude study');
+  }
   if (lowerTitle.contains('prelud')) terms.add('prelude');
   if (lowerTitle.contains('capricc')) terms.add('capriccio');
   if (lowerTitle.contains('nocturne')) terms.add('nocturne');
@@ -173,7 +188,7 @@ String generateSearchTerms(String title) {
 }
 
 Future<void> main(List<String> args) async {
-  print('''
+  stdout.writeln('''
 ${TerminalColors.bold}${TerminalColors.cyan}
 ╔══════════════════════════════════════════════════════════════════════╗
 ║           Zerluth Data Converter - Flat to Grouped Format            ║
@@ -185,18 +200,21 @@ ${TerminalColors.reset}
   const outputPath = 'lib/data/sources/zerluth_composers.json';
 
   // Load crawled data
-  print('${TerminalColors.cyan}Loading crawled data from $inputPath...${TerminalColors.reset}');
+  stdout.writeln(
+      '${TerminalColors.cyan}Loading crawled data from $inputPath...${TerminalColors.reset}');
 
   final inputFile = File(inputPath);
   if (!await inputFile.exists()) {
-    print('${TerminalColors.red}Error: Input file not found. Run the crawler first.${TerminalColors.reset}');
+    stdout.writeln(
+        '${TerminalColors.red}Error: Input file not found. Run the crawler first.${TerminalColors.reset}');
     exit(1);
   }
 
   final jsonString = await inputFile.readAsString();
   final List<dynamic> rawItems = json.decode(jsonString);
 
-  print('${TerminalColors.green}Loaded ${rawItems.length} items${TerminalColors.reset}');
+  stdout.writeln(
+      '${TerminalColors.green}Loaded ${rawItems.length} items${TerminalColors.reset}');
 
   // Parse items
   final items = rawItems
@@ -204,7 +222,8 @@ ${TerminalColors.reset}
       .where((item) => item.composer != null && item.title != null)
       .toList();
 
-  print('${TerminalColors.cyan}Valid items with composer and title: ${items.length}${TerminalColors.reset}');
+  stdout.writeln(
+      '${TerminalColors.cyan}Valid items with composer and title: ${items.length}${TerminalColors.reset}');
 
   // Group by composer
   final composerMap = <String, Composer>{};
@@ -232,7 +251,8 @@ ${TerminalColors.reset}
     composerMap[key]!.works.add(work);
   }
 
-  print('${TerminalColors.cyan}Grouped into ${composerMap.length} unique composers${TerminalColors.reset}');
+  stdout.writeln(
+      '${TerminalColors.cyan}Grouped into ${composerMap.length} unique composers${TerminalColors.reset}');
 
   // Sort composers by name and works by title
   final sortedComposers = composerMap.values.toList()
@@ -253,27 +273,34 @@ ${TerminalColors.reset}
     const JsonEncoder.withIndent('  ').convert(outputData),
   );
 
-  print('\n${TerminalColors.green}${TerminalColors.bold}Conversion complete!${TerminalColors.reset}');
-  print('${TerminalColors.cyan}Output written to: $outputPath${TerminalColors.reset}');
+  stdout.writeln(
+      '\n${TerminalColors.green}${TerminalColors.bold}Conversion complete!${TerminalColors.reset}');
+  stdout.writeln(
+      '${TerminalColors.cyan}Output written to: $outputPath${TerminalColors.reset}');
 
   // Statistics
-  final totalWorks = sortedComposers.fold<int>(0, (sum, c) => sum + c.works.length);
+  final totalWorks =
+      sortedComposers.fold<int>(0, (sum, c) => sum + c.works.length);
   final worksWithDifficulty = items.where((i) => i.difficulty != null).length;
   final worksWithInstr = items.where((i) => i.instrumentation != null).length;
 
-  print('\n${TerminalColors.yellow}Statistics:${TerminalColors.reset}');
-  print('  Composers: ${sortedComposers.length}');
-  print('  Works: $totalWorks');
-  print('  Works with difficulty: $worksWithDifficulty (${(worksWithDifficulty / totalWorks * 100).toStringAsFixed(1)}%)');
-  print('  Works with instrumentation: $worksWithInstr (${(worksWithInstr / totalWorks * 100).toStringAsFixed(1)}%)');
+  stdout
+      .writeln('\n${TerminalColors.yellow}Statistics:${TerminalColors.reset}');
+  stdout.writeln('  Composers: ${sortedComposers.length}');
+  stdout.writeln('  Works: $totalWorks');
+  stdout.writeln(
+      '  Works with difficulty: $worksWithDifficulty (${(worksWithDifficulty / totalWorks * 100).toStringAsFixed(1)}%)');
+  stdout.writeln(
+      '  Works with instrumentation: $worksWithInstr (${(worksWithInstr / totalWorks * 100).toStringAsFixed(1)}%)');
 
   // Top composers by works
   final topComposers = sortedComposers.toList()
     ..sort((a, b) => b.works.length.compareTo(a.works.length));
 
-  print('\n${TerminalColors.magenta}Top 10 composers by number of works:${TerminalColors.reset}');
+  stdout.writeln(
+      '\n${TerminalColors.magenta}Top 10 composers by number of works:${TerminalColors.reset}');
   for (var i = 0; i < 10 && i < topComposers.length; i++) {
     final c = topComposers[i];
-    print('  ${i + 1}. ${c.completeName}: ${c.works.length} works');
+    stdout.writeln('  ${i + 1}. ${c.completeName}: ${c.works.length} works');
   }
 }

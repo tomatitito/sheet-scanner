@@ -1,6 +1,6 @@
 ---
 id: sheet-scanner-vlc0
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-02-21T09:20:17.621798+01:00
@@ -43,3 +43,9 @@ Create reusable extractor utilities in `lib/data/extractors/`:
 Apply extraction during data loading in `WorkData.fromJson()` so all consumers benefit automatically.
 
 
+
+## Notes
+
+**2026-06-15T19:05:22Z**
+
+Reconciled against code/tests: child work for catalog numbers (sheet-scanner-ve5) and musical keys (sheet-scanner-dsjb) is implemented and now closed; WorkData/WorkInfo extract structured metadata, autocomplete displays/searches it, and focused extractor/integration/performance tests pass. Closing epic as complete.

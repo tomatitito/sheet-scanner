@@ -30,10 +30,7 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
     Duration listenFor = const Duration(minutes: 1),
   }) async {
     try {
-      debugPrint('[REPO-TRACE] startVoiceInput called with listenFor=${listenFor.inSeconds}s');
-      
       // Check if service is available
-      debugPrint('[REPO-TRACE] Checking if service is available...');
       final available = await _speechService.isAvailable();
       if (!available) {
         debugPrint('[REPO-ERROR] Speech recognition not available');
@@ -44,10 +41,8 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
           ),
         );
       }
-      debugPrint('[REPO-TRACE] Service is available');
 
       // Initialize the service
-      debugPrint('[REPO-TRACE] Initializing service...');
       final initialized = await _speechService.initialize();
       if (!initialized) {
         debugPrint('[REPO-ERROR] Failed to initialize service');
@@ -58,7 +53,6 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
           ),
         );
       }
-      debugPrint('[REPO-TRACE] Service initialized');
 
       // Validate that the requested language is available on the device
       final availableLanguages = await _speechService.availableLanguages;
@@ -74,7 +68,6 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
       }
 
       // Create a completer for this listening session
-      debugPrint('[REPO-TRACE] Creating new completer for listening session');
       _listenCompleter = Completer<DictationResult>();
 
       // Clear previous result
@@ -82,14 +75,10 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
       final startTime = DateTime.now();
 
       // Start listening
-      debugPrint('[REPO-TRACE] Calling _speechService.startListening()...');
-      final listenStartTime = DateTime.now();
       await _speechService.startListening(
         onResult: (String text, bool isFinal) {
-          debugPrint('[REPO-TRACE] onResult callback: text="$text", isFinal=$isFinal');
           if (isFinal) {
             _finalText = text;
-            debugPrint('[REPO-TRACE] isFinal=true, completing completer with text="$text"');
             // Complete the completer when final result is received
             if (_listenCompleter != null && !_listenCompleter!.isCompleted) {
               _listenCompleter!.complete(
@@ -114,20 +103,14 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
         language: effectiveLanguage,
         listenFor: listenFor,
       );
-      final listenStartDuration = DateTime.now().difference(listenStartTime);
-      debugPrint('[REPO-TRACE] _speechService.startListening() returned after ${listenStartDuration.inMilliseconds}ms');
-
       // Wait for the listening session to complete or timeout
       // Timeout accounts for: recording time (30s default) + transcription time (90s max)
       // The service layer has its own timeouts (5s for recording start, 90s for transcription).
       // Total max time: listenFor + 90s transcription + 15s buffer = ~2.5 minutes
-      debugPrint('[REPO-TRACE] Awaiting completer future with timeout ${listenFor.inSeconds + 120}s (listen + transcription)...');
       final Duration timeoutDuration = listenFor + const Duration(seconds: 120);
-      final awaitStartTime = DateTime.now();
       final result = await _listenCompleter!.future.timeout(
         timeoutDuration,
         onTimeout: () {
-          debugPrint('[REPO-TRACE] Timeout fired after ${timeoutDuration.inSeconds}s - operation still pending');
           // Stop listening on timeout
           unawaited(_speechService.stopListening());
           return DictationResult(
@@ -138,9 +121,6 @@ class SpeechRecognitionRepositoryImpl implements SpeechRecognitionRepository {
           );
         },
       );
-      final awaitDuration = DateTime.now().difference(awaitStartTime);
-      debugPrint('[REPO-TRACE] Completer future resolved after ${awaitDuration.inSeconds}s, text="${result.text}"');
-
       return Right(result);
     } on Exception catch (e) {
       debugPrint('[REPO-ERROR] Exception during voice input: $e');
